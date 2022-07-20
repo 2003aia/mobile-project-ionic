@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.stng",
+	"appName": "СТНГ",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}
