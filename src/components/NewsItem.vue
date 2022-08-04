@@ -42,9 +42,6 @@ export default defineComponent({
     IonImg,
   },
 
-  watch() {
-    console.log(this.sub_title, "subtitle");
-  },
 });
 </script>
 
@@ -62,13 +59,7 @@ ion-item {
   --inner-padding-end: 0;
   margin-bottom: 20px;
 }
-
-.item {
-  background: #fff;
-  box-shadow: 0px 4px 10px 0px #0000001a;
-  padding: 0;
-  border-radius: 9px;
-} /* 
+ /* 
 .img-wrapper {
   height: 200px;
   width: 100%;

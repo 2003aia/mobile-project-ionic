@@ -50,12 +50,13 @@ export default defineComponent({
   setup() {
     const isDateEnabled = (dateIsoString) => {
       const date = new Date(dateIsoString);
-      if (getDate(date) === 25 && getMonth(date) === 6) {
-        return false;
-      } else {
-        return true;
-      }
-      
+
+        if (getDate(date) === 24 && getMonth(date) === 7) {
+          return false;
+        } else {
+          return true;
+        }
+
     };
     const router = useRouter();
     return { router, isDateEnabled };

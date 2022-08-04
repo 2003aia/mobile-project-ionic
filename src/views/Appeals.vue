@@ -11,47 +11,66 @@
     <Layout
       height="false"
       outlineBtn="."
-      :method="() => (checkStatus = true)"
-      :filledBtn="checkStatus === false ? 'Проверить статус' : '.'"
-      :title="'Отслеживание статуса договора о подключении'"
+      :method="() => (checkStatus = false)"
+      :filledBtn="'.'"
+      :title="'Обращение'"
     >
       <template v-slot:main-content>
-        <div v-if="checkStatus === true">
-          <ion-list v-for="el in data" :key="el.title">
-            <div class="item">
-              <ion-text>
-                <p class="title ion-text-start">
-                  {{ el.title }}
-                </p></ion-text
-              >
+        <div v-if="appealsListResponse?.data">
+          <ion-list v-for="el in appealsListResponse?.data" :key="el.title">
+            <div
+              class="item"
+              @click="
+                () => router.push({ name: 'appealsMessages', params: el })
+              "
+            >
+              <div class="item-header">
+                <ion-text class="title ion-text-start">№{{ el.id }}</ion-text>
+                <ion-badge>
+                  {{ el.messages }}
+                </ion-badge>
+              </div>
               <ion-item>
-                <ion-text class="text">{{ el.data[0].name }}</ion-text>
-                <ion-text slot="end" class="sub-title text">{{
-                  el.data[0].val
-                }}</ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-text class="text">{{ el.data[1].name }}</ion-text>
-                <ion-text slot="end" class="sub-title text">{{
-                  el.data[1].val
-                }}</ion-text>
-              </ion-item>
-              <ion-item>
-                <ion-text class="text">{{ el.data[2].name }}</ion-text>
-                <ion-text slot="end" class="text sub-title">{{
-                  el.data[2].val
-                }}</ion-text>
+                <ion-text class="text time">{{ el.date_create }}</ion-text>
               </ion-item>
             </div>
           </ion-list>
         </div>
-
-        <div v-if="checkStatus === false">
-          <ion-text>
-            <p class="title ion-text-start">Номер договора</p></ion-text
-          >
-          <Input name="Введите номер договора" :required="true" />
+        <div v-else class="loading">
+          <ion-spinner name="bubbles"></ion-spinner>
         </div>
+      </template>
+
+      <template v-slot:content>
+        <LayoutBox>
+          <template v-slot:content>
+            <div
+              @click="
+                () =>
+                  router.push({
+                    name: 'appealsMessages',
+                    params: { newAppeal: true },
+                  })
+              "
+            >
+              <ion-text class="sub-title ion-text-start"> Обращение </ion-text>
+              <ion-item>
+                <ion-img
+                  slot="start"
+                  class="icon-start"
+                  :src="require('@/assets/img/send.png')"
+                ></ion-img>
+                <!-- <ion-icon class="icon-start" slot="start" :icon="paperPlaneOutline"></ion-icon> -->
+                <ion-text class="sub-title">Создать новое обращение</ion-text>
+                <ion-icon
+                  class="icon-end"
+                  slot="end"
+                  :icon="chevronForwardOutline"
+                ></ion-icon>
+              </ion-item>
+            </div>
+          </template>
+        </LayoutBox>
       </template>
     </Layout>
   </ion-page>
@@ -62,9 +81,23 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
+import LayoutBox from "../components/LayoutBox.vue";
 import Back from "../components/Back.vue";
-import { IonPage, IonText, IonItem, IonList } from "@ionic/vue";
-import Input from "../components/Input.vue";
+import { paperPlaneOutline, chevronForwardOutline } from "ionicons/icons";
+import {
+  IonPage,
+  IonText,
+  IonItem,
+  IonList,
+  IonBadge,
+  IonSpinner,
+  IonIcon,
+  IonImg,
+  onIonViewDidEnter,
+} from "@ionic/vue";
+import { useAppealsStore } from "../stores/appeals";
+import { storeToRefs } from "pinia";
+import { Storage } from "@ionic/storage";
 
 export default defineComponent({
   name: "appealsPage",
@@ -75,69 +108,63 @@ export default defineComponent({
     IonItem,
     IonList,
     Back,
-    Input,
+    IonBadge,
+    IonIcon,
+    IonImg,
+    IonSpinner,
+    LayoutBox,
   },
   data() {
     return {
       checkStatus: false,
-      data: [
+      data2: [
         {
-          title: "Заявка на подключение",
-
-          data: [
-            { name: "Выполнено", val: "Да" },
-            { name: "Дата начало", val: "10.06.2022" },
-            { name: "Дата окончания", val: "10.06.2022" },
-          ],
+          title: "№3432",
+          date: "14.04.3434",
+          time: "12.23.43",
+          notifications: "23",
         },
         {
-          title: "Выдача ТУ",
-          data: [
-            { name: "Выполнено", val: "Да" },
-            { name: "Дата начало", val: "10.06.2022" },
-            { name: "Дата окончания", val: "10.06.2022" },
-          ],
+          title: "№3432",
+          date: "14.04.3434",
+          time: "12.23.43",
+          notifications: "23",
         },
         {
-          title: "Договор на подключение",
-          data: [
-            { name: "Выполнено", val: "Да" },
-            { name: "Дата начало", val: "10.06.2022" },
-            { name: "Дата окончания", val: "10.06.2022" },
-          ],
-        },
-        {
-          title: "Разработка проекта - сметной документации",
-          data: [
-            { name: "Выполнено", val: "Нет" },
-            { name: "Дата начало", val: "-" },
-            { name: "Дата окончания", val: "-" },
-          ],
-        },
-        {
-          title:
-            "Разработка проектно-сметной документации, в т. ч.: - топосьемка",
-          data: [
-            { name: "Выполнено", val: "Нет" },
-            { name: "Дата начало", val: "-" },
-            { name: "Дата окончания", val: "-" },
-          ],
-        },
-        {
-          title:
-            "Разработка проектно-сметной документации, в т. ч.: - проектная документация",
-          data: [
-            { name: "Выполнено", val: "Нет" },
-            { name: "Дата начало", val: "-" },
-            { name: "Дата окончания", val: "-" },
-          ],
+          title: "№3432",
+          date: "14.04.3434",
+          time: "12.23.43",
+          notifications: "23",
         },
       ],
     };
   },
   setup() {
     const router = useRouter();
-    return { router };
+    const store = new Storage();
+    const { getAppealsList } = useAppealsStore();
+    const { appealsListResponse } = storeToRefs(useAppealsStore());
+    const fetchAppealsHandler = async () => {
+      await store.create();
+      const storeValue = await store.get("token");
+      const token = JSON.parse(storeValue).token;
+      await getAppealsList(token).then(async () => {
+        await store.create();
+
+        console.log("getAppealsList", appealsListResponse.value);
+      });
+    };
+    onIonViewDidEnter(() => {
+      fetchAppealsHandler();
+    });
+
+    return {
+      router,
+      paperPlaneOutline,
+      chevronForwardOutline,
+      appealsListResponse,
+      /* fetchAppealsHandler, */
+    };
   },
 });
 </script>
@@ -152,13 +179,38 @@ export default defineComponent({
 .item {
   width: 100%;
 }
-ion-item {
-  --padding-end: 0;
-  --padding-start: 0;
-  --inner-padding-end: 0px;
-  --inner-padding-bottom: 0px;
+.item-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.icon-start {
+  width: 32px;
+  height: 32px;
+  margin-right: 15px;
+}
+.icon-end {
+  width: 24px;
+  height: 24px;
+  margin-left: 0px;
+  color: #0378b4;
 }
 .text {
   margin-left: 0;
+}
+.time {
+  margin-right: 20px;
+}
+.item-header .title {
+  margin-bottom: 0;
+}
+
+ion-spinner {
+  top: -20px;
+}
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

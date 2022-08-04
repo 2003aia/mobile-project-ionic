@@ -209,6 +209,11 @@ const routes = [
     component: () => import('@/views/Appeals.vue'),
   },
   {
+    name: 'appealsMessages',
+    path: '/appealsMessages',
+    component: () => import('@/views/AppealsMessages.vue'),
+  },
+  {
     name: 'personalAccounts',
     path: '/personalAccounts',
     component: () => import('@/views/PersonalAccounts.vue'),
@@ -253,6 +258,11 @@ const routes = [
     path: '/requestsInfo',
     component: () => import('@/views/RequestsInfo.vue'),
   },
+  {
+    name: 'selectPage',
+    path: '/selectPage',
+    component: () => import('@/views/Select.vue')
+  }
 ]
 
 const router = createRouter({

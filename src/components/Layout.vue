@@ -67,21 +67,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.background {
-  height: 100%;
-  background-color: #f5f5f5;
-}
-.height {
-  height: 100%;
-}
 
 .container {
-  position: relative;
-  display: flex;
-  /*   height: 100%; */
-  flex-direction: column;
-  padding-bottom: 15px;
-  background-color: #f5f5f5;
+  padding: 0;
 }
 .header {
   padding: 15px;
@@ -110,6 +98,7 @@ export default defineComponent({
 
 .outline {
   margin-top: 45px;
+  margin-bottom: 15px;
 }
 
 .button {

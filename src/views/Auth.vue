@@ -140,30 +140,21 @@ export default defineComponent({
 
 <style scoped>
 .background {
-  height: 100%;
+  --background: #fff;
 }
 
 .text {
   margin-bottom: 20px;
 }
-
 .container {
-  padding: 15px;
-  /*   margin-top: 15px;
-  margin-bottom: 15px; */
   background-color: rgb(255, 255, 255);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
-
 .logoURL {
   height: 26px;
   width: 120px;
   margin: auto;
   margin-bottom: 15px;
 }
-
 .logo {
   height: 80px;
   width: 240px;

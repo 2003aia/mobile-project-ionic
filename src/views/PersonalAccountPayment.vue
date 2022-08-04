@@ -113,7 +113,7 @@ export default defineComponent({
     const route = useRoute();
     return { router, route };
   },
-  props:{
+  props: {
     tabs: Boolean,
   },
   names: "personalAccauntPayment",
@@ -146,6 +146,8 @@ export default defineComponent({
   position: sticky;
   top: 5px;
   z-index: 1000;
+  margin-bottom: 20px;
+
   flex-wrap: wrap;
 }
 .btn {

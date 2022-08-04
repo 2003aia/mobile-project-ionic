@@ -74,7 +74,7 @@ export default defineComponent({
 
 <style scoped>
 .background {
-  height: 100%;
+  --background: #fff;
 }
 
 .text {
@@ -82,13 +82,7 @@ export default defineComponent({
 }
 
 .container {
-  padding: 15px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  background-color: rgb(255, 255, 255);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  background: #fff;
 }
 
 .logo {

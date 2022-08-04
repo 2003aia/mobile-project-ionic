@@ -6,7 +6,6 @@
 <script>
 import { IonApp, IonRouterOutlet } from "@ionic/vue";
 import { defineComponent } from "vue";
-import { Storage } from "@ionic/storage";
 
 export default defineComponent({
   name: "App",
@@ -15,11 +14,6 @@ export default defineComponent({
     IonRouterOutlet,
   },
   setup() {
-    const store = new Storage();
-    const createStorage = async () => {
-      await store.create();
-    };
-    createStorage();
     return {};
   },
 });

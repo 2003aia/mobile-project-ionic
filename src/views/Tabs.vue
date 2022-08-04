@@ -236,7 +236,7 @@ export default defineComponent({
 .tabs {
   border-radius: 10px 10px 0px 0px;
   border-top: 0;
-  background: #523838;
+  background: #EAEAEA;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
 }
 ion-tab-bar {

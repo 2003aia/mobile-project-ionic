@@ -113,7 +113,7 @@ export default defineComponent({
   border-radius: 25px;
   padding-right: 2px;
   padding-left: 2px;
-
+margin-bottom: 20px;
   flex-wrap: wrap;
 }
 .btn {

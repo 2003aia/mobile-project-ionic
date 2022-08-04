@@ -157,7 +157,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style scoped>/* 
 .background {
   height: 100%;
 }
@@ -169,7 +169,7 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   background-color: #f5f5f5;
-}
+} */
 .header {
   padding: 15px;
   padding-top: 84px;
