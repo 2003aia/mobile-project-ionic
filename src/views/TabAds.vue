@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-content>
+    <ion-content class="background">
       <div class="container">
         <div class="button-wrapper">
           <Button
@@ -22,34 +22,52 @@
         <ion-text class="main-title">
           <p class="main-title">Объявления</p>
         </ion-text>
-        <NewsItem
-          v-for="ad in ads"
-          :key="ad.id"
-          :main_title="ad.main_title"
-          :sub_title="ad.sub_title"
-          :text="ad.text"
-          :date="ad.date"
-          @click="
-            () =>
-              router.push({
-                name: 'adPage',
-                params: ad,
-              })
-          "
-          :imgsrc="ad.img"
-        />
+        <div v-if="loading === false">
+          <NewsItem
+            v-for="el in list"
+            :key="el?.id"
+            :date="el?.date"
+            :main_title="el?.name"
+            :sub_title="el?.preview"
+            :text="el?.preview"
+            @click="
+              () => {
+                router.push({
+                  name: 'newsPage',
+                  params: { id: el.id, for: 'notice' },
+                });
+              }
+            "
+            :imgsrc="el?.image"
+          />
+          <ion-infinite-scroll threshold="100px" id="infinite-scroll">
+            <ion-infinite-scroll-content loading-spinner="bubbles">
+            </ion-infinite-scroll-content>
+          </ion-infinite-scroll>
+        </div>
+        <ion-spinner name="bubbles" v-else />
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { airplaneOutline } from "ionicons/icons";
-import { IonPage, IonContent, IonText } from "@ionic/vue";
+import {
+  IonPage,
+  IonContent,
+  IonText,
+  onIonViewDidEnter,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonSpinner,
+} from "@ionic/vue";
 import Button from "../components/Button.vue";
 import NewsItem from "../components/NewsItem.vue";
 import { useRouter } from "vue-router";
+import { useNoticeStore } from "../stores/notice";
+import { storeToRefs } from "pinia";
 
 export default defineComponent({
   name: "tabAdsPage",
@@ -93,8 +111,33 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const { fetchNotice } = useNoticeStore();
+    const { notice } = storeToRefs(useNoticeStore());
+    let page = 0;
+    let list = ref([]);
+    let loading = ref(false);
+    const fetchMoreNotice = (e) => {
+      page = page + 1;
+      loading.value = true;
+      fetchNotice(page).then(() => {
+        loading.value = false;
+        for (let index = 0; index < notice.value.data.length; index++) {
+          const element = notice.value.data[index];
+          list.value.push(element);
+        }
+
+        e?.target?.complete();
+        console.log(notice.value, "//test fetching notice");
+      });
+    };
+    onIonViewDidEnter(() => {
+      fetchMoreNotice();
+    });
     return {
       router,
+      list,
+      loading,
+      fetchMoreNotice,
       airplaneOutline,
     };
   },
@@ -109,7 +152,16 @@ export default defineComponent({
       console.log("ads");
     },
   },
-  components: { IonPage, IonContent, Button, NewsItem, IonText },
+  components: {
+    IonPage,
+    IonContent,
+    Button,
+    NewsItem,
+    IonText,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
+    IonSpinner,
+  },
 });
 </script>
 

@@ -16,7 +16,7 @@
       :title="'Обращение'"
     >
       <template v-slot:main-content>
-        <div v-if="appealsListResponse?.data">
+        <div v-if="appealsListResponse !== null">
           <ion-list v-for="el in appealsListResponse?.data" :key="el.title">
             <div
               class="item"
@@ -36,12 +36,39 @@
             </div>
           </ion-list>
         </div>
-        <div v-else class="loading">
-          <ion-spinner name="bubbles"></ion-spinner>
+        <div
+          @click="
+            () =>
+              router.push({
+                name: 'appealsMessages',
+                params: { newAppeal: true },
+              })
+          "
+          v-else
+        >
+          <ion-text class="sub-title ion-text-start"> Обращение </ion-text>
+          <ion-item>
+            <ion-img
+              slot="start"
+              class="icon-start"
+              :src="require('@/assets/img/send.png')"
+            ></ion-img>
+            <!-- <ion-icon class="icon-start" slot="start" :icon="paperPlaneOutline"></ion-icon> -->
+            <ion-text class="sub-title">Создать новое обращение</ion-text>
+            <ion-icon
+              class="icon-end"
+              slot="end"
+              :icon="chevronForwardOutline"
+            ></ion-icon>
+          </ion-item>
         </div>
       </template>
 
-      <template v-slot:content>
+      <ion-spinner name="bubbles"></ion-spinner>
+      <!-- <div v-else class="loading">
+
+		</div> -->
+      <template v-slot:content v-if="appealsListResponse !== null">
         <LayoutBox>
           <template v-slot:content>
             <div
@@ -78,7 +105,7 @@
 
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import LayoutBox from "../components/LayoutBox.vue";
@@ -142,15 +169,18 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const store = new Storage();
+    const loading = ref(false);
     const { getAppealsList } = useAppealsStore();
     const { appealsListResponse } = storeToRefs(useAppealsStore());
     const fetchAppealsHandler = async () => {
       await store.create();
       const storeValue = await store.get("token");
       const token = JSON.parse(storeValue).token;
+      console.log(token, "token");
+      loading.value = true;
       await getAppealsList(token).then(async () => {
         await store.create();
-
+        loading.value = false;
         console.log("getAppealsList", appealsListResponse.value);
       });
     };
@@ -163,6 +193,7 @@ export default defineComponent({
       paperPlaneOutline,
       chevronForwardOutline,
       appealsListResponse,
+      loading,
       /* fetchAppealsHandler, */
     };
   },

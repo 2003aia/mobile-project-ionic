@@ -30,7 +30,8 @@
             </p>
           </ion-text>
           <Input
-            type="number"
+            v-mask="'+7 (###) ###-##-##'"
+            type="tel"
             name="Телефон"
             :required="true"
             :value="phone"
@@ -44,14 +45,18 @@
             v-model="email"
           />
 
-          <ion-text v-if="registrError?.response?.data?.error">
+          <ion-text v-if="errorText">
             <p class="ion-text-start error">
-              {{ registrError.response.data.error }}
+              {{ errorText }}
             </p>
           </ion-text>
 
           <ion-item class="check">
-            <ion-checkbox slot="start"></ion-checkbox>
+            <ion-checkbox
+              @update:modelValue="check = $event"
+              :modelValue="check"
+              slot="start"
+            ></ion-checkbox>
             <ion-text>Согласен (-на) на обработку персональных данных</ion-text>
           </ion-item>
 
@@ -110,9 +115,10 @@ import {
   IonCheckbox,
   IonText,
 } from "@ionic/vue";
+import { mask } from "vue-the-mask";
 import { storeToRefs } from "pinia";
 import { useLoginStore } from "../stores/login";
-import { Storage } from "@ionic/storage";
+// import { Storage } from "@ionic/storage";
 
 export default defineComponent({
   name: "registrPage",
@@ -128,39 +134,47 @@ export default defineComponent({
     IonText,
     Back,
   },
+  directives: { mask },
   setup() {
     const { registrResponse, registrError } = storeToRefs(useLoginStore());
     const { registrUser } = useLoginStore();
     const router = useRouter();
     let email = ref("");
     let phone = ref("");
+    let check = ref(false);
     let errorText = ref("");
-    console.log(
-      registrResponse?.value?.data,
-      "response",
-      registrError.value?.response?.data?.error
-    );
+    console.log(registrResponse?.value, "response", registrError.value);
 
     const registrUserHandler = async () => {
-      registrUser(phone.value)
-        .then(async () => {
-          const store = new Storage();
-          await store.create();
-          await store.set(
-            "token",
-            JSON.stringify(registrResponse?.value?.data)
-          );
-          await store.set("login", phone.value);
-          if (registrResponse.value?.status === true) {
-            router.push({ name: "newPassPage", params: { recovery: false } });
-          } else {
-            errorText = registrError.value?.response?.data?.error;
-          }
-        })
-        .catch((e) => {
-          console.log(e, "error");
-          errorText = e;
+      if (phone.value !== "" && check.value) {
+        registrUser(phone.value, email.value !== "" ? email.value : null)
+          .then(async () => {
+            const store = new Storage();
+            await store.create();
+            await store.set(
+              "token",
+              JSON.stringify(registrResponse?.value?.data)
+            );
+
+            await store.set("login", phone.value);
+            if (registrResponse.value?.status === true) {
+              router.push({ name: "newPassPage", params: { recovery: false } });
+            } else {
+              errorText = registrError.value?.response?.data?.error;
+            }
+          })
+          .catch((e) => {
+            console.log(e, "error");
+            errorText = e;
+          });
+        router.push({
+          name: "newPassPage",
+          params: { phone: phone.value, email: email.value, recovery: false },
         });
+      } else {
+        console.log("check", check.value);
+        errorText.value = "Заполните поля!";
+      }
     };
 
     const changePhone = (e) => {
@@ -171,13 +185,14 @@ export default defineComponent({
       email.value = e.target.value;
       console.log(e.target.value, "current value", email.value);
     };
+
     return {
       registrUserHandler,
       router,
       email,
       phone,
+      check,
       changeEmail,
-      registrError,
       errorText,
       changePhone,
     };

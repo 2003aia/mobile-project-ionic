@@ -15,8 +15,8 @@
         <ion-router-outlet id="main"></ion-router-outlet>
         <ion-menu side="start" menu-id="first" content-id="main">
           <ion-content>
-            <ion-toolbar> </ion-toolbar>
-
+           
+ <ion-toolbar> </ion-toolbar>
             <ion-list>
               <ion-item
                 @click="
@@ -236,7 +236,8 @@ export default defineComponent({
 .tabs {
   border-radius: 10px 10px 0px 0px;
   border-top: 0;
-  background: #EAEAEA;
+  /* background: #EAEAEA; */
+  background: #fff;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
 }
 ion-tab-bar {

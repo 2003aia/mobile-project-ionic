@@ -23,16 +23,16 @@
               : `Обращение №${route.params?.id ? route.params.id : ""}`
           }}
         </ion-text>
-
+        
         <ion-text
           ><p v-if="!route.params.newAppeal && category">
             {{ category }}
           </p></ion-text
         >
-
         <ion-accordion-group v-if="route.params?.newAppeal">
           <ion-accordion :toggle-icon="caretDownSharp" value="second">
             <ButtonSelect
+            class="btn-select"
               slot="header"
               :name="
                 selected?.category
@@ -40,6 +40,7 @@
                   : `Выберите категорию обращения`
               "
             />
+
             <div slot="content">
               <ion-list
                 v-for="el in appealsCategoriesResponse.data"
@@ -100,10 +101,11 @@
           ></ion-img>
         </label>
 
-        <input
+        <ion-input
           :value="message.value"
           @change="messageChange"
           class="input"
+          
           placeholder="Напишите сообщение"
         />
         <ion-img
@@ -292,6 +294,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.btn-select {
+  /* background: green; */
+  margin-top: 10px;
+}
 .message-left .message-main {
   margin-left: 0;
   background: #0378b4;

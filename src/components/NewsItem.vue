@@ -2,7 +2,7 @@
   <ion-item lines="none" :router-link="name">
     <div class="item">
       <div class="img-wrapper">
-        <ion-img v-if="imgsrc !== ''" :src="imgsrc"></ion-img>
+        <ion-img v-if="imgsrc !== null" :src="imgsrc"></ion-img>
       </div>
 
       <div class="content">

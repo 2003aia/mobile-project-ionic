@@ -1,20 +1,20 @@
 <template>
   <ion-page>
-    <ion-content>
+    <ion-content class="background">
       <div class="container">
-          <div class="btn-wrapper">
-            <Button
-              class="btn"
-              name="Новости"
-              :grey="newsButton"
-              router-link="/tabs/main"
-            />
-            <Button
-              class="btn"
-              name="Объявления"
-              :grey="adsButton"
-              router-link="/tabs/ads"
-            />
+        <div class="btn-wrapper">
+          <Button
+            class="btn"
+            name="Новости"
+            :grey="newsButton"
+            router-link="/tabs/main"
+          />
+          <Button
+            class="btn"
+            name="Объявления"
+            :grey="adsButton"
+            router-link="/tabs/ads"
+          />
         </div>
 
         <ion-text class="main-title">
@@ -31,7 +31,10 @@
             :text="el?.preview"
             @click="
               () => {
-                router.push({ name: 'newsPage', params: { id: el.id } });
+                router.push({
+                  name: 'newsPage',
+                  params: { id: el.id, for: 'news' },
+                });
               }
             "
             :imgsrc="el?.image"
@@ -53,7 +56,7 @@ import {
   IonPage,
   IonContent,
   IonText,
-   onIonViewDidEnter,
+  onIonViewDidEnter,
   IonSpinner,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
@@ -62,7 +65,7 @@ import Button from "../components/Button.vue";
 import NewsItem from "../components/NewsItem.vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
-import { useNewsStore } from "../stores/index";
+import { useNewsStore } from "../stores/news";
 
 export default defineComponent({
   name: "tabMainPage",
@@ -117,7 +120,7 @@ export default defineComponent({
 
     function fetchMoreNews(e) {
       page = page + 1;
-
+      loading.value = true;
       fetchNews(page).then(() => {
         loading.value = false;
         for (let index = 0; index < news.value.data.length; index++) {
@@ -128,13 +131,13 @@ export default defineComponent({
       });
     }
 
-      onIonViewDidEnter(() => {
+    onIonViewDidEnter(() => {
       fetchMoreNews();
     });
 
     return {
       loading,
-       list,
+      list,
       router,
       fetchMoreNews,
       airplaneOutline,

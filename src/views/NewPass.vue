@@ -115,8 +115,14 @@ export default defineComponent({
     const oldPasswordChange = (e) => {
       oldPassword.value = e.target.value;
     };
-    const authUserHandler = () => {
-      router.push("/tabs");
+    const authUserHandler = async () => {
+      // router.push("/tabs");
+      const store = new Storage()
+      await store.create()
+      const token = await store.get("token");
+      let profileDataParsed = JSON.parse(token);
+      let oldPassword = profileDataParsed.msg.substr(35)
+      console.log('password', profileDataParsed.msg, oldPassword )
       /* authUser(phone.value, password.value)
         .then(() => {
           console.log(authResponse.value, authError.value);
@@ -134,7 +140,11 @@ export default defineComponent({
     const storageHandler = async () => {
       const store = new Storage();
       await store.create();
-      phone.value = await store.get("login");
+      if (route.params.phone) {
+        phone.value = route.params.phone;
+      } else {
+        phone.value = await store.get("login");
+      }
     };
 
     onIonViewDidEnter(() => {
@@ -157,7 +167,8 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>/* 
+<style scoped>
+/* 
 .background {
   height: 100%;
 }

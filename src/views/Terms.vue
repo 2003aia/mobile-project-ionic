@@ -8,8 +8,11 @@
       title="Соглашение на обработку персональных данных"
     >
       <template v-slot:main-content>
-        <ion-text v-html="data?.data?.text"> </ion-text>
-        <ion-text v-html="data?.data?.label"> </ion-text>
+        <div v-if="loading === false">
+          <ion-text v-html="data?.data?.text"> </ion-text>
+          <ion-text v-html="data?.data?.label"> </ion-text>
+        </div>
+        <ion-spinner v-else name="bubbles" />
       </template>
     </Layout>
   </ion-page>
@@ -19,7 +22,7 @@
 import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, onIonViewDidEnter } from "@ionic/vue";
+import { IonPage, IonText, onIonViewDidEnter, IonSpinner } from "@ionic/vue";
 import axios from "axios";
 
 export default defineComponent({
@@ -28,21 +31,25 @@ export default defineComponent({
     IonPage,
     Layout,
     IonText,
+    IonSpinner,
   },
   setup() {
     const router = useRouter();
     let data = ref(null);
+    const loading = ref(false);
     const fetchTerms = async () => {
+      loading.value = true;
       data.value = await axios
         .get("https://api.aostng.ru/api/v2/user/agreement/")
         .then((response) => {
+          loading.value = false;
           return response.data;
         });
     };
     onIonViewDidEnter(() => {
       fetchTerms();
     });
-    return { router, data };
+    return { router, data, loading };
   },
 });
 </script>

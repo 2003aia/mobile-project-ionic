@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-content>
+    <ion-content class="background">
       <Back />
       <ion-spinner v-if="loading === true" name="bubbles" />
       <div v-if="loading === false">
@@ -12,7 +12,7 @@
               </p>
             </ion-text>
           </div>
-          <ion-img v-if="detail?.image !== ''" :src="detail?.image" />
+          <ion-img v-if="detail?.image !== null" :src="detail?.image" />
         </div>
 
         <div class="container">
@@ -32,11 +32,19 @@
 <script>
 import { defineComponent, ref } from "vue";
 import { airplaneOutline } from "ionicons/icons";
-import { IonPage, IonContent, IonText, IonImg, IonSpinner } from "@ionic/vue";
+import {
+  IonPage,
+  IonContent,
+  IonText,
+  IonImg,
+  IonSpinner,
+  onIonViewDidEnter,
+} from "@ionic/vue";
 import Back from "../components/Back.vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
-import { useNewsStore } from "../stores/index";
+import { useNewsStore } from "../stores/news";
+import { useNoticeStore } from '../stores/notice'
 
 export default defineComponent({
   name: "infoMainPage",
@@ -67,7 +75,23 @@ export default defineComponent({
         })
         .then(() => (loading.value = false));
     }
-    fetchNewsDetails();
+    function fetchNoticeDetails() {
+      const { noticeDetail } = storeToRefs(useNoticeStore());
+      const { fetchNoticeDetail } = useNoticeStore();
+      loading.value = true;
+      fetchNoticeDetail(route.params.id)
+        .then(() => {
+          detail.value = noticeDetail.value.data;
+        })
+        .then(() => (loading.value = false));
+    }
+    onIonViewDidEnter(() => {
+      if (route.params.for === "news") {
+        fetchNewsDetails();
+      } else {
+        fetchNoticeDetails()
+      }       
+    });
 
     console.log(route.params, "params");
     return {

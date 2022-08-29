@@ -95,6 +95,9 @@ export default defineComponent({
   left: 0;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
+.main:nth-child(){
+  
+}
 
 .outline {
   margin-top: 45px;
