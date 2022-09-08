@@ -40,10 +40,8 @@
           ></ion-item
         >
         <div class="input" v-if="route.params?.edit === 'true'">
-          <ion-text class="sub-title sub-margin"
-            >Введите старый пароль</ion-text
-          >
-          <Input name="Введите старый пароль" />
+          <ion-text class="sub-title sub-margin">Введите код</ion-text>
+          <Input :code="code" @change="codeChange" name="Введите код" />
         </div>
         <div class="input">
           <ion-text class="sub-title sub-margin">Новый пароль</ion-text>
@@ -57,8 +55,17 @@
           <ion-text class="sub-title sub-margin"
             >Повторите новый пароль</ion-text
           >
-          <Input name="Повторите новый пароль" />
+          <Input
+            name="Повторите новый пароль"
+            :value="confirmPassword"
+            @change="confirmPasswordChange"
+          />
         </div>
+        <ion-text v-if="error">
+            <p class="ion-text-start error">
+              {{ error }}
+            </p>
+          </ion-text>
       </template>
     </Layout>
   </ion-page>
@@ -107,34 +114,58 @@ export default defineComponent({
     const phone = ref("");
     const password = ref("");
     const oldPassword = ref("");
-    const { authResponse, authError } = storeToRefs(useLoginStore());
-    // const { authUser } = useLoginStore();
+    const confirmPassword = ref("");
+    const code = ref("");
+    const error = ref("");
+    const { changePassResponse, changePassError } = storeToRefs(
+      useLoginStore()
+    );
+    const { changePass } = useLoginStore();
     const passwordChange = (e) => {
       password.value = e.target.value;
     };
     const oldPasswordChange = (e) => {
       oldPassword.value = e.target.value;
     };
+    const confirmPasswordChange = (e) => {
+      confirmPassword.value = e.target.value;
+    };
+    const codeChange = (e) => {
+      code.value = e.target.value;
+    };
     const authUserHandler = async () => {
-      // router.push("/tabs");
-      const store = new Storage()
-      await store.create()
-      const token = await store.get("token");
-      let profileDataParsed = JSON.parse(token);
-      let oldPassword = profileDataParsed.msg.substr(35)
-      console.log('password', profileDataParsed.msg, oldPassword )
-      /* authUser(phone.value, password.value)
-        .then(() => {
-          console.log(authResponse.value, authError.value);
-          if (authResponse.value?.status === true) {
-            router.push("/tabs");
-          } else {
-            console.log(authError.value, "error");
-          }
-        })
-        .catch((e) => {
-          console.log(e, "error2");
-        }); */
+      const store = new Storage();
+      await store.create();
+      if (route.params.edit) {
+        if (code.value === route.params.code) {
+         changePass(phone.value, password.value, confirmPassword.value)
+          .then(() => {
+            if (changePassResponse.value?.status === true) {
+              router.push("/tabs");
+            } else {
+              error.value = changePassError.value;
+            }
+          })
+          .catch((e) => {
+            console.log(e, "error2");
+          }); 
+        } else { 
+          error.value = 'Введен неправильный код из СМС!'
+        }
+        
+      } else {
+        changePass(phone.value, password.value, confirmPassword.value)
+          .then(() => {
+            if (changePassResponse.value?.status === true) {
+              router.push("/tabs");
+            } else {
+              error.value = changePassError.value;
+            }
+          })
+          .catch((e) => {
+            console.log(e, "error2");
+          });
+      }
     };
 
     const storageHandler = async () => {
@@ -158,10 +189,12 @@ export default defineComponent({
       passwordChange,
       oldPasswordChange,
       password,
+      confirmPassword,
+      confirmPasswordChange,
+      codeChange,
       oldPassword,
       phone,
-      authError,
-      authResponse,
+      error,
     };
   },
 });

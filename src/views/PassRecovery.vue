@@ -20,7 +20,16 @@
           </p>
         </div>
         <div>
-          <Input name="Телефон или email" :value="login" @change="loginChange"/>
+          <Input
+            name="Телефон или email"
+            :value="login"
+            @change="loginChange"
+          />
+          <ion-text v-if="errorText">
+            <p class="ion-text-start error">
+              {{ errorText }}
+            </p>
+          </ion-text>
 
           <Button
             @click="
@@ -28,7 +37,6 @@
                 passRecoveryHandler();
               }
             "
-            router-link="/newPassPage"
             name="Восстановить пароль"
           />
         </div>
@@ -60,21 +68,29 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const { passRecoveryResponse, passRecoveryError } = storeToRefs(useLoginStore());
+    const { passRecoveryResponse, passRecoveryError } = storeToRefs(
+      useLoginStore()
+    );
     const { passRecovery } = useLoginStore();
     const errorText = ref("");
     const login = ref("");
     const passRecoveryHandler = () => {
-      passRecovery(login)
+      passRecovery(login.value)
         .then(() => {
-          console.log(passRecoveryResponse.value, passRecoveryError.value, "response");
           if (passRecoveryResponse?.value?.status === true) {
+            const code = passRecoveryResponse.value?.data.msg.substr(91);
+
             router.push({
               name: "newPassPage",
-              params: { recovery: true },
+              params: { recovery: true, code: code, phone: login.value, edit: true },
             });
+            console.log(
+              passRecoveryResponse.value,
+              passRecoveryError.value,
+              "response"
+            );
           } else {
-            console.log(passRecoveryError.value, "error");
+            errorText.value = passRecoveryError.value?.response?.data?.error;
           }
         })
         .catch((e) => {
@@ -83,9 +99,9 @@ export default defineComponent({
         });
     };
     const loginChange = (e) => {
-      login.value = e.target.value
-    }
-    return { router, passRecoveryHandler, login, loginChange };
+      login.value = e.target.value;
+    };
+    return { router, passRecoveryHandler, login, loginChange, errorText };
   },
   data() {
     return {

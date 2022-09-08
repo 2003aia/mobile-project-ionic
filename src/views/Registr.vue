@@ -160,11 +160,7 @@ export default defineComponent({
               "token",
               JSON.stringify(registrResponse?.value?.data)
             );
-            console.log(
-              registrResponse.value?.data.msg.substr(35),
-              "response",
-              registrError.value
-            );
+            
             await store.set("login", phone.value);
             if (registrResponse.value?.status === true) {
               codeSent.value = true;
@@ -177,31 +173,27 @@ export default defineComponent({
             console.log(e, "error");
             errorText = e;
           });
-
       } else {
-        console.log("check", check.value);
         errorText.value = "Заполните поля!";
       }
     };
     const codeUserHandler = () => {
       if (codeResponse.value === code.value) {
-        router.push('newPassPage')
+        const myModel = phone.value.replace(/\D+/g, "");
+        router.push({ name: "newPassPage", params: { phone: myModel } });
       } else {
-        errorText.value = 'Введен неправильный код'
+        errorText.value = "Введен неправильный код";
       }
     };
 
     const changePhone = (e) => {
       phone.value = e.target.value;
-      console.log(e.target.value, "current value", phone.value);
     };
     const changeEmail = (e) => {
       email.value = e.target.value;
-      console.log(e.target.value, "current value", email.value);
     };
     const changeCode = (e) => {
       code.value = e.target.value;
-      console.log(e.target.value, "current value", code.value);
     };
 
     return {

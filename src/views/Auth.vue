@@ -34,9 +34,10 @@
             :changeHandler="passwordChange"
           />
 
-          <ion-text v-if="authError?.response?.data?.error">
-            <p class="error">
-              {{ authError?.response?.data?.error }}
+          
+          <ion-text v-if="errorText">
+            <p class="ion-text-start error">
+              {{ errorText }}
             </p>
           </ion-text>
 
@@ -91,6 +92,8 @@ import { storeToRefs } from "pinia";
 import { useLoginStore } from "../stores/login";
 import { IonPage, IonButton, IonContent, IonText, IonImg } from "@ionic/vue";
 import { mask } from "vue-the-mask";
+import { Storage } from "@ionic/storage";
+
 
 export default defineComponent({
   name: "authPage",
@@ -114,13 +117,20 @@ export default defineComponent({
     let password = "";
     let errorText = ref("");
     const authUserHandler = () => {
-      authUser(phone, password)
-        .then(() => {
-          console.log(authResponse.value, authError.value, "response");
+      const myModel = phone.replace(/\D+/g, "");
+      authUser(myModel, password)
+        .then(async() => {
           if (authResponse?.value?.status === true) {
+            const store = new Storage();
+            await store.create();
+            await store.set(
+              "token",
+              JSON.stringify(authResponse?.value?.data)
+            );
+            console.log(authResponse.value, 'test')
             router.push("/tabs");
           } else {
-            console.log(authError, "error");
+            errorText.value= authError.value.response?.data?.error;
           }
         })
         .catch((e) => {

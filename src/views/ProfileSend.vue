@@ -5,8 +5,7 @@
       height="false"
       :method="
         () => {
-          router.push({ name: 'newPassPage', params: { recovery: false } });
-          edit = true;
+          passRecoveryHandler();
         }
       "
       :filledBtn="'Отправить код'"
@@ -16,7 +15,12 @@
       <template v-slot:main-content>
         <ion-text>
           <p class="title ion-text-start">Изменить пароль</p>
-          <p>Мы отправим Вам проверочный код на номер {{ data.phone }}</p>
+          <p>Мы отправим Вам проверочный код на номер {{ login }}</p>
+        </ion-text>
+        <ion-text v-if="error">
+          <p class="ion-text-start error">
+            {{ error }}
+          </p>
         </ion-text>
       </template>
     </Layout>
@@ -25,11 +29,14 @@
 
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText } from "@ionic/vue";
+import { IonPage, IonText, onIonViewWillEnter } from "@ionic/vue";
 import Back from "../components/Back.vue";
+import { useLoginStore } from "../stores/login";
+import { storeToRefs } from "pinia";
+import { Storage } from "@ionic/storage";
 
 export default defineComponent({
   name: "profileSendPage",
@@ -55,7 +62,38 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    return { router };
+    const error = ref("");
+    const login = ref("");
+    const { passRecoveryResponse, passRecoveryError } = storeToRefs(
+      useLoginStore()
+    );
+    const { passRecovery } = useLoginStore();
+
+    const passRecoveryHandler = async () => {
+      const store = new Storage();
+      await store.create();
+      const login = await store.get("token");
+      const value = JSON.parse(login);
+      passRecovery(value?.login).then(() => {
+        if (passRecoveryResponse.value.status === true) {
+          const code = passRecoveryResponse.value?.data.msg.substr(91);
+          router.push({name: 'newPassPage', params: { code: code, edit: true, phone: value?.login }})
+        } else {
+          error.value = passRecoveryError.value?.response?.data?.error;
+        }
+      });
+    };
+    const getLogin = async () => {
+      const store = new Storage();
+      await store.create();
+      const token = await store.get("token");
+      const value = JSON.parse(token);
+      login.value = value.login;
+    };
+    onIonViewWillEnter(() => {
+      getLogin();
+    });
+    return { router, passRecoveryHandler, error, login };
   },
 });
 </script>

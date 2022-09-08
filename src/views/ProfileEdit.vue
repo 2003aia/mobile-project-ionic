@@ -47,7 +47,7 @@
           <!--  </ion-item> -->
           <ion-item>
             <ion-text>
-              <p class="sub-title">{{ data.phone }}</p>
+              <p class="sub-title">{{ login }}</p>
               <p>Контактный телефон</p>
             </ion-text>
           </ion-item>
@@ -110,6 +110,7 @@ export default defineComponent({
     let name = ref("");
     const surname = ref("");
     const email = ref("");
+    const login = ref("")
     let profileData = null;
     let token = "";
 
@@ -122,6 +123,7 @@ export default defineComponent({
       name.value = profileDataParsed?.firstName;
       surname.value = profileDataParsed?.lastName;
       email.value = profileDataParsed?.email;
+      login.value = profileDataParsed?.login
     };
 
     const editProfileHandler = async () => {
@@ -157,6 +159,7 @@ export default defineComponent({
       surname,
       name,
       email,
+      login,
     };
   },
 });

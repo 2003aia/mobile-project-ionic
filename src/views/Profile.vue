@@ -48,7 +48,7 @@
           </ion-item>
           <ion-item>
             <ion-text>
-              <p class="sub-title">{{ data.phone }}</p>
+              <p class="sub-title">{{ profileResponse?.data?.login }}</p>
               <p>Контактный телефон</p>
             </ion-text>
           </ion-item>
@@ -108,7 +108,6 @@ export default defineComponent({
     const fetchProfileHandler = async () => {
       await store.create();
       const value = await store.get("token");
-
       getProfile(JSON.parse(value)?.token).then(async () => {
         await store.set(
           "profileData",

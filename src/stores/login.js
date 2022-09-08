@@ -31,11 +31,11 @@ export const useLoginStore = defineStore({
                 this.registrError = error
             }
         },
-        async passRecovery(login, email) {
+        async passRecovery(login) {
             const store = new Storage();
             await store.create();
             try {
-                this.passRecoveryResponse = await axios.post(`https://api.aostng.ru/api/v2/user/password/forgot/`, { login: login, email: email })
+                this.passRecoveryResponse = await axios.post(`https://api.aostng.ru/api/v2/user/password/forgot/`, { login: login })
                     .then((response) => response.data)
 
             } catch (error) {
@@ -53,12 +53,12 @@ export const useLoginStore = defineStore({
                 this.authError = error
             }
         },
-        async changePass(login, password) {
+        async changePass(login, password, confirmPassword) {
             const store = new Storage();
             await store.create();
             try {
-                this.changePassResponse = await axios.post(`https://api.aostng.ru/api/v2/user/password/changePassword/`, {
-                    login: login, password: password
+                this.changePassResponse = await axios.post(`https://api.aostng.ru/api/v2/user/password/change/`, {
+                    login: login, password: password, confirmPassword: confirmPassword,
                 }).then((response) => response.data)
             } catch (error) {
                 this.changePassError = error
