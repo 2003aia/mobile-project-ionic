@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <Back v-if="!tabs" />
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" class="background">
       <div class="container">
         <div class="btn-wrapper">
           <Button class="btn" name="Оплата" />

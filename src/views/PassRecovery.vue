@@ -20,15 +20,12 @@
           </p>
         </div>
         <div>
-          <Input name="Телефон или email" />
+          <Input name="Телефон или email" :value="login" @change="loginChange"/>
 
           <Button
             @click="
               () => {
-                router.push({
-                  name: 'newPassPage',
-                  params: { recovery: true },
-                });
+                passRecoveryHandler();
               }
             "
             router-link="/newPassPage"
@@ -42,12 +39,13 @@
 
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import Button from "../components/Button.vue";
 import Input from "../components/Input.vue";
 import Back from "../components/Back.vue";
-
+import { useLoginStore } from "../stores/login";
+import { storeToRefs } from "pinia";
 import { IonPage, IonContent, IonImg } from "@ionic/vue";
 
 export default defineComponent({
@@ -62,7 +60,32 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    return { router };
+    const { passRecoveryResponse, passRecoveryError } = storeToRefs(useLoginStore());
+    const { passRecovery } = useLoginStore();
+    const errorText = ref("");
+    const login = ref("");
+    const passRecoveryHandler = () => {
+      passRecovery(login)
+        .then(() => {
+          console.log(passRecoveryResponse.value, passRecoveryError.value, "response");
+          if (passRecoveryResponse?.value?.status === true) {
+            router.push({
+              name: "newPassPage",
+              params: { recovery: true },
+            });
+          } else {
+            console.log(passRecoveryError.value, "error");
+          }
+        })
+        .catch((e) => {
+          console.log(e, "error2");
+          errorText.value = e;
+        });
+    };
+    const loginChange = (e) => {
+      login.value = e.target.value
+    }
+    return { router, passRecoveryHandler, login, loginChange };
   },
   data() {
     return {

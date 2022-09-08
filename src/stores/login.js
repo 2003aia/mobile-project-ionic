@@ -9,6 +9,10 @@ export const useLoginStore = defineStore({
         registrError: null,
         authError: null,
         authResponse: null,
+        passRecoveryResponse: null,
+        passRecoveryError: null,
+        changePassResponse: null,
+        changePassError: null,
     }),
     getters: {
         getPostsPerAuthor: (state) => {
@@ -27,16 +31,24 @@ export const useLoginStore = defineStore({
                 this.registrError = error
             }
         },
+        async passRecovery(login, email) {
+            const store = new Storage();
+            await store.create();
+            try {
+                this.passRecoveryResponse = await axios.post(`https://api.aostng.ru/api/v2/user/password/forgot/`, { login: login, email: email })
+                    .then((response) => response.data)
+
+            } catch (error) {
+                this.passRecoveryError = error
+            }
+        },
         async authUser(login, password) {
             const store = new Storage();
             await store.create();
             try {
                 this.authResponse = await axios.post(`https://api.aostng.ru/api/v2/user/auth/`, {
                     login: login, password: password
-                })
-                    .then((response) => response.data).catch((e) => {
-                        this.authError = e
-                    })
+                }).then((response) => response.data)
             } catch (error) {
                 this.authError = error
             }
@@ -45,14 +57,11 @@ export const useLoginStore = defineStore({
             const store = new Storage();
             await store.create();
             try {
-                this.authResponse = await axios.post(`https://api.aostng.ru/api/v2/user/auth/`, {
+                this.changePassResponse = await axios.post(`https://api.aostng.ru/api/v2/user/password/changePassword/`, {
                     login: login, password: password
-                })
-                    .then((response) => response.data).catch((e) => {
-                        this.authError = e
-                    })
+                }).then((response) => response.data)
             } catch (error) {
-                this.authError = error
+                this.changePassError = error
             }
         }
     }

@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-content>
+    <ion-content class="background">
       <div class="container">
         <ion-button
           class="btn1"

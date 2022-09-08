@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <Back :btnSrc="()=>router.push('/tabs/main')"/>
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" class="background">
       <div class="container">
         <div class="btn-wrapper">
           <Button

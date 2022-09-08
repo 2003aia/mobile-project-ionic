@@ -58,7 +58,21 @@
         </ion-menu>
 
         <ion-tab-bar class="tabs" slot="bottom">
-          <ion-tab-button class="badge-wrapper" tab="main" href="/tabs/main">
+          <ion-tab-button tab="menu" href="/tabs/menu" @click="openMenu">
+            <ion-img
+              class="tabslogo"
+              :src="
+                selected !== 'menu'
+                  ? require('@/assets/img/dots.png')
+                  : require('@/assets/img/active-dots.png')
+              "
+            />
+
+            <ion-label :class="{ active: selected === 'menu' }"
+              >Главный</ion-label
+            >
+          </ion-tab-button>
+          <!-- <ion-tab-button class="badge-wrapper" tab="main" href="/tabs/main">
             <ion-img
               class="tabslogo"
               :src="
@@ -70,9 +84,9 @@
             <div class="badge"></div>
 
             <ion-label :class="{ active: selected === 'main' }"
-              >Главный</ion-label
+              >Прочие</ion-label
             >
-          </ion-tab-button>
+          </ion-tab-button> -->
 
           <ion-tab-button tab="services" href="/tabs/services">
             <ion-img
@@ -120,17 +134,19 @@
               >Е-запись</ion-label
             >
           </ion-tab-button>
-          <ion-tab-button tab="menu" href="/tabs/menu" @click="openMenu">
+         
+          <ion-tab-button class="badge-wrapper" tab="main" href="/tabs/main">
             <ion-img
               class="tabslogo"
               :src="
-                selected !== 'menu'
-                  ? require('@/assets/img/dots.png')
-                  : require('@/assets/img/active-dots.png')
+                selected !== 'main'
+                  ? require('@/assets/img/home.png')
+                  : require('@/assets/img/active-home.png')
               "
             />
+            <div class="badge"></div>
 
-            <ion-label :class="{ active: selected === 'menu' }"
+            <ion-label :class="{ active: selected === 'main' }"
               >Прочие</ion-label
             >
           </ion-tab-button>

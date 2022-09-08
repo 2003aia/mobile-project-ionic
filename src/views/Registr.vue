@@ -81,15 +81,17 @@
           <p class="text ion-text-center">
             Мы отправили проверочный код на номер {{ phone.value }}
           </p>
-          <Input name="Введите код" />
+          <Input name="Введите код" :value="code" @change="changeCode" />
+          <ion-text v-if="errorText">
+            <p class="ion-text-start error">
+              {{ errorText }}
+            </p>
+          </ion-text>
           <Button
             name="Подтвердить"
             @click="
               () => {
-                router.push({
-                  name: 'newPassPage',
-                  params: { recovery: false },
-                });
+                codeUserHandler();
               }
             "
           />
@@ -118,7 +120,7 @@ import {
 import { mask } from "vue-the-mask";
 import { storeToRefs } from "pinia";
 import { useLoginStore } from "../stores/login";
-// import { Storage } from "@ionic/storage";
+import { Storage } from "@ionic/storage";
 
 export default defineComponent({
   name: "registrPage",
@@ -143,11 +145,14 @@ export default defineComponent({
     let phone = ref("");
     let check = ref(false);
     let errorText = ref("");
-    console.log(registrResponse?.value, "response", registrError.value);
+    let codeSent = ref(false);
+    let code = ref("");
+    let codeResponse = ref("");
 
     const registrUserHandler = async () => {
       if (phone.value !== "" && check.value) {
-        registrUser(phone.value, email.value !== "" ? email.value : null)
+        const myModel = phone.value.replace(/\D+/g, "");
+        registrUser(myModel, email.value !== "" ? email.value : null)
           .then(async () => {
             const store = new Storage();
             await store.create();
@@ -155,25 +160,34 @@ export default defineComponent({
               "token",
               JSON.stringify(registrResponse?.value?.data)
             );
-
+            console.log(
+              registrResponse.value?.data.msg.substr(35),
+              "response",
+              registrError.value
+            );
             await store.set("login", phone.value);
             if (registrResponse.value?.status === true) {
-              router.push({ name: "newPassPage", params: { recovery: false } });
+              codeSent.value = true;
+              codeResponse.value = registrResponse.value?.data.msg.substr(35);
             } else {
-              errorText = registrError.value?.response?.data?.error;
+              errorText.value = registrError.value?.response?.data?.error;
             }
           })
           .catch((e) => {
             console.log(e, "error");
             errorText = e;
           });
-        router.push({
-          name: "newPassPage",
-          params: { phone: phone.value, email: email.value, recovery: false },
-        });
+
       } else {
         console.log("check", check.value);
         errorText.value = "Заполните поля!";
+      }
+    };
+    const codeUserHandler = () => {
+      if (codeResponse.value === code.value) {
+        router.push('newPassPage')
+      } else {
+        errorText.value = 'Введен неправильный код'
       }
     };
 
@@ -185,6 +199,10 @@ export default defineComponent({
       email.value = e.target.value;
       console.log(e.target.value, "current value", email.value);
     };
+    const changeCode = (e) => {
+      code.value = e.target.value;
+      console.log(e.target.value, "current value", code.value);
+    };
 
     return {
       registrUserHandler,
@@ -193,13 +211,17 @@ export default defineComponent({
       phone,
       check,
       changeEmail,
+      changeCode,
       errorText,
+      codeUserHandler,
+      codeSent,
+      code,
       changePhone,
     };
   },
   data() {
     return {
-      codeSent: false,
+      // codeSent: false,
     };
   },
   methods: function () {},

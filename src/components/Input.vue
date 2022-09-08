@@ -6,7 +6,6 @@
       placeholder=" "
       :value="value"
       @change="changeHandler"
-      type="text"
     />
     <ion-text
       :class="{ inputTextBlue: textBlue === true }"

@@ -20,10 +20,17 @@
           </ion-text>
         </div>
         <div>
-          <Input name="Телефон" :value="phone" :changeHandler="phoneChange" />
+          <Input
+            v-mask="'+7 (###) ###-##-##'"
+            name="Телефон"
+            :value="phone"
+            type="tel"
+            :changeHandler="phoneChange"
+          />
           <Input
             name="Пароль"
             :value="password"
+            type="password"
             :changeHandler="passwordChange"
           />
 
@@ -83,6 +90,7 @@ import Input from "../components/Input.vue";
 import { storeToRefs } from "pinia";
 import { useLoginStore } from "../stores/login";
 import { IonPage, IonButton, IonContent, IonText, IonImg } from "@ionic/vue";
+import { mask } from "vue-the-mask";
 
 export default defineComponent({
   name: "authPage",
@@ -96,6 +104,8 @@ export default defineComponent({
     Input,
     IonImg,
   },
+  directives: { mask },
+
   setup() {
     const router = useRouter();
     const { authResponse, authError } = storeToRefs(useLoginStore());
