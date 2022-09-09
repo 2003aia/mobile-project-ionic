@@ -25,14 +25,14 @@
             :value="name"
             name="Укажите имя"
           />
-          <ion-text><p class="sub-title">Фамилия</p> </ion-text>
+          <!-- <ion-text><p class="sub-title">Фамилия</p> </ion-text>
           <Input
             name="Укажите фамилию"
             :value="surname"
             :changeHandler="surnameChange"
-          />
-          <ion-text><p class="sub-title">Отчество</p> </ion-text>
-          <Input name="Укажите отчество" />
+          /> -->
+          <!--  <ion-text><p class="sub-title">Отчество</p> </ion-text>
+          <Input name="Укажите отчество" /> -->
 
           <!-- <ion-item> -->
           <ion-text>
@@ -110,28 +110,42 @@ export default defineComponent({
     let name = ref("");
     const surname = ref("");
     const email = ref("");
-    const login = ref("")
+    const login = ref("");
     let profileData = null;
-    let token = "";
 
     const storageHandler = async () => {
       const store = new Storage();
       await store.create();
-      profileData = await store.get("profileData");
-      token = await store.get("token");
+      profileData = await store.get("token");
       let profileDataParsed = JSON.parse(profileData);
-      name.value = profileDataParsed?.firstName;
-      surname.value = profileDataParsed?.lastName;
+      name.value = profileDataParsed?.name;
+      /* surname.value = profileDataParsed?.lastName; */
       email.value = profileDataParsed?.email;
-      login.value = profileDataParsed?.login
+      login.value = profileDataParsed?.phone;
     };
 
     const editProfileHandler = async () => {
-      editProfile(
-        JSON.parse(token)?.token,
-        name.value,
-        surname.value,
-        email.value
+      editProfile(JSON.parse(profileData)?.token, name.value, email.value).then(
+        async () => {
+          const store = new Storage();
+          await store.create();
+          await store
+            .set("token", {
+              /* ...profileData, */
+              name: name.value,
+              email: email.value,
+            })
+            .then(async () => {
+              const store = new Storage();
+              await store.create();
+              profileData = await store.get("token");
+              /* let profileDataParsed = JSON.parse(profileData);
+              name.value = profileDataParsed?.name;
+              email.value = profileDataParsed?.email;
+              login.value = profileDataParsed?.phone; */
+              console.log(profileData, "test");
+            });
+        }
       );
     };
 

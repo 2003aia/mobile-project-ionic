@@ -75,28 +75,37 @@ export default defineComponent({
     const errorText = ref("");
     const login = ref("");
     const passRecoveryHandler = () => {
-      passRecovery(login.value)
-        .then(() => {
-          if (passRecoveryResponse?.value?.status === true) {
-            const code = passRecoveryResponse.value?.data.msg.substr(91);
+      if (login.value === "") {
+        errorText.value = "Заполните все поля!";
+      } else {
+        passRecovery(login.value)
+          .then(() => {
+            if (passRecoveryResponse?.value?.status === true) {
+              const code = passRecoveryResponse.value?.data.msg.substr(91);
 
-            router.push({
-              name: "newPassPage",
-              params: { recovery: true, code: code, phone: login.value, edit: true },
-            });
-            console.log(
-              passRecoveryResponse.value,
-              passRecoveryError.value,
-              "response"
-            );
-          } else {
-            errorText.value = passRecoveryError.value?.response?.data?.error;
-          }
-        })
-        .catch((e) => {
-          console.log(e, "error2");
-          errorText.value = e;
-        });
+              router.push({
+                name: "newPassPage",
+                params: {
+                  recovery: true,
+                  code: code,
+                  phone: login.value,
+                  edit: true,
+                },
+              });
+              console.log(
+                passRecoveryResponse.value,
+                passRecoveryError.value,
+                "response"
+              );
+            } else {
+              errorText.value = passRecoveryError.value?.response?.data?.error;
+            }
+          })
+          .catch((e) => {
+            console.log(e, "error2");
+            errorText.value = e;
+          });
+      }
     };
     const loginChange = (e) => {
       login.value = e.target.value;

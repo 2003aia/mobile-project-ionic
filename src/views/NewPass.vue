@@ -62,10 +62,10 @@
           />
         </div>
         <ion-text v-if="error">
-            <p class="ion-text-start error">
-              {{ error }}
-            </p>
-          </ion-text>
+          <p class="ion-text-start error">
+            {{ error }}
+          </p>
+        </ion-text>
       </template>
     </Layout>
   </ion-page>
@@ -138,33 +138,48 @@ export default defineComponent({
       await store.create();
       if (route.params.edit) {
         if (code.value === route.params.code) {
-         changePass(phone.value, password.value, confirmPassword.value)
-          .then(() => {
-            if (changePassResponse.value?.status === true) {
-              router.push("/tabs");
-            } else {
-              error.value = changePassError.value;
-            }
-          })
-          .catch((e) => {
-            console.log(e, "error2");
-          }); 
-        } else { 
-          error.value = 'Введен неправильный код из СМС!'
+          if (
+            phone.value === "" ||
+            password.value === "" ||
+            confirmPassword.value === ""
+          ) {
+            error.value = "Заполните все поля!";
+          } else {
+            changePass(phone.value, password.value, confirmPassword.value)
+              .then(() => {
+                if (changePassResponse.value?.status === true) {
+                  router.push("/tabs");
+                } else {
+                  error.value = changePassError.value;
+                }
+              })
+              .catch((e) => {
+                console.log(e, "error2");
+              });
+          }
+        } else {
+          error.value = "Введен неправильный код из СМС!";
         }
-        
       } else {
-        changePass(phone.value, password.value, confirmPassword.value)
-          .then(() => {
-            if (changePassResponse.value?.status === true) {
-              router.push("/tabs");
-            } else {
-              error.value = changePassError.value;
-            }
-          })
-          .catch((e) => {
-            console.log(e, "error2");
-          });
+        if (
+          phone.value === "" ||
+          password.value === "" ||
+          confirmPassword.value === ""
+        ) {
+          error.value = "Заполните все поля!";
+        } else {
+          changePass(phone.value, password.value, confirmPassword.value)
+            .then(() => {
+              if (changePassResponse.value?.status === true) {
+                router.push("/tabs");
+              } else {
+                error.value = changePassError.value;
+              }
+            })
+            .catch((e) => {
+              console.log(e, "error2");
+            });
+        }
       }
     };
 

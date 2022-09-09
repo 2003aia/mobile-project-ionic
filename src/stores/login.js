@@ -20,46 +20,46 @@ export const useLoginStore = defineStore({
         }
     },
     actions: {
-        async registrUser(login, email) {
+        async registrUser(phone,) {
             const store = new Storage();
             await store.create();
             try {
-                this.registrResponse = await axios.post(`https://api.aostng.ru/api/v2/user/create/`, { login: login, email: email })
-                    .then((response) => response.data)
+                await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Registration`, { phone: phone })
+                    .then((response) => this.registrResponse = response.data)
 
             } catch (error) {
                 this.registrError = error
             }
         },
-        async passRecovery(login) {
+        async passRecovery(phone) {
             const store = new Storage();
             await store.create();
             try {
-                this.passRecoveryResponse = await axios.post(`https://api.aostng.ru/api/v2/user/password/forgot/`, { login: login })
-                    .then((response) => response.data)
+                await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Restore`, { phone: phone })
+                    .then((response) => this.passRecoveryResponse = response.data)
 
             } catch (error) {
                 this.passRecoveryError = error
             }
         },
-        async authUser(login, password) {
+        async authUser(phone, password) {
             const store = new Storage();
             await store.create();
             try {
-                this.authResponse = await axios.post(`https://api.aostng.ru/api/v2/user/auth/`, {
-                    login: login, password: password
-                }).then((response) => response.data)
+                await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Authorization`, {
+                    phone: phone, password: password
+                }).then((response) => this.authResponse = response.data)
             } catch (error) {
                 this.authError = error
             }
         },
-        async changePass(login, password, confirmPassword) {
+        async changePass( token, password,) {
             const store = new Storage();
             await store.create();
             try {
-                this.changePassResponse = await axios.post(`https://api.aostng.ru/api/v2/user/password/change/`, {
-                    login: login, password: password, confirmPassword: confirmPassword,
-                }).then((response) => response.data)
+                await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
+                    token: token, password: password, 
+                }).then((response) => this.changePassResponse = response.data)
             } catch (error) {
                 this.changePassError = error
             }

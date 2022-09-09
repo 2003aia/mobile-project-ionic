@@ -24,31 +24,31 @@
         <ion-list>
           <ion-item>
             <ion-text>
-              <p class="sub-title">{{ profileResponse?.data?.firstName }}</p>
+              <p class="sub-title">{{ profileData?.name }}</p>
               <p>Имя</p>
             </ion-text>
           </ion-item>
-          <ion-item>
+          <!-- <ion-item>
             <ion-text>
-              <p class="sub-title">{{ profileResponse?.data?.lastName }}</p>
+              <p class="sub-title">{{ profileData?.data?.lastName }}</p>
               <p>Фамилия</p>
             </ion-text>
-          </ion-item>
-          <ion-item>
+          </ion-item> -->
+          <!-- <ion-item>
             <ion-text>
               <p class="sub-title">{{ data.secondname }}</p>
               <p>Отчество</p>
             </ion-text>
-          </ion-item>
+          </ion-item> -->
           <ion-item>
             <ion-text>
-              <p class="sub-title">{{ profileResponse?.data?.email }}</p>
+              <p class="sub-title">{{ profileData?.email }}</p>
               <p>Электронная почта</p>
             </ion-text>
           </ion-item>
           <ion-item>
             <ion-text>
-              <p class="sub-title">{{ profileResponse?.data?.login }}</p>
+              <p class="sub-title">{{ profileData?.phone }}</p>
               <p>Контактный телефон</p>
             </ion-text>
           </ion-item>
@@ -60,7 +60,7 @@
 
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import Back from "../components/Back.vue";
@@ -103,23 +103,25 @@ export default defineComponent({
     const router = useRouter();
     const store = new Storage();
     const { profileResponse, profileError } = storeToRefs(useProfileStore());
-    const { getProfile } = useProfileStore();
-
+    // const { getProfile } = useProfileStore();
+    const profileData = ref('')
     const fetchProfileHandler = async () => {
       await store.create();
       const value = await store.get("token");
-      getProfile(JSON.parse(value)?.token).then(async () => {
+      profileData.value = JSON.parse(value)
+      console.log(profileData.value, 'test')
+     /*  getProfile(JSON.parse(value)?.token).then(async () => {
         await store.set(
           "profileData",
           JSON.stringify(profileResponse.value.data)
         );
-      });
+      }); */
     };
     onIonViewWillEnter(() => {
       fetchProfileHandler();
     });
 
-    return { router, profileResponse, profileError };
+    return { router, profileResponse ,profileData, profileError };
   },
 });
 </script>

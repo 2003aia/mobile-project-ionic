@@ -34,7 +34,6 @@
             :changeHandler="passwordChange"
           />
 
-          
           <ion-text v-if="errorText">
             <p class="ion-text-start error">
               {{ errorText }}
@@ -94,7 +93,6 @@ import { IonPage, IonButton, IonContent, IonText, IonImg } from "@ionic/vue";
 import { mask } from "vue-the-mask";
 import { Storage } from "@ionic/storage";
 
-
 export default defineComponent({
   name: "authPage",
   components: {
@@ -118,25 +116,30 @@ export default defineComponent({
     let errorText = ref("");
     const authUserHandler = () => {
       const myModel = phone.replace(/\D+/g, "");
-      authUser(myModel, password)
-        .then(async() => {
-          if (authResponse?.value?.status === true) {
-            const store = new Storage();
-            await store.create();
-            await store.set(
-              "token",
-              JSON.stringify(authResponse?.value?.data)
-            );
+      if (password === "" || phone === "") {
+        errorText.value = "Заполните поля!";
+      } else {
+        authUser(myModel, password)
+          .then(async () => {
             console.log(authResponse.value, 'test')
-            router.push("/tabs");
-          } else {
-            errorText.value= authError.value.response?.data?.error;
-          }
-        })
-        .catch((e) => {
-          console.log(e, "error2");
-          errorText.value = e;
-        });
+            if (authResponse?.value?.error === false) {
+              const store = new Storage();
+              await store.create();
+              await store.set(
+                "token",
+                JSON.stringify({...authResponse?.value?.data, phone: phone}),
+              );
+              console.log(authResponse.value, "test");
+              router.push("/tabs");
+            } else {
+              errorText.value = authError.value.response?.data?.error;
+            }
+          })
+          .catch((e) => {
+            console.log(e, "error2");
+            errorText.value = e;
+          });
+      }
     };
     const phoneChange = (e) => {
       phone = e.target.value;

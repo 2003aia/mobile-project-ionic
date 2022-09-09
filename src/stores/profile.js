@@ -18,24 +18,19 @@ export const useProfileStore = defineStore({
     actions: {
         async getProfile(token) {
             try {
-                this.profileResponse = await axios.post(`https://api.aostng.ru/api/v2/user/profile/get/`, { token: token })
-                    .then((response) => response.data)
+                await axios.post(`https://api.aostng.ru/api/v2/user/profile/get/`, { token: token })
+                    .then((response) => this.profileResponse = response.data)
             } catch (error) {
                 this.profileError = error
             }
         },
-        async editProfile(token, firstName, lastName, email) {
+        async editProfile(token, name, email) {
             try {
-                this.editProfileResponse = await axios.post(`https://api.aostng.ru/api/v2/user/profile/set/`, {
+                await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
                     token: token,
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email
-
-                })
-                    .then((response) => response.data).catch((e) => {
-                        this.editProfileError = e
-                    })
+                    name: name,
+                    email: email,
+                }).then((response) => this.editProfileResponse = response.data)
             } catch (error) {
                 this.editProfileError = error
             }
