@@ -21,6 +21,7 @@
 
       <Button
         @click="method"
+        :loading="loading"
         :router-link="btnSrc"
         v-if="filledBtn !== '.'"
         class="button"
@@ -62,12 +63,12 @@ export default defineComponent({
     filledBtn: String,
     title: String,
     height: String,
+    loading: Boolean,
   },
 });
 </script>
 
 <style scoped>
-
 .container {
   padding: 0;
 }
@@ -95,8 +96,7 @@ export default defineComponent({
   left: 0;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
-.main:nth-child(){
-  
+.main:nth-child() {
 }
 
 .outline {

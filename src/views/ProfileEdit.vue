@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back />
+    <Back :btnSrc="()=>router.push('profile')"/>
     <Layout
       height="false"
       :method="editProfileHandler"
@@ -9,6 +9,7 @@
           router.push('/profileSend');
         }
       "
+      :loading="loading"
       :filledBtn="'Сохранить'"
       title="Личный кабинет"
       :outlineBtn="'Изменить пароль'"
@@ -112,12 +113,13 @@ export default defineComponent({
     const email = ref("");
     const login = ref("");
     let profileData = null;
-
+    let profileDataParsed = null;
+    let loading = ref(false)
     const storageHandler = async () => {
       const store = new Storage();
       await store.create();
       profileData = await store.get("token");
-      let profileDataParsed = JSON.parse(profileData);
+      profileDataParsed = JSON.parse(profileData);
       name.value = profileDataParsed?.name;
       /* surname.value = profileDataParsed?.lastName; */
       email.value = profileDataParsed?.email;
@@ -125,26 +127,26 @@ export default defineComponent({
     };
 
     const editProfileHandler = async () => {
+      loading.value = true
       editProfile(JSON.parse(profileData)?.token, name.value, email.value).then(
         async () => {
+          loading.value = false
           const store = new Storage();
           await store.create();
-          await store
-            .set("token", {
-              /* ...profileData, */
-              name: name.value,
-              email: email.value,
-            })
-            .then(async () => {
-              const store = new Storage();
-              await store.create();
-              profileData = await store.get("token");
-              /* let profileDataParsed = JSON.parse(profileData);
+          const data = {
+            ...profileDataParsed,
+            name: name.value,
+            email: email.value,
+          };
+          await store.set("token", JSON.stringify(data)).then(async () => {
+            const store = new Storage();
+            await store.create();
+            profileData = await store.get("token");
+            /* let profileDataParsed = JSON.parse(profileData);
               name.value = profileDataParsed?.name;
               email.value = profileDataParsed?.email;
               login.value = profileDataParsed?.phone; */
-              console.log(profileData, "test");
-            });
+          });
         }
       );
     };
@@ -163,6 +165,7 @@ export default defineComponent({
       storageHandler();
     });
     return {
+      loading,
       profileResponse,
       profileError,
       router,

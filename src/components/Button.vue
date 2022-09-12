@@ -7,15 +7,16 @@
       outline: outline === true,
     }"
   >
-    <ion-text class="name ion-text-wrap">
+    <ion-text class="name ion-text-wrap" v-if="loading===false">
       {{ name }}
     </ion-text>
+    <ion-spinner v-if="loading === true" name="bubbles" color="light"/>
   </ion-button>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import { IonButton, IonText } from "@ionic/vue";
+import { IonButton, IonText, IonSpinner } from "@ionic/vue";
 
 export default defineComponent({
   name: "ExploreContainer",
@@ -23,15 +24,23 @@ export default defineComponent({
     name: String,
     grey: Boolean,
     outline: Boolean,
+    loading: Boolean,
   },
   components: {
     IonButton,
     IonText,
+    IonSpinner,
   },
+  setup() {
+  }
 });
 </script>
 
 <style scoped>
+ion-spinner{
+  margin-top: 0px;
+  color: #fff;
+}
 .button {
   --border-radius: 25px;
   height: 50px;

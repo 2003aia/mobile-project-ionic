@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back />
+    <Back :btnSrc="()=>router.push('/tabs/')"/>
     <Layout
       height="false"
       :method="
@@ -40,6 +40,9 @@
               <p>Отчество</p>
             </ion-text>
           </ion-item> -->
+          <code>
+            {{ myResolvedValue }}
+          </code>
           <ion-item>
             <ion-text>
               <p class="sub-title">{{ profileData?.email }}</p>
@@ -69,7 +72,7 @@ import {
   IonText,
   IonItem,
   IonList,
-  onIonViewWillEnter,
+  onIonViewDidEnter,
 } from "@ionic/vue";
 import { Storage } from "@ionic/storage";
 import { storeToRefs } from "pinia";
@@ -104,24 +107,32 @@ export default defineComponent({
     const store = new Storage();
     const { profileResponse, profileError } = storeToRefs(useProfileStore());
     // const { getProfile } = useProfileStore();
-    const profileData = ref('')
+    const profileData = ref("");
     const fetchProfileHandler = async () => {
       await store.create();
       const value = await store.get("token");
-      profileData.value = JSON.parse(value)
-      console.log(profileData.value, 'test')
-     /*  getProfile(JSON.parse(value)?.token).then(async () => {
+      profileData.value = JSON.parse(value);
+
+      console.log(profileData.value, "test");
+      if (profileResponse.value) {
+        await store.create();
+        const value = await store.get("token");
+        profileData.value = JSON.parse(value);
+
+        console.log(profileData.value, "test22");
+      }
+      /*  getProfile(JSON.parse(value)?.token).then(async () => {
         await store.set(
           "profileData",
           JSON.stringify(profileResponse.value.data)
         );
       }); */
     };
-    onIonViewWillEnter(() => {
+    onIonViewDidEnter(() => {
       fetchProfileHandler();
     });
 
-    return { router, profileResponse ,profileData, profileError };
+    return { router, profileResponse, profileData, profileError };
   },
 });
 </script>
