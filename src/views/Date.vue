@@ -5,6 +5,8 @@
       height="false"
       filledBtn="Готово"
       outlineBtn="."
+      :btnSrc="returnTo"
+      :method="() => clickFilledBtn()"
       :title="time === true ? 'Выберите время' : 'Выберите дату'"
     >
       <template v-slot:main-content>
@@ -13,6 +15,7 @@
           color="date"
           mode="ios"
           presentation="time"
+          @ionChange="onDateChange"
         ></ion-datetime>
 
         <ion-datetime
@@ -20,6 +23,7 @@
           color="date"
           :is-date-enabled="isDateEnabled"
           presentation="date"
+          @ionChange="onDateChange"
           mode="ios"
         ></ion-datetime>
       </template>
@@ -35,6 +39,7 @@ import Layout from "../components/Layout.vue";
 import Back from "../components/Back.vue";
 import { IonPage, IonDatetime } from "@ionic/vue";
 import { getDate, getMonth } from "date-fns";
+import { usePreEntryStore } from "../stores/preEntry";
 
 export default defineComponent({
   name: "timePage",
@@ -48,19 +53,35 @@ export default defineComponent({
     Layout,
   },
   setup() {
+    const router = useRouter();
+
+    let returnTo = router.options.history.state.back;
+    let selectedDateTime = null;
+
     const isDateEnabled = (dateIsoString) => {
       const date = new Date(dateIsoString);
 
-        if (getDate(date) === 24 && getMonth(date) === 7) {
-          return false;
-        } else {
-          return true;
-        }
+      if (getDate(date) === 24 && getMonth(date) === 7) {
+        return false;
+      } else {
+        return true;
+      }
 
     };
-    const router = useRouter();
-    return { router, isDateEnabled };
+    const { setDate, fetchTime } = usePreEntryStore()
+    return { router, returnTo, selectedDateTime, isDateEnabled, setDate, fetchTime };
   },
+  methods:{
+    onDateChange(event){
+      this.selectedDateTime = new Date(event.detail.value).toLocaleDateString().replace('/', '.');
+    },
+    clickFilledBtn(){
+      if(this.time === false && this.returnTo == '/tabs/record'){
+        this.setDate(this.selectedDateTime);
+        this.fetchTime();
+      }
+    },
+  }
 });
 </script>
 
