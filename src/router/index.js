@@ -165,7 +165,7 @@ const routes = [
       },
       {
         path: 'time',
-        component: () => import('@/views/Date.vue'),
+        component: () => import('@/views/RecordTime.vue'),
         props: {
           time: true
         }
