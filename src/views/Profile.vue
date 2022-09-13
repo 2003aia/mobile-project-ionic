@@ -10,7 +10,7 @@
       "
       :method2="
         () => {
-          router.push('/profileSend');
+          router.push('/newPassPage');
         }
       "
       :filledBtn="'Редактировать'"

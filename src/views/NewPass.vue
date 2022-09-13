@@ -27,8 +27,9 @@
           в соответствующее поле. Придумайте новый пароль.
         </ion-text>
         <ion-text v-else>
-          На Ваш номер был отправлен код для создания пароля, введите его в
-          соответствующее поле. Придумайте новый пароль.
+          <!-- На Ваш номер был отправлен код для создания пароля, введите его в
+          соответствующее поле. -->
+          Придумайте новый пароль.
         </ion-text>
         <br />
 
@@ -136,40 +137,18 @@ export default defineComponent({
     const authUserHandler = async () => {
       const store = new Storage();
       await store.create();
-      if (route.params.edit) {
-        if (code.value === route.params.code) {
-          if (
-            phone.value === "" ||
-            password.value === "" ||
-            confirmPassword.value === ""
-          ) {
-            error.value = "Заполните все поля!";
-          } else {
-            changePass(phone.value, password.value, confirmPassword.value)
-              .then(() => {
-                if (changePassResponse.value?.status === true) {
-                  router.push("/tabs");
-                } else {
-                  error.value = changePassError.value;
-                }
-              })
-              .catch((e) => {
-                console.log(e, "error2");
-              });
-          }
-        } else {
-          error.value = "Введен неправильный код из СМС!";
-        }
+      if (password.value === "" || confirmPassword.value === "") {
+        error.value = "Заполните все поля!";
       } else {
-        if (
-          phone.value === "" ||
-          password.value === "" ||
-          confirmPassword.value === ""
-        ) {
-          error.value = "Заполните все поля!";
-        } else {
-          changePass(phone.value, password.value, confirmPassword.value)
+        const token = await store.get("token");
+        if (password.value === confirmPassword.value) {
+          changePass(JSON.parse(token).token, password.value)
             .then(() => {
+              console.log(
+                JSON.parse(token).token,
+                changePassResponse.value,
+                "test"
+              );
               if (changePassResponse.value?.status === true) {
                 router.push("/tabs");
               } else {
@@ -179,6 +158,9 @@ export default defineComponent({
             .catch((e) => {
               console.log(e, "error2");
             });
+        } else {
+        error.value = "Пароли не совпадают";
+          
         }
       }
     };
@@ -189,7 +171,9 @@ export default defineComponent({
       if (route.params.phone) {
         phone.value = route.params.phone;
       } else {
-        phone.value = await store.get("login");
+        const value = await store.get("token");
+
+        phone.value = await JSON.parse(value).phone;
       }
     };
 

@@ -56,9 +56,10 @@ export const useLoginStore = defineStore({
         async changePass( token, password,) {
             const store = new Storage();
             await store.create();
+            const profileData = await store.get('token')
             try {
                 await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
-                    token: token, password: password, 
+                    token: token, password: password, name: JSON.parse(profileData).name
                 }).then((response) => this.changePassResponse = response.data)
             } catch (error) {
                 this.changePassError = error

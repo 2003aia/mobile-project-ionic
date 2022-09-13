@@ -138,15 +138,7 @@ export default defineComponent({
             name: name.value,
             email: email.value,
           };
-          await store.set("token", JSON.stringify(data)).then(async () => {
-            const store = new Storage();
-            await store.create();
-            profileData = await store.get("token");
-            /* let profileDataParsed = JSON.parse(profileData);
-              name.value = profileDataParsed?.name;
-              email.value = profileDataParsed?.email;
-              login.value = profileDataParsed?.phone; */
-          });
+          await store.set("token", JSON.stringify(data))
         }
       );
     };

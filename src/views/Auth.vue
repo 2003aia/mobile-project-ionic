@@ -129,7 +129,7 @@ export default defineComponent({
                 "token",
                 JSON.stringify({...authResponse?.value?.data, phone: phone}),
               );
-              console.log(authResponse.value, "test");
+              console.log(authResponse.value, "test auth");
               router.push("/tabs");
             } else {
               errorText.value = authError.value.response?.data?.error;

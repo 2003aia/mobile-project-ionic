@@ -21,7 +21,9 @@
         </div>
         <div>
           <Input
-            name="Телефон или email"
+            name="Телефон"
+            v-mask="'+7 (###) ###-##-##'"
+            
             :value="login"
             @change="loginChange"
           />
@@ -55,9 +57,12 @@ import Back from "../components/Back.vue";
 import { useLoginStore } from "../stores/login";
 import { storeToRefs } from "pinia";
 import { IonPage, IonContent, IonImg } from "@ionic/vue";
+import { mask } from "vue-the-mask";
 
 export default defineComponent({
   name: "passRecoveryPage",
+  directives: { mask },
+
   components: {
     IonContent,
     IonPage,
@@ -78,10 +83,12 @@ export default defineComponent({
       if (login.value === "") {
         errorText.value = "Заполните все поля!";
       } else {
-        passRecovery(login.value)
+      const myModel = login.value.replace(/\D+/g, "");
+
+        passRecovery(myModel)
           .then(() => {
-            if (passRecoveryResponse?.value?.status === true) {
-              const code = passRecoveryResponse.value?.data.msg.substr(91);
+            if (passRecoveryResponse?.value?.error === false) {
+              /* const code = passRecoveryResponse.value?.data.msg.substr(91);
 
               router.push({
                 name: "newPassPage",
@@ -91,7 +98,8 @@ export default defineComponent({
                   phone: login.value,
                   edit: true,
                 },
-              });
+              }); */
+              router.push('/authPage')
               console.log(
                 passRecoveryResponse.value,
                 passRecoveryError.value,
