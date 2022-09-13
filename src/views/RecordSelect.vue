@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back  title='Назад'/>
+    <Back title='Назад' />
     <Layout outlineBtn="." filledBtn="." title="Вид услуг">
       <template v-slot:main-content>
         <ion-text class="title">Выберите варианты</ion-text>
@@ -8,13 +8,11 @@
           <ion-item router-link="/tabs/record" @click="selectServiceType('Q01')">
             <ion-text class="sub-title">Прием документов </ion-text>
           </ion-item>
-          <ion-item>
-            <ion-text router-link="/tabs/record" class="sub-title" @click="selectServiceType('Q03')"
-              >Заключение договора на поставку газа (квартира)</ion-text
-            >
+          <ion-item router-link="/tabs/record" @click="selectServiceType('Q03')">
+            <ion-text class="sub-title">Заключение договора на поставку газа (квартира)</ion-text>
           </ion-item>
-          <ion-item>
-            <ion-text router-link="/tabs/record" class="sub-title" @click="selectServiceType('Q06')">Социальная газификация </ion-text>
+          <ion-item router-link="/tabs/record" @click="selectServiceType('Q06')">
+            <ion-text class=" sub-title">Социальная газификация </ion-text>
           </ion-item>
         </ion-list>
       </template>
@@ -47,7 +45,7 @@ export default defineComponent({
     return { router, setServiceType, fetchTime };
   },
   methods: {
-    selectServiceType(type){
+    selectServiceType(type) {
       this.setServiceType(type);
       this.fetchTime();
     }

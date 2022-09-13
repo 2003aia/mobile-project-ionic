@@ -11,6 +11,7 @@ export const usePreEntryStore = defineStore({
         entryPhone: '',
         entryServiceType: '',
         entryDate: null,
+        entryAvailableTimes: [],
         entryTime: null,
     }),
     getters: {
@@ -19,6 +20,7 @@ export const usePreEntryStore = defineStore({
                 entryPhone: state.entryPhone,
                 entryServiceType: state.entryServiceType,
                 entryDate: state.entryDate,
+                entryAvailableTimes: state.entryAvailableTimes,
                 entryTime: state.entryTime,
             };
         }
@@ -66,15 +68,7 @@ export const usePreEntryStore = defineStore({
                             }
 
                             console.log(values);
-                            // var startingIndices = [];
-
-                            // var indexOccurence = response.data.indexOf('value', 0);
-
-                            // while (indexOccurence >= 0) {
-                            //     startingIndices.push(response.data);
-
-                            //     indexOccurence = response.data.indexOf('value', indexOccurence + 1);
-                            // }
+                            this.entryAvailableTimes = values;
                         })
 
                 } catch (error) {

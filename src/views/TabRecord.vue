@@ -70,7 +70,7 @@
         <ion-list>
           <ion-item router-link="/tabs/date">
             <ion-icon size="large" slot="start" class="icon-start" :icon="calendarNumberOutline"></ion-icon>
-            <ion-text class="sub-title"> Выберите дату записи</ion-text>
+            <ion-text class="sub-title">{{ entryDate ? entryDate : "Выберите дату записи" }}</ion-text>
             <ion-icon size="large" slot="end" class="icon-end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
           <ion-item router-link="/tabs/time">
