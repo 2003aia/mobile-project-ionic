@@ -3,7 +3,7 @@
     <ion-page>
         <!-- <Back name="" title="Е-запись" /> -->
         <Layout v-if="!currentlySuccess" height="false" outlineBtn="." filledBtn="Оставить заявку" title="Вид услуг"
-            :method="() => clickFilledBtn()">
+            :method="() => sendPreregRequest()">
             <template v-slot:header-content>
                 <ion-text>
                     <p class="main-text">
@@ -89,7 +89,7 @@
         </Layout>
 
 
-        <Layout v-else outlineBtn="." filledBtn="." title="Предварительная запись">
+        <Layout v-else outlineBtn="." filledBtn="Вернуться" :method="() => reset()" title="Предварительная запись">
             <template v-slot:main-content>
                 <ion-text>
                     <p class="title ion-text-start">Прием документов</p>
@@ -154,10 +154,10 @@ export default defineComponent({
         const router = useRouter();
         const preEntryStore = usePreEntryStore();
         const { entryPhone, entryServiceType, entryDate, entryTime } = storeToRefs(preEntryStore);
+        
+        const { sendFullInfo, resetPreEntry } = usePreEntryStore();
+        
         const errorText = ref("");
-
-        const { sendFullInfo } = usePreEntryStore();
-
         const currentlySuccess = ref(false);
         const agreement = ref(false);
 
@@ -175,7 +175,8 @@ export default defineComponent({
             errorText,
             sendFullInfo,
             currentlySuccess,
-            agreement
+            agreement, 
+            resetPreEntry
         };
     },
     methods: {
@@ -195,7 +196,7 @@ export default defineComponent({
 
             return formattedText;
         },
-        clickFilledBtn() {
+        sendPreregRequest() {
             if (!this.agreement) {
                 this.errorText = "Необходимо подтвердить соглашение на обработку персональных данных";
                 return;
@@ -214,18 +215,25 @@ export default defineComponent({
             if (this.entryTime) {
                 status++;
             }
-            console.log(this.agreement);
+            
             if (status !== 4) {
                 this.errorText = "Все поля должны быть заполнены";
             } else {
+                this.errorText = '';
                 this.sendFullInfo(this.entryPhone, this.entryServiceType, this.entryDate, this.entryTime)
                     .then((success) => {
+                        console.log(success);
                         if (success) {
                             this.currentlySuccess = true;
                         }
                     });
             }
         },
+        reset(){
+            this.resetPreEntry();
+            this.agreement = false;
+            this.currentlySuccess = false;
+        }
     }
 });
 </script>

@@ -59,6 +59,7 @@ export const usePreEntryStore = defineStore({
                     const response = await axios.post(`https://aostng.ru/ajax/preregajax.php`, bodyFormData, config);
 
                     let values = [];
+                    // Get values between <option value="##:##:##"> and </option>
                     const re = />([^<.]+)<\//g;
                     let match = re.exec(response.data);
                     while (match != null) {
@@ -76,7 +77,6 @@ export const usePreEntryStore = defineStore({
 
         async sendFullInfo(phone, type, date, time) {
             console.log(phone, type, date, time);
-
             try {
                 let config = {
                     headers: {
@@ -96,14 +96,19 @@ export const usePreEntryStore = defineStore({
                 bodyFormData.append('time', time);
                 bodyFormData.append('ionicDevice', device);
 
-                const post = await axios.post(`https://aostng.ru/prereg2.php`, bodyFormData, config);
-
-                const match = post.data();
-                return match.indexOf("Ваша заявка принята!") !== -1;
+                await axios.post(`https://aostng.ru/prereg2.php`, bodyFormData, config);
+                return true;
             } catch (error) {
-                console.log(error)
                 return false;
             }
-        }
+        },
+
+        async resetPreEntry(){
+            this.entryPhone = '';
+            this.entryServiceType = '';
+            this.entryDate = null;
+            this.entryAvailableTimes = [];
+            this.entryTime = null;
+        },
     }
 })

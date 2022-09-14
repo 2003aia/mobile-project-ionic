@@ -27,6 +27,7 @@ import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import { IonPage, IonText, IonList, IonItem } from "@ionic/vue";
 import Back from '../components/Back.vue'
+import { storeToRefs } from "pinia";
 import { usePreEntryStore } from "../stores/preEntry";
 
 export default defineComponent({
@@ -41,8 +42,9 @@ export default defineComponent({
     },
     setup() {
         const router = useRouter();
-        const { entryAvailableTimes, entryTime, setTime } = usePreEntryStore();
-        console.log(entryAvailableTimes)
+        const preEntryStore = usePreEntryStore();
+        const { setTime } = usePreEntryStore();
+        const { entryAvailableTimes, entryTime } = storeToRefs(preEntryStore);
         return { router, entryAvailableTimes, entryTime, setTime };
     },
     methods: {
