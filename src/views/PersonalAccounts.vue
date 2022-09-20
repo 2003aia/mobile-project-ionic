@@ -136,7 +136,7 @@
                 name: 'personalAccountIndication',
                 params: {
                   ...lcList[0],
-                  counters: JSON.stringify(lcList[0].counters[0]),
+                  counters: JSON.stringify(lcList[0].counters),
                 },
               })
           "

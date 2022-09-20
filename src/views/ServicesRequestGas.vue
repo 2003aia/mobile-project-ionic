@@ -16,18 +16,8 @@
       <template v-slot:main-content>
         <ion-text>
           <p class="title ion-text-start">Данные заявителя</p>
-          <!-- <ion-list v-for="el in formsList" :key="el">
-          
-          <ion-item>
-            <ion-text>
-              {{ el.USER_BIRTHPLACE}}
-              <p>
-                {{el.length}}
-              </p>
-             
-            </ion-text>
-          </ion-item>
-            
+          <!-- <ion-list v-for="(el,) in formsList" :key="el">
+            <Input :name="el?.NAME" :required="true" />
           </ion-list> -->
           <p>
             <ion-text class="dot">*</ion-text> - обязательное поле для
@@ -126,14 +116,15 @@ export default defineComponent({
   },
   computed: {
     formsList() {
-      return this.$pinia.state.value?.services?.formResponse?.result?.forms.filter((el)=>{
-        return el.SERVICE.VALUE === 'Социальная газификация'
-      })
+      return this.$pinia.state.value?.services?.formResponse?.result?.forms[3];
     },
   },
   mounted() {
     this.getForms();
-    console.log(this.$pinia.state.value?.services?.formResponse,'testtt222222')
+    console.log(
+      this.$pinia.state.value?.services?.formResponse,
+      "testtt222222"
+    );
     // axios
     //   .get("https://aostng.ru/api/?action=getAll&format=json&page=3&limit=20")
     //   .then((response) => {
