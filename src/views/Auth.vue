@@ -40,7 +40,7 @@
             </p>
           </ion-text>
 
-          <Button @click="authUserHandler" name="Войти" />
+          <Button :loading="loading" @click="authUserHandler" name="Войти" />
         </div>
         <ion-button
           class="textURL ion-text-wrap"
@@ -114,25 +114,26 @@ export default defineComponent({
     let phone = "";
     let password = "";
     let errorText = ref("");
+    let loading = ref(false)
     const authUserHandler = () => {
       const myModel = phone.replace(/\D+/g, "");
       if (password === "" || phone === "") {
         errorText.value = "Заполните поля!";
       } else {
+        loading.value = true
         authUser(myModel, password)
           .then(async () => {
-            console.log(authResponse.value, 'test')
+            loading.value = false
             if (authResponse?.value?.error === false) {
               const store = new Storage();
               await store.create();
               await store.set(
                 "token",
-                JSON.stringify({...authResponse?.value?.data, phone: phone}),
+                JSON.stringify({...authResponse?.value?.data, phone: phone, password: password}),
               );
-              console.log(authResponse.value, "test auth");
               router.push("/tabs");
             } else {
-              errorText.value = authError.value.response?.data?.error;
+              errorText.value = authResponse.value?.message
             }
           })
           .catch((e) => {
@@ -148,6 +149,7 @@ export default defineComponent({
       password = e.target.value;
     };
     return {
+      loading,
       router,
       password,
       phone,

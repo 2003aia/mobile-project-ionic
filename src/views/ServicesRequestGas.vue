@@ -16,6 +16,19 @@
       <template v-slot:main-content>
         <ion-text>
           <p class="title ion-text-start">Данные заявителя</p>
+          <!-- <ion-list v-for="el in formsList" :key="el">
+          
+          <ion-item>
+            <ion-text>
+              {{ el.USER_BIRTHPLACE}}
+              <p>
+                {{el.length}}
+              </p>
+             
+            </ion-text>
+          </ion-item>
+            
+          </ion-list> -->
           <p>
             <ion-text class="dot">*</ion-text> - обязательное поле для
             заполнения.
@@ -89,6 +102,9 @@ import Back from "../components/Back.vue";
 import { documentTextOutline } from "ionicons/icons";
 import Input from "../components/Input.vue";
 import LayoutBox from "../components/LayoutBox.vue";
+import { mapActions } from "pinia";
+// import axios from "axios";
+import { useServicesStore } from "../stores/services";
 
 export default defineComponent({
   name: "servicesRequestGas",
@@ -101,7 +117,28 @@ export default defineComponent({
     Back,
   },
   data() {
-    return {};
+    return {
+      forms: [],
+    };
+  },
+  methods: {
+    ...mapActions(useServicesStore, ["getForms"]),
+  },
+  computed: {
+    formsList() {
+      return this.$pinia.state.value?.services?.formResponse?.result?.forms.filter((el)=>{
+        return el.SERVICE.VALUE === 'Социальная газификация'
+      })
+    },
+  },
+  mounted() {
+    this.getForms();
+    console.log(this.$pinia.state.value?.services?.formResponse,'testtt222222')
+    // axios
+    //   .get("https://aostng.ru/api/?action=getAll&format=json&page=3&limit=20")
+    //   .then((response) => {
+    //     this.$data.forms = response.data?.forms;
+    //   });
   },
   setup() {
     const router = useRouter();

@@ -64,7 +64,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const { addAccountResponse, addAccountError } = storeToRefs(
+    const { addAccountResponse, } = storeToRefs(
       usePersonalAccountStore()
     );
     const { addAccount } = usePersonalAccountStore();
@@ -82,7 +82,6 @@ export default defineComponent({
       addAccount(JSON.parse(token).token, lc.value).then(() => {
         loading.value = false;
         response.value = addAccountResponse.value.message
-        console.log(addAccountResponse, addAccountError, "test addaccount");
       });
     };
     return {

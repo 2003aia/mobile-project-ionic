@@ -58,7 +58,7 @@
         </ion-menu>
 
         <ion-tab-bar class="tabs" slot="bottom">
-          <ion-tab-button tab="menu" href="/tabs/menu" @click="openMenu">
+          <ion-tab-button tab="menu"  @click="openMenu">
             <ion-img
               class="tabslogo"
               :src="
@@ -144,7 +144,7 @@
                   : require('@/assets/img/active-home.png')
               "
             />
-            <div class="badge"></div>
+            <!-- <div class="badge"></div> -->
 
             <ion-label :class="{ active: selected === 'main' }"
               >Прочие</ion-label

@@ -56,7 +56,7 @@ import {
   IonPage,
   IonContent,
   IonText,
-  onIonViewDidEnter,
+  onIonViewWillEnter,
   IonSpinner,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
@@ -131,9 +131,10 @@ export default defineComponent({
       });
     }
 
-    onIonViewDidEnter(() => {
+    onIonViewWillEnter(() => {
       fetchMoreNews();
     });
+    
 
     return {
       loading,

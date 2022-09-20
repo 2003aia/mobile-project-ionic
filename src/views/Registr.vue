@@ -37,13 +37,13 @@
             :value="phone"
             :changeHandler="changePhone"
           />
-          <Input
+          <!-- <Input
             :value="email"
             :changeHandler="changeEmail"
             type="email"
             name="email"
             v-model="email"
-          />
+          /> -->
 
           <ion-text v-if="errorText">
             <p class="ion-text-start error">
@@ -68,6 +68,7 @@
             Пользовательское соглашение
           </ion-button>
           <Button
+            :loading="loading"
             name="Зарегистрироваться"
             @click="
               () => {
@@ -82,6 +83,20 @@
             Мы отправили проверочный код на номер {{ phone.value }}
           </p>
           <Input name="Введите код" :value="code" @change="changeCode" />
+          <Input
+            name="Введите новый пароль"
+            :value="password"
+            type="password"
+            @change="changePassword"
+          />
+
+          <Input
+            type="password"
+            name="Повторите новый пароль"
+            :value="passwordConfirm"
+            @change="changePasswordConfirm"
+          />
+
           <ion-text v-if="errorText">
             <p class="ion-text-start error">
               {{ errorText }}
@@ -89,6 +104,7 @@
           </ion-text>
           <Button
             name="Подтвердить"
+            :loading="loading2"
             @click="
               () => {
                 codeUserHandler();
@@ -138,8 +154,10 @@ export default defineComponent({
   },
   directives: { mask },
   setup() {
-    const { registrResponse, registrError } = storeToRefs(useLoginStore());
-    const { registrUser } = useLoginStore();
+    const { registrResponse, registrError, registrResponse2 } = storeToRefs(
+      useLoginStore()
+    );
+    const { registrUser, registrUser2 } = useLoginStore();
     const router = useRouter();
     let email = ref("");
     let phone = ref("");
@@ -147,42 +165,63 @@ export default defineComponent({
     let errorText = ref("");
     let codeSent = ref(false);
     let code = ref("");
-    let codeResponse = ref("");
+    let password = ref("");
+    let passwordConfirm = ref("");
+    let loading = ref(false);
+    let loading2 = ref(false);
+    // let codeResponse = ref("");
 
     const registrUserHandler = async () => {
       if (phone.value !== "" && check.value) {
+        loading.value = true;
         const myModel = phone.value.replace(/\D+/g, "");
-        registrUser(myModel, email.value !== "" ? email.value : null)
+        registrUser(myModel, /* email.value !== "" ? email.value : null */)
           .then(async () => {
-            const store = new Storage();
-            await store.create();
-            await store.set(
-              "token",
-              JSON.stringify(registrResponse?.value?.data)
-            );
-            
-            await store.set("login", phone.value);
-            if (registrResponse.value?.status === true) {
+            loading.value = false;
+            if (registrResponse.value?.error === false) {
+              const store = new Storage();
+              await store.create();
+              const oldData = await store.get("token");
+              const oldDataParsed = JSON.parse(oldData);
+              const data = {
+                token: registrResponse?.value?.data?.token,
+                ...oldDataParsed,
+              };
+              await store.set("token", JSON.stringify(data));
+              await store.set("login", phone.value);
               codeSent.value = true;
-              codeResponse.value = registrResponse.value?.data.msg.substr(35);
+              // codeResponse.value = registrResponse.value?.data.msg.substr(35);
             } else {
-              errorText.value = registrError.value?.response?.data?.error;
+              errorText.value = registrResponse?.value?.message;
             }
           })
           .catch((e) => {
             console.log(e, "error");
-            errorText = e;
+            errorText.value = e;
           });
       } else {
         errorText.value = "Заполните поля!";
       }
     };
-    const codeUserHandler = () => {
-      if (codeResponse.value === code.value) {
+    const codeUserHandler = async () => {
+      /* if (codeResponse.value === code.value) {
         const myModel = phone.value.replace(/\D+/g, "");
         router.push({ name: "newPassPage", params: { phone: myModel } });
       } else {
         errorText.value = "Введен неправильный код";
+      } */
+      if (password.value === passwordConfirm.value) {
+        loading2.value = true;
+        registrUser2(code.value, password.value).then(() => {
+          loading.value = false;
+          if (registrResponse2.value.error === false) {
+            router.push("/tabs");
+          } else {
+            errorText.value = registrResponse.value.message;
+          }
+        });
+      } else {
+        errorText.value = "Пароли не совпадают";
       }
     };
 
@@ -195,8 +234,19 @@ export default defineComponent({
     const changeCode = (e) => {
       code.value = e.target.value;
     };
+    const changePassword = (e) => {
+      password.value = e.target.value;
+    };
+    const changePasswordConfirm = (e) => {
+      passwordConfirm.value = e.target.value;
+    };
 
     return {
+      loading,
+      loading2,
+      changePassword,
+      changePasswordConfirm,
+      registrError,
       registrUserHandler,
       router,
       email,

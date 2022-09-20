@@ -342,7 +342,7 @@ ion-spinner {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 50px;
+  /* margin-top: 50px; */
 }
 
 ion-badge {
@@ -378,6 +378,6 @@ ion-badge {
   flex-direction: column;
   padding-bottom: 15px;
   background-color: #f5f5f5;  
-  max-width: 400px;
+  max-width: 550px;
   margin: auto;
 }

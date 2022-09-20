@@ -24,8 +24,8 @@
         <ion-list>
           <ion-item>
             <ion-text>
-              <p class="sub-title">{{ profileData?.name }}</p>
-              <p>Имя</p>
+              <p v-if="profileData?.name" class="sub-title">{{ profileData?.name }}</p>
+              <p v-else >Имя</p>
             </ion-text>
           </ion-item>
           <!-- <ion-item>
@@ -40,19 +40,17 @@
               <p>Отчество</p>
             </ion-text>
           </ion-item> -->
-          <code>
-            {{ myResolvedValue }}
-          </code>
+         
           <ion-item>
             <ion-text>
-              <p class="sub-title">{{ profileData?.email }}</p>
-              <p>Электронная почта</p>
+              <p class="sub-title" v-if="profileData?.email">{{ profileData?.email }}</p>
+              <p v-else>Электронная почта</p>
             </ion-text>
           </ion-item>
           <ion-item>
             <ion-text>
-              <p class="sub-title">{{ profileData?.phone }}</p>
-              <p>Контактный телефон</p>
+              <p class="sub-title" v-if="profileData?.phone">{{ profileData?.phone }}</p>
+              <p v-else>Контактный телефон</p>
             </ion-text>
           </ion-item>
         </ion-list>
@@ -113,14 +111,13 @@ export default defineComponent({
       const value = await store.get("token");
       profileData.value = JSON.parse(value);
 
-      console.log(profileData.value, "test");
-      if (profileResponse.value) {
+      /* if (profileResponse.value) {
         await store.create();
         const value = await store.get("token");
         profileData.value = JSON.parse(value);
 
         console.log(profileData.value, "test22");
-      }
+      } */
       /*  getProfile(JSON.parse(value)?.token).then(async () => {
         await store.set(
           "profileData",

@@ -23,7 +23,6 @@
           <Input
             name="Телефон"
             v-mask="'+7 (###) ###-##-##'"
-            
             :value="login"
             @change="loginChange"
           />
@@ -32,13 +31,18 @@
               {{ errorText }}
             </p>
           </ion-text>
-
+          <ion-text v-if="passRecoveryResponse?.message">
+            <p class="ion-text-start">
+              {{passRecoveryResponse?.message}}
+            </p>
+          </ion-text>
           <Button
             @click="
               () => {
                 passRecoveryHandler();
               }
             "
+            :loading="loading"
             name="Восстановить пароль"
           />
         </div>
@@ -56,7 +60,7 @@ import Input from "../components/Input.vue";
 import Back from "../components/Back.vue";
 import { useLoginStore } from "../stores/login";
 import { storeToRefs } from "pinia";
-import { IonPage, IonContent, IonImg } from "@ionic/vue";
+import { IonPage, IonContent, IonImg, IonText } from "@ionic/vue";
 import { mask } from "vue-the-mask";
 
 export default defineComponent({
@@ -70,6 +74,7 @@ export default defineComponent({
     Back,
     Input,
     IonImg,
+    IonText,
   },
   setup() {
     const router = useRouter();
@@ -78,15 +83,17 @@ export default defineComponent({
     );
     const { passRecovery } = useLoginStore();
     const errorText = ref("");
+    const loading = ref(false);
     const login = ref("");
     const passRecoveryHandler = () => {
       if (login.value === "") {
         errorText.value = "Заполните все поля!";
       } else {
-      const myModel = login.value.replace(/\D+/g, "");
-
+        const myModel = login.value.replace(/\D+/g, "");
+        loading.value = true;
         passRecovery(myModel)
           .then(() => {
+            loading.value = false;
             if (passRecoveryResponse?.value?.error === false) {
               /* const code = passRecoveryResponse.value?.data.msg.substr(91);
 
@@ -99,7 +106,7 @@ export default defineComponent({
                   edit: true,
                 },
               }); */
-              router.push('/authPage')
+              // router.push("/authPage");
               console.log(
                 passRecoveryResponse.value,
                 passRecoveryError.value,
@@ -118,7 +125,7 @@ export default defineComponent({
     const loginChange = (e) => {
       login.value = e.target.value;
     };
-    return { router, passRecoveryHandler, login, loginChange, errorText };
+    return { router, passRecoveryHandler, login, loginChange, errorText, loading, passRecoveryResponse };
   },
   data() {
     return {

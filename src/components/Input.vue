@@ -2,6 +2,7 @@
   <div class="input-wrapper">
     <input
       ref="text"
+      :type="type"
       class="input"
       placeholder=" "
       :value="value"
@@ -52,6 +53,7 @@ export default defineComponent({
     textBlue: Boolean,
     name: String,
     value: String,
+    type: String,
     changeHandler: Function,
   },
 });
