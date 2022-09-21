@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back />
+    <Back :btnSrc="() => router.push('/personalAccounts')" />
     <ion-content :fullscreen="true" class="background">
       <div class="container">
         <div class="btn-wrapper">
@@ -8,7 +8,13 @@
             class="btn"
             :grey="true"
             name="Оплата"
-            router-link="/personalAccountPayment"
+            @click="
+              () =>
+                router.push({
+                  name: 'personalAccountPayment',
+                  params: route.params,
+                })
+            "
           />
           <Button class="btn" name="Показания" />
         </div>
@@ -117,12 +123,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import {
-  IonContent,
-  IonPage,
-  IonText,
-  IonItem /* IonList */,
-} from "@ionic/vue";
+import { IonContent, IonPage, IonText, IonItem, IonList } from "@ionic/vue";
 import Button from "../components/Button.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Back from "../components/Back.vue";
@@ -180,7 +181,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    console.log(JSON.parse(this.$route.params.counters));
     for (
       let index = 0;
       index < JSON.parse(this.$route.params.counters).length;
@@ -199,6 +199,7 @@ export default defineComponent({
     Button,
     IonText,
     IonItem,
+    IonList,
   },
 });
 </script>

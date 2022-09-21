@@ -17,7 +17,8 @@ export const usePersonalAccountStore = defineStore({
     getAccountResponse: null,
     paymentHistoryResponse: null,
     paymentHistoryError: null,
-
+    sberPayResponse: null,
+    sberPayError: null,
     getAccountError: null,
     delAccountResponse: { error: false, data: null },
     delAccountError: null,
@@ -223,12 +224,31 @@ export const usePersonalAccountStore = defineStore({
           .then((response) => {
             /* const counterStorage = usePersonalAccountStore()
             counterStorage.getIndices(counterId) */
-            console.log('testsetIndices')
             this.getIndices(counterId)
             this.setIndicesResponse = response.data;
           });
       } catch (error) {
         this.setIndicesError = error;
+      }
+    },
+    async sberPay(lc, phone, email, accruals, sumTO, penalties) {
+      try {
+        const store = new Storage();
+        await store.create();
+        const token = await store.get("token");
+        const tokenParsed = JSON.parse(token);
+        await axios
+          .post(
+            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/SberPay`,
+            { token: tokenParsed.token, phone: phone, email: email, LC: lc, accruals: accruals, penalties: penalties, sumTO: sumTO, }
+          )
+          .then((response) => {
+            /* const counterStorage = usePersonalAccountStore()
+            counterStorage.getIndices(counterId) */
+            this.sberPayResponse = response.data;
+          });
+      } catch (error) {
+        this.sberPayError = error;
       }
     },
   },

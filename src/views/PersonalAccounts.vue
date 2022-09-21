@@ -123,7 +123,17 @@
         <Button
           class="btn"
           name="Оплата"
-          router-link="/personalAccountPayment"
+          @click="
+            () =>
+              router.push({
+                name: 'personalAccountPayment',
+                params: {
+                  ...lcList[0],
+                  debts: JSON.stringify(lcList[0].debts),
+                  counters: JSON.stringify(lcList[0].counters),
+                },
+              })
+          "
         />
 
         <Button
@@ -136,6 +146,8 @@
                 name: 'personalAccountIndication',
                 params: {
                   ...lcList[0],
+                  debts: JSON.stringify(lcList[0].debts),
+
                   counters: JSON.stringify(lcList[0].counters),
                 },
               })

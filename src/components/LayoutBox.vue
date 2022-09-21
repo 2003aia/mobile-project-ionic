@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="main" @click="onClick">
     <slot name="content" />
   </div>
 </template>
@@ -14,6 +14,7 @@ export default defineComponent({
     filledButton: String,
     title: String,
     height: String,
+    onClick: Function,
   },
 });
 </script>
