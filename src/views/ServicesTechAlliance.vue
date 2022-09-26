@@ -21,7 +21,7 @@
             <ion-text class="dot">*</ion-text> - обязательное поле для
             заполнения.
           </p>
-          <div v-for="el in formUser" :key="el">
+          <div v-for="(el, index) in formUser" :key="el">
             <div class="input-wrapper">
               <input
                 ref="text"
@@ -61,16 +61,16 @@
               </p>
             </ion-text>
 
-            <div v-for="el in formPass" :key="el">
+            <div v-for="(el, index) in formPass" :key="el">
               <div class="input-wrapper">
                 <input
-                  ref="text"
+                  ref="text2"
                   :type="el.type"
                   class="input"
                   placeholder=" "
                   v-model="el.value"
                 />
-                <ion-text class="input-text" @click="onFocusText(index)"
+                <ion-text class="input-text" @click="onFocusText2(index)"
                   >{{ el.name
                   }}<ion-text v-if="el.required" class="dot"
                     >*</ion-text
@@ -227,9 +227,20 @@ export default defineComponent({
     async storageHandler() {
       const store = new Storage();
       await store.create();
+      let formPass = [];
+      for (let index = 0; index < this.$data.formPass.length; index++) {
+        const element = this.$data.formPass[index];
+        formPass.push({ [element.field]: element.value });
+      }
+      let formUser = [];
+      for (let index = 0; index < this.$data.formUser.length; index++) {
+        const element = this.$data.formUser[index];
+        formUser.push({ [element.field]: element.value });
+      }
       const userObject = {
-        ...this.$data.formPass,
-        ...this.$data.formUser,
+        ...formPass,
+        ...formUser,
+
         GAS_ADDRESS: this.$data.address,
         GAS__SROK: this.$data.deadlines,
         GAS_SLUCHI: this.$route.params?.connect,
@@ -237,9 +248,13 @@ export default defineComponent({
       };
       await store.set("servicesTechAlliance", JSON.stringify(userObject));
     },
-    onFocusText: function (index) {
+    onFocusText(index) {
       console.log("focus");
       this.$refs.text[index].focus();
+    },
+    onFocusText2(index) {
+      console.log("focus");
+      this.$refs.text2[index].focus();
     },
     changeDeadlines(e) {
       this.$data.deadlines = e.target.value;
@@ -276,30 +291,38 @@ export default defineComponent({
       deadlines: "",
       formPass: [
         {
+          field: "USER_PASSPORT_SERIAL",
           name: "Серия",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_PASSPORT_NUM",
           name: "Номер",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_PASS_WHO",
+
           name: "Кем выдан",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_PASS_DATE",
+
           name: "Дата выдачи паспорта",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_REGION",
+
           name: "Место регистрации",
           type: "text",
           required: true,
@@ -308,54 +331,71 @@ export default defineComponent({
       ],
       formUser: [
         {
+          field: "USER_NAME",
           name: "Укажите имя",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_LAST_NAME",
+
           name: "Укажите фамилию",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_SECOND_NAME",
+
           name: "Укажите отчество",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_BIRTHDATE",
+
           name: "Дата рождения",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_BIRTHPLACE",
+
           name: "Место рождения",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_ADDRESS",
+
           name: "Место жительства",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_PHONE",
+
           name: "Контактный телефон",
           type: "text",
           required: true,
           value: "",
         },
         {
+          field: "USER_PHONE_2",
+
           name: "Доп. контактный телефон",
           type: "text",
           required: false,
           value: "",
         },
         {
+          field: "USER_COMPANY_ADRESS_POCHT",
+
           name: "Электронная почта",
           type: "text",
           required: true,
