@@ -19,7 +19,7 @@
             <ion-item
               @click="
                 () => {
-                  router.push('/tabs/servicesTechAlliance');
+                  router.push({params: {connect: el.name}, name: '/tabs/servicesTechAlliance'});
                 }
               "
             >
@@ -32,7 +32,7 @@
             <ion-item
               @click="
                 () => {
-                  router.push('/tabs/servicesTechAlliance');
+                  router.push({params: {harakter: el.name},name:'/tabs/servicesTechAlliance'});
                 }
               "
             >

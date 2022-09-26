@@ -50,7 +50,7 @@
           </ion-text>
         </ion-button>
         <ion-button
-          router-link="/tabs/servicesRecovery"
+          router-link="/tabs/servicesCallInspector"
           class="btn6"
           fill="clear"
         >

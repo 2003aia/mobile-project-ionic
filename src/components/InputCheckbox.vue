@@ -1,6 +1,6 @@
 <template>
   <ion-item class="check">
-    <ion-checkbox slot="start"></ion-checkbox>
+    <ion-checkbox :value="value" @change="changeHandler" slot="start"></ion-checkbox>
     <ion-text>{{ name }}</ion-text>
   </ion-item>
 </template>
@@ -26,6 +26,8 @@ export default defineComponent({
   },
   name: "inputCheckBoxView",
   props: {
+    value: String,
+    changeHandler: Function,
     name: String,
   },
 });

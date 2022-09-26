@@ -16,9 +16,10 @@
       <template v-slot:main-content>
         <ion-text>
           <p class="title ion-text-start">Данные заявителя</p>
-          <!-- <ion-list v-for="(el,) in formsList" :key="el">
-            <Input :name="el?.NAME" :required="true" />
-          </ion-list> -->
+          <ion-list v-for="el in formsList" :key="el">
+            {{ el }}
+            <!-- <Input :name="el?.NAME" :required="true" /> -->
+          </ion-list>
           <p>
             <ion-text class="dot">*</ion-text> - обязательное поле для
             заполнения.
@@ -116,13 +117,22 @@ export default defineComponent({
   },
   computed: {
     formsList() {
-      return this.$pinia.state.value?.services?.formResponse?.result?.forms[3];
+      return this.$pinia.state.value?.services?.formResponse?.result?.forms.filter(
+        (el) => {
+          return (
+            el.SERVICE.VALUE_ID === '52'
+           /*  "Услуга технологического присоединения для физических лиц" */
+          );
+        }
+      );
     },
   },
   mounted() {
     this.getForms();
     console.log(
-      this.$pinia.state.value?.services?.formResponse,
+      this.$pinia.state.value?.services?.formResponse?.result?.forms.filter(
+        (el) => el.SERVICE.VALUE_ID=== '52'/* "Услуга технологического присоединения для физических лиц" */ 
+      ),
       "testtt222222"
     );
     // axios

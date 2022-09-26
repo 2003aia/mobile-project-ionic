@@ -73,6 +73,12 @@ const routes = [
         component: () => import("@/views/ServicesOne.vue"),
       },
       {
+        path: "servicesCallInspector",
+        name: "servicesCallInspector",
+
+        component: () => import("@/views/ServicesCallInspector.vue"),
+      },
+      {
         path: "servicesOneSelect",
         name: "servicesOneSelect",
         component: () => import("@/views/ServicesOneSelect.vue"),

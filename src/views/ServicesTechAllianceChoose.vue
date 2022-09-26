@@ -99,6 +99,7 @@ import Back from "../components/Back.vue";
 import ButtonSelect from "../components/ButtonSelect.vue";
 import { caretDownSharp } from "ionicons/icons";
 import InputFile from "../components/InputFile.vue";
+import { Storage } from "@ionic/storage";
 
 export default defineComponent({
   name: "servicesTechAllianceChoose",
@@ -112,6 +113,15 @@ export default defineComponent({
     IonAccordionGroup,
     Back,
     ButtonSelect,
+  },
+  mounted() {
+    const fetchStoreHandler = async () => {
+      const store = new Storage();
+      await store.create();
+      const servicesTechAlliance = await store.get("servicesTechAlliance");
+      console.log(JSON.parse(servicesTechAlliance), 'servicesTechAlliance');
+    };
+    fetchStoreHandler();
   },
   setup() {
     const router = useRouter();

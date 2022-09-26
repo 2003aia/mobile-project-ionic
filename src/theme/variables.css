@@ -321,6 +321,20 @@ http://ionicframework.com/docs/theming/ */
   margin-right: 15px;
 }
 
+ion-radio {
+ /*  margin-bottom: 5px;
+  margin-top: 5px; */
+  /* --border-radius: 50%;
+  --size: 26px; */
+  /* --checkmark-width: 2px; */
+  /* --background-checked: #62D0CE; */
+  --color-checked: #62D0CE;
+  border-color: #631414;
+  border-width: 2px;
+  margin-right: 15px;
+  --color: #868686;
+}
+
 .check ion-text {
   text-align: start;
   margin-bottom: 0;
