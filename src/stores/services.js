@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
 
-
 export const useServicesStore = defineStore({
   id: "services",
   state: () => ({
@@ -12,16 +11,20 @@ export const useServicesStore = defineStore({
     callInspectorError: null,
     servicesResponse: null,
     servicesResponseError: null,
+    form: [],
   }),
-
+  getters: {
+    setForm: (state) => {
+      return (value) => [...state.form, ...value];
+    },
+  },
   actions: {
     async getForms() {
       console.log("getting forms");
       try {
-
         await axios
           .get(
-            `https://aostng.ru/api/?action=getAll&format=json&page=3&limit=20`,
+            `https://aostng.ru/api/?action=getAll&format=json&page=3&limit=20`
           )
           .then((response) => (this.formResponse = response.data));
       } catch (error) {
@@ -31,18 +34,16 @@ export const useServicesStore = defineStore({
     async services(forms) {
       console.log("services");
       try {
-
         await axios
-          .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Services`,
-            {
-              status: [{
+          .post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Services`, {
+            status: [
+              {
                 CODE: "24",
-                VALUE: "Требуется документ"
-              }],
-              forms: forms
-            }
-          )
+                VALUE: "Требуется документ",
+              },
+            ],
+            forms: forms,
+          })
           .then((response) => (this.servicesResponse = response.data));
       } catch (error) {
         this.servicesResponseError = error;
@@ -63,6 +64,6 @@ export const useServicesStore = defineStore({
       } catch (error) {
         this.callInspectorError = error;
       }
-    }
+    },
   },
 });

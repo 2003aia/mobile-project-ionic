@@ -9,7 +9,7 @@
       height="false"
       filledBtn="Далее"
       outlineBtn="."
-      title="Готово"
+      title="Вызов инспектора"
     >
       <!-- <template v-slot:header-content>
         <ion-text>

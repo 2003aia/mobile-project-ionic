@@ -18,6 +18,7 @@
       <template v-slot:main-content>
         <ion-text>
           <p class="title ion-text-start">
+            {{ form }}
             Выберите планируемый максимальный часовой расхода газа. Расчет
             максимального часового расхода газа (не прилагается, если
             планируемый максимальный часовой расход газа не более 7 куб.
@@ -114,13 +115,19 @@ export default defineComponent({
     Back,
     ButtonSelect,
   },
+  computed: {
+    form() {
+      return this.$pinia.state.value?.services?.form
+    },
+  },
   mounted() {
     const fetchStoreHandler = async () => {
       const store = new Storage();
       await store.create();
-      const servicesTechAlliance = await store.get("servicesTechAlliance");
-      console.log(JSON.parse(servicesTechAlliance), 'servicesTechAlliance');
+      // const servicesTechAlliance = await store.get("servicesTechAlliance");
+      /* console.log(JSON.parse(servicesTechAlliance), "servicesTechAlliance"); */
     };
+    console.log(this.form, 'choosetest')
     fetchStoreHandler();
   },
   setup() {

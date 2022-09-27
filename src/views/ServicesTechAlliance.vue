@@ -227,33 +227,52 @@ export default defineComponent({
     async storageHandler() {
       const store = new Storage();
       await store.create();
-      let formPass = [];
+      let formPass = {};
       for (let index = 0; index < this.$data.formPass.length; index++) {
         const element = this.$data.formPass[index];
-        formPass.push({ [element.field]: element.value });
+        formPass[element.field] = { NAME: element.name, VALUE: element.value };
       }
-      let formUser = [];
+
+      let formUser = {
+        ...this.test[0],
+        ...formPass,
+        ...this.$pinia.state.value?.services?.form[0],
+      };
       for (let index = 0; index < this.$data.formUser.length; index++) {
         const element = this.$data.formUser[index];
-        formUser.push({ [element.field]: element.value });
+        formUser[element.field] = { NAME: element.name, VALUE: element.value };
       }
-      const userObject = {
-        ...formPass,
+
+      let userObject = {
         ...formUser,
 
-        GAS_ADDRESS: this.$data.address,
-        GAS__SROK: this.$data.deadlines,
-        GAS_SLUCHI: this.$route.params?.connect,
-        GAS_HARAKTER: this.$route.params?.harakter,
+        GAS_ADDRESS: { NAME: "Адрес объекта", VALUE: this.$data.address },
+        GAS__SROK: {
+          NAME: "Сроки проектирования, строительства и ввода в эксплуатацию объекта капитального строительства (в том числе по этапам и очередям)*",
+          VALUE: this.$data.deadlines,
+        },
+        GAS_SLUCHI: {
+          NAME: "Подключение в случаях (выбрать один из следующих вариантов)",
+          VALUE: this.$route.params?.connect,
+        },
+        GAS_HARAKTER: {
+          NAME: "Характер потребления газа",
+          VALUE: this.$route.params?.harakter,
+        },
       };
+      /* if (this.$pinia.state.value?.services?.form) {
+        this.$pinia.state.value?.services?.form?.push(
+          JSON.stringify(userObject)
+        );
+      } */
+      // let test = JSON.parse(this.$pinia.state.value?.services?.form)
+      console.log( 'tessss', this.$pinia.state.value?.services?.form[0])
       await store.set("servicesTechAlliance", JSON.stringify(userObject));
     },
     onFocusText(index) {
-      console.log("focus");
       this.$refs.text[index].focus();
     },
     onFocusText2(index) {
-      console.log("focus");
       this.$refs.text2[index].focus();
     },
     changeDeadlines(e) {
@@ -265,6 +284,14 @@ export default defineComponent({
   },
   mounted() {
     this.getForms();
+    const fetchStoreHandler = async () => {
+      const store = new Storage();
+      await store.create();
+      const servicesTechAlliance = await store.get("servicesTechAlliance");
+      console.log(JSON.parse(servicesTechAlliance), "servicesTechAlliance");
+    };
+    console.log(this.form, "choosetest");
+    fetchStoreHandler();
     console.log("test", this.test);
   },
   data() {
@@ -292,15 +319,16 @@ export default defineComponent({
       formPass: [
         {
           field: "USER_PASSPORT_SERIAL",
-          name: "Серия",
+          name: "Серия паспорта",
           type: "text",
           required: true,
           value: "",
         },
         {
           field: "USER_PASSPORT_NUM",
-          name: "Номер",
           type: "text",
+          name: "Номер паспорта",
+
           required: true,
           value: "",
         },
@@ -332,7 +360,7 @@ export default defineComponent({
       formUser: [
         {
           field: "USER_NAME",
-          name: "Укажите имя",
+          name: "Имя",
           type: "text",
           required: true,
           value: "",
@@ -340,7 +368,7 @@ export default defineComponent({
         {
           field: "USER_LAST_NAME",
 
-          name: "Укажите фамилию",
+          name: "Фамилия",
           type: "text",
           required: true,
           value: "",
@@ -348,7 +376,7 @@ export default defineComponent({
         {
           field: "USER_SECOND_NAME",
 
-          name: "Укажите отчество",
+          name: "Отчество",
           type: "text",
           required: true,
           value: "",
@@ -388,15 +416,15 @@ export default defineComponent({
         {
           field: "USER_PHONE_2",
 
-          name: "Доп. контактный телефон",
+          name: "Дополнительный контактный номер",
           type: "text",
           required: false,
           value: "",
         },
         {
-          field: "USER_COMPANY_ADRESS_POCHT",
+          field: "USER_EMAIL",
 
-          name: "Электронная почта",
+          name: "E-mail",
           type: "text",
           required: true,
           value: "",

@@ -2,7 +2,6 @@
   <ion-page>
     <Back />
     <Layout
-      :method="nextHandler"
       height="false"
       :filledBtn="'.'"
       :title="
@@ -18,9 +17,10 @@
           <ion-list v-for="el in connections" v-bind:key="el.id">
             <ion-item
               @click="
-                () => {
+                storageHandler(el.name)
+                /* () => {
                   router.push({params: {connect: el.name}, name: '/tabs/servicesTechAlliance'});
-                }
+                } */
               "
             >
               <ion-text class="sub-title">{{ el.name }} </ion-text>
@@ -31,9 +31,10 @@
           <ion-list v-for="el in gas" v-bind:key="el.id">
             <ion-item
               @click="
-                () => {
+                storageHandler(el.name)
+                /* () => {
                   router.push({params: {harakter: el.name},name:'/tabs/servicesTechAlliance'});
-                }
+                } */
               "
             >
               <ion-text class="sub-title">{{ el.name }} </ion-text>
@@ -53,6 +54,7 @@ import Layout from "../components/Layout.vue";
 import { IonPage, IonText, IonList, IonItem } from "@ionic/vue";
 import Back from "../components/Back.vue";
 import { documentTextOutline, arrowDownOutline } from "ionicons/icons";
+// import {Storage} from '@ionic/storage'
 
 export default defineComponent({
   name: "servicesTechAllianceSelect",
@@ -97,10 +99,22 @@ export default defineComponent({
       ],
     };
   },
+  computed: {
+    form() {
+      return this.$pinia.state.value?.services?.form;
+    },
+  },
   methods: {
-    nextHandler: function () {
-      this.next = true;
-      console.log("test");
+    async storageHandler(value) {
+      if (this.$pinia.state.value?.services?.form) {
+        this.$pinia.state.value?.services?.form?.push({
+          GAS_SLUCHI: {
+            NAME: "Подключение в случаях (выбрать один из следующих вариантов)",
+            VALUE: value,
+          },
+        });
+        this.$router.go(-1);
+      }
     },
   },
   setup() {
