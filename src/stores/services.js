@@ -12,6 +12,7 @@ export const useServicesStore = defineStore({
     servicesResponse: null,
     servicesResponseError: null,
     form: [],
+    select: [],
   }),
   getters: {
     setForm: (state) => {

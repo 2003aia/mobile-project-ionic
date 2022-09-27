@@ -38,16 +38,6 @@
               >
             </div>
           </div>
-          <!-- 
-          <Input name="Укажите имя " :required="true" />
-          <Input name="Укажите фамилию " :required="true" />
-          <Input name="Укажите отчество " :required="true" />
-          <Input name="Дата рождения " :required="true" />
-          <Input name="Место рождения  " :required="true" />
-          <Input name="Место жительства " :required="true" />
-          <Input name="Контактный телефон " :required="true" />
-          <Input name="Доп. контактный телефон  " :required="true" />
-          <Input name="Электронная почта  " :required="true" /> -->
         </ion-text>
       </template>
       <template v-slot:content>
@@ -78,11 +68,6 @@
                 >
               </div>
             </div>
-            <!--  <Input name="Серия " :required="true" />
-            <Input name="Номер " :required="true" />
-            <Input name="Кем выдан " :required="true" />
-            <Input name="Дата выдачи паспорта " :required="true" />
-            <Input name="Место регистрации " :required="true" /> -->
           </template>
         </LayoutBox>
         <LayoutBox>
@@ -97,29 +82,12 @@
                 Наименование объекта капитального строительства
               </p>
             </ion-text>
-            <!--  <div v-for="el in formGasName" :key="el">
-              <InputCheckbox
-                :name="el.name"
-                :value="el.value"
-                :changeHandler="selectOnlyThis(el.name)"
-              />
 
-            </div> -->
             <InputCheckbox name="Жилой дом" />
             <InputCheckbox name="Гараж" />
             <InputCheckbox name="Баня" />
             <InputCheckbox name="Другое" />
-            <!-- <ion-radio-group
-              mode="ios"
-              v-for="el in formGasName"
-              :key="el"
-              value="Жилой дом"
-            >
-              <ion-item>
-                <ion-label>{{ el.name }}</ion-label>
-                <ion-radio slot="start" :value="el.value"></ion-radio>
-              </ion-item>
-            </ion-radio-group> -->
+
             <ion-text>
               <p class="sub-title">
                 Адрес обьекта <ion-text class="dot">*</ion-text>
@@ -195,8 +163,15 @@ import InputCheckbox from "../components/InputCheckbox.vue";
 import ButtonSelect from "../components/ButtonSelect.vue";
 import { mapActions } from "pinia";
 import { useServicesStore } from "../stores/services";
-import { Storage } from "@ionic/storage";
+import { Storage } from "@ionic/storage";/* 
+<?if ($arItem["LINK"] == 'jur'):?>
+			<li class="header__site-section"><a href="https://aostng.ru/"><?=$arItem["TEXT"]?></a></li>
+	<?else:?> 
+  
+  //content
 
+<?endif?>
+  */
 export default defineComponent({
   name: "servicesTechAlliance",
   components: {
@@ -236,7 +211,7 @@ export default defineComponent({
       let formUser = {
         ...this.test[0],
         ...formPass,
-        ...this.$pinia.state.value?.services?.form[0],
+        // ...this.$pinia.state.value?.services?.form[0],
       };
       for (let index = 0; index < this.$data.formUser.length; index++) {
         const element = this.$data.formUser[index];
@@ -253,20 +228,26 @@ export default defineComponent({
         },
         GAS_SLUCHI: {
           NAME: "Подключение в случаях (выбрать один из следующих вариантов)",
-          VALUE: this.$route.params?.connect,
+          VALUE: this.$pinia.state.value?.services?.select[0]?.GAS_SLUCHI
+            ? this.$pinia.state.value?.services?.select[0]?.GAS_SLUCHI.VALUE
+            : this.$pinia.state.value?.services?.select[1]?.GAS_SLUCHI?.VALUE,
         },
         GAS_HARAKTER: {
           NAME: "Характер потребления газа",
-          VALUE: this.$route.params?.harakter,
+          VALUE: this.$pinia.state.value?.services?.select[0]?.GAS_HARAKTER
+            ? this.$pinia.state.value?.services?.select[0]?.GAS_HARAKTER?.VALUE
+            : this.$pinia.state.value?.services?.select[1]?.GAS_HARAKTER?.VALUE,
         },
       };
-      /* if (this.$pinia.state.value?.services?.form) {
-        this.$pinia.state.value?.services?.form?.push(
-          JSON.stringify(userObject)
-        );
-      } */
+      if (this.$pinia.state.value?.services?.form) {
+        this.$pinia.state.value?.services?.form?.push(userObject);
+      }
       // let test = JSON.parse(this.$pinia.state.value?.services?.form)
-      console.log( 'tessss', this.$pinia.state.value?.services?.form[0])
+      console.log(
+        "tessss",
+        userObject,
+        this.$pinia.state.value?.services?.select
+      );
       await store.set("servicesTechAlliance", JSON.stringify(userObject));
     },
     onFocusText(index) {

@@ -99,20 +99,25 @@ export default defineComponent({
       ],
     };
   },
-  computed: {
-    form() {
-      return this.$pinia.state.value?.services?.form;
-    },
-  },
   methods: {
     async storageHandler(value) {
       if (this.$pinia.state.value?.services?.form) {
-        this.$pinia.state.value?.services?.form?.push({
-          GAS_SLUCHI: {
-            NAME: "Подключение в случаях (выбрать один из следующих вариантов)",
-            VALUE: value,
-          },
-        });
+        if (this.$route.params.connection === "true") {
+          this.$pinia.state.value?.services?.select?.push({
+            GAS_SLUCHI: {
+              NAME: "Подключение в случаях (выбрать один из следующих вариантов)",
+              VALUE: value,
+            },
+          });
+        } else {
+          this.$pinia.state.value?.services?.select?.push({
+            GAS_HARAKTER: {
+              NAME: "Характер потребления газа",
+              VALUE: value,
+            },
+          });
+        }
+
         this.$router.go(-1);
       }
     },
