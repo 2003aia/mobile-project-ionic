@@ -1,6 +1,19 @@
 <template>
   <div class="input-wrapper">
+    
     <input
+    v-if="type === 'number' && min === 0"
+      ref="text"
+      :type="type"
+      :min="min"
+      oninput="validity.valid||(value='');"
+      class="input"
+      placeholder=" "
+      :value="value"
+      @change="changeHandler"
+    />
+    <input
+    v-else
       ref="text"
       :type="type"
       class="input"
@@ -55,6 +68,7 @@ export default defineComponent({
     value: String,
     type: String,
     changeHandler: Function,
+    min: Number,
   },
 });
 </script>

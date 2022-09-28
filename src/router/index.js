@@ -149,16 +149,11 @@ const routes = [
         component: () => import("@/views/ServicesTrackingFiles.vue"),
       },
       {
-        path: "personalAccountPayment",
-        props: { tabs: true },
-        // name: "personalAccountPayment",
-        component: () => import("@/views/PersonalAccountPayment.vue"),
-      },
-      {
-        path: "personalAccountPaymentHistory",
-        // props: { tabs: true },
-        // name: "personalAccountPaymentHistory",
-        component: () => import("@/views/PersonalAccountPaymentHistory.vue"),
+        path: "personalAccounts",
+        props: {
+          tabs: true
+        },
+        component: () => import("@/views/PersonalAccounts.vue"),
       },
       {
         path: "record",

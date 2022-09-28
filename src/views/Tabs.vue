@@ -1,6 +1,6 @@
 <template>
   <ion-page>
- <!--    <ion-header>
+    <!--    <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-button>
@@ -15,8 +15,7 @@
         <ion-router-outlet id="main"></ion-router-outlet>
         <ion-menu side="start" menu-id="first" content-id="main">
           <ion-content>
-           
- <ion-toolbar> </ion-toolbar>
+            <ion-toolbar> </ion-toolbar>
             <ion-list>
               <ion-item
                 @click="
@@ -58,18 +57,18 @@
         </ion-menu>
 
         <ion-tab-bar class="tabs" slot="bottom">
-          <ion-tab-button tab="menu"  @click="openMenu">
+          <ion-tab-button tab="menu" @click="openMenu">
             <ion-img
               class="tabslogo"
               :src="
                 selected !== 'menu'
-                  ? require('@/assets/img/dots.png')
-                  : require('@/assets/img/active-dots.png')
+                  ? require('@/assets/img/home.png')
+                  : require('@/assets/img/active-home.png')
               "
             />
 
             <ion-label :class="{ active: selected === 'menu' }"
-              >Главный</ion-label
+              >Быстрое меню</ion-label
             >
           </ion-tab-button>
           <!-- <ion-tab-button class="badge-wrapper" tab="main" href="/tabs/main">
@@ -103,21 +102,22 @@
             >
           </ion-tab-button>
           <ion-tab-button
-            tab="personalAccountPayment"
-            href="/tabs/personalAccountPayment"
+            tab="personalAccounts"
+            href="/tabs/personalAccounts"
           >
             <ion-img
               class="tabslogo"
               :src="
-                selected !== 'personalAccountPayment'
-                  ? require('@/assets/img/pay.png')
-                  : require('@/assets/img/active-pay.png')
+                selected !== 'personalAccounts'
+                  ? require('@/assets/img/bills.png')
+                  : require('@/assets/img/active-bills.png')
               "
             />
+            <!-- <ion-icon :class="{svg: selected !== 'personalAccounts', svgActive: selected === 'personalAccounts'}" :icon="documentTextOutline"></ion-icon> -->
 
             <ion-label
-              :class="{ active: selected === 'personalAccountPayment' }"
-              >Оплатить</ion-label
+              :class="{ active: selected === 'personalAccounts' }"
+              >Лицевые счета</ion-label
             >
           </ion-tab-button>
           <ion-tab-button tab="record" href="/tabs/record">
@@ -134,14 +134,14 @@
               >Е-запись</ion-label
             >
           </ion-tab-button>
-         
+
           <ion-tab-button class="badge-wrapper" tab="main" href="/tabs/main">
             <ion-img
               class="tabslogo"
               :src="
                 selected !== 'main'
-                  ? require('@/assets/img/home.png')
-                  : require('@/assets/img/active-home.png')
+                  ? require('@/assets/img/dots.png')
+                  : require('@/assets/img/active-dots.png')
               "
             />
             <!-- <div class="badge"></div> -->
@@ -175,7 +175,7 @@ import {
   menuController,
   IonBadge,
   IonToolbar,
- /*  IonToolbar,
+  /*  IonToolbar,
   IonHeader,
   IonButtons,
   IonTitle, */
@@ -195,7 +195,6 @@ import {
 export default defineComponent({
   name: "tabsPages",
   components: {
-   
     IonRouterOutlet,
     IonLabel,
     IonTabBar,
@@ -211,7 +210,7 @@ export default defineComponent({
     IonItem,
     IonMenu,
     IonPage,
-   /*  IonHeader,
+    /*  IonHeader,
     IonTitle, */
   },
   setup() {
@@ -286,6 +285,18 @@ ion-tab-button {
   height: 22px;
 }
 
+.svg{
+  width: 20px;
+  height: 22px;
+  color: #BDBDBD;
+}
+
+.svgActive{
+  width: 20px;
+  height: 22px;
+  color: #62d0ce;
+}
+
 .badge-wrapper {
   position: relative;
 }
@@ -314,6 +325,7 @@ ion-label {
   font-size: 12px;
   font-weight: 600;
   margin-top: 3px;
+  /* word-break: break-all; */
 }
 
 .active {

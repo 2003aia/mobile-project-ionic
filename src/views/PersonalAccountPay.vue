@@ -67,7 +67,7 @@ import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Input from "../components/Input.vue";
-import { IonPage, IonText, IonImg } from "@ionic/vue";
+import { IonPage, IonText, IonImg, IonContent } from "@ionic/vue";
 import {
   pencilOutline,
   documentTextOutline,
@@ -87,6 +87,7 @@ export default defineComponent({
     IonText,
     Input,
     LayoutBox,
+    IonContent,
     IonImg,
   },
   data() {

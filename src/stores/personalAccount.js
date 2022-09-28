@@ -26,6 +26,7 @@ export const usePersonalAccountStore = defineStore({
     getIndicesError: null,
     setIndicesResponse: null,
     setIndicesError: null,
+    personalItemData: {}
   }),
   getters: {
     getSettlementsList: (state) => {

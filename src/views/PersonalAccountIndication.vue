@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back :btnSrc="() => router.push('/personalAccounts')" />
+    <Back />
     <ion-content :fullscreen="true" class="background">
       <div class="container">
         <div class="btn-wrapper">
@@ -12,7 +12,6 @@
               () =>
                 router.push({
                   name: 'personalAccountPayment',
-                  params: route.params,
                 })
             "
           />
@@ -40,22 +39,22 @@
                 <p class="title ion-text-start">Счетчик</p>
               </ion-text>
               <ion-item>
-                <ion-text>{{ el.name }}</ion-text>
+                <ion-text>{{ el?.name }}</ion-text>
               </ion-item>
-              <ion-list v-for="(indice, index) in el.indications" :key="indice">
+              <ion-list v-for="(indice, index) in el?.indications" :key="indice">
                 <ion-text>
                   <p class="sub-title">{{ index + 1 }}.</p>
                 </ion-text>
                 <ion-item>
                   <ion-text>Датa</ion-text>
                   <ion-text slot="end" class="text-end">{{
-                    indice.date
+                    indice?.date
                   }}</ion-text>
                 </ion-item>
                 <ion-item>
                   <ion-text>Показания</ion-text>
                   <ion-text slot="end" class="text-end">{{
-                    indice.indication
+                    indice?.indication
                   }}</ion-text>
                 </ion-item>
               </ion-list>
@@ -173,7 +172,8 @@ export default defineComponent({
         : [];
     },
     lcList() {
-      return this.$route.params;
+      return this.$pinia.state.value?.personalAccount?.personalItemData
+      // return this.$route.params;
     },
     setIndicesMessage() {
       return this.$pinia.state.value?.personalAccount?.setIndicesResponse?.data
@@ -183,12 +183,17 @@ export default defineComponent({
   mounted() {
     for (
       let index = 0;
-      index < JSON.parse(this.$route.params.counters).length;
+      index < this.lcList?.counters?.length;
+
+      // index < JSON.parse(this.$route.params.counters).length;
       index++
     ) {
-      const element = JSON.parse(this.$route.params.counters)[index];
+      const element = this.lcList?.counters[index];
+
+      // const element = JSON.parse(this.$route.params.counters)[index];
       this.getIndices(element.counterId);
     }
+    // console.log(this.lcList,'tesssss', this.$pinia.state.value?.personalAccount?.personalItemData)
   },
   names: "personalAccauntIndication",
   components: {

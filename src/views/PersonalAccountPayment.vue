@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back :btnSrc="() => router.push('/personalAccounts')" v-if="!tabs" />
+    <Back />
     <ion-content :fullscreen="true" class="background">
       <div class="container">
         <div class="btn-wrapper">
@@ -13,7 +13,6 @@
               () =>
                 router.push({
                   name: 'personalAccountIndication',
-                  params: route.params,
                 })
             "
           />
@@ -22,14 +21,14 @@
           <template v-slot:content>
             <ion-text>
               <p class="title ion-text-start">
-                Лицевой счет №{{ route.params?.code }}
+                Лицевой счет №{{ lcList?.code }}
               </p>
             </ion-text>
             <ion-item>
-              <ion-text>{{ route.params?.name }} руб.</ion-text>
+              <ion-text>{{ lcList?.name }}</ion-text>
             </ion-item>
             <ion-item>
-              <ion-text>{{ route.params?.address }} руб.</ion-text>
+              <ion-text>{{ lcList?.address }}</ion-text>
             </ion-item>
           </template>
         </layout-box>
@@ -43,23 +42,27 @@
             <ion-item>
               <ion-text>Задолженность:</ion-text>
               <ion-text slot="end" class="text-end"
-                >{{ JSON.parse(route.params?.debts)?.accruals }} руб.</ion-text
+                >{{ lcList?.debts?.accruals }} руб.</ion-text
               >
             </ion-item>
-            <ion-item>
+            <!--   <ion-item>
               <ion-text> Аванс:</ion-text>
 
-              <ion-text slot="end" class="text-end"> 0 руб. </ion-text>
-            </ion-item>
+              <ion-text slot="end" class="text-end">
+                {{ lcList?.debts?.advances }} руб.
+              </ion-text>
+            </ion-item> -->
 
             <ion-text>
               <p class="title ion-text-start">Оплата</p>
             </ion-text>
             <Input
               :value="accruals"
+              :type="'number'"
               :changeHandler="changeAccruals"
               name="Введите сумму за сет. газ"
               :textBlue="true"
+              :min="0"
             />
           </template>
         </layout-box>
@@ -71,13 +74,15 @@
             <ion-item>
               <ion-text> Задолженность: </ion-text>
               <ion-text slot="end" class="text-end"
-                >{{ JSON.parse(route.params?.debts)?.sumTO }} руб.</ion-text
+                >{{ lcList.debts?.sumTO }} руб.</ion-text
               >
             </ion-item>
-            <ion-item>
+            <!-- <ion-item>
               <ion-text> Аванс: </ion-text>
-              <ion-text slot="end" class="text-end">0 руб.</ion-text>
-            </ion-item>
+              <ion-text slot="end" class="text-end"
+                >{{ lcList.debts?.advances }} руб.</ion-text
+              >
+            </ion-item> -->
             <ion-text>
               <p class="title ion-text-start">Оплата</p>
             </ion-text>
@@ -86,6 +91,8 @@
               :changeHandler="changeSumTO"
               name="Введите сумму за техобслуж."
               :textBlue="true"
+              :type="'number'"
+              :min="0"
             />
           </template>
         </layout-box>
@@ -97,13 +104,15 @@
             <ion-item>
               <ion-text> Задолженность: </ion-text>
               <ion-text slot="end" class="text-end"
-                >{{ JSON.parse(route.params?.debts)?.penalties }} руб.</ion-text
+                >{{ lcList.debts?.penalties }} руб.</ion-text
               >
             </ion-item>
-            <ion-item>
+            <!--  <ion-item>
               <ion-text> Аванс: </ion-text>
-              <ion-text slot="end" class="text-end">0 руб.</ion-text>
-            </ion-item>
+              <ion-text slot="end" class="text-end"
+                >{{ lcList.debts?.advances }} руб.</ion-text
+              >
+            </ion-item> -->
             <ion-text>
               <p class="title ion-text-start">Оплата</p>
             </ion-text>
@@ -112,6 +121,32 @@
               :value="penalties"
               :changeHandler="changePenalties"
               :textBlue="true"
+              :type="'number'"
+              :min="0"
+            />
+          </template>
+        </layout-box>
+        <layout-box>
+          <template v-slot:content>
+            <ion-text>
+              <p class="title ion-text-start">Аванс</p>
+            </ion-text>
+            <ion-item>
+              <ion-text> Задолженность: </ion-text>
+              <ion-text slot="end" class="text-end"
+                >{{ lcList.debts?.advances }} руб.</ion-text
+              >
+            </ion-item>
+            <ion-text>
+              <p class="title ion-text-start">Оплата</p>
+            </ion-text>
+            <Input
+              name="Введите сумму"
+              :value="advances"
+              :changeHandler="changeAdvances"
+              :textBlue="true"
+              :min="0"
+              :type="'number'"
             />
           </template>
         </layout-box>
@@ -124,7 +159,8 @@
             <Input :value="accruals" :changeHandler="changeAccruals" name="123456" :textBlue="true" />
           </template>
         </layout-box> -->
-        <ion-text v-if="error"
+
+        <ion-text v-show="error"
           ><p class="ion-text-start error">{{ error }}</p></ion-text
         >
         <Button name="Оплатить" @click="paymentHandler" />
@@ -157,7 +193,13 @@ export default defineComponent({
       penalties: "",
       sumTO: "",
       error: "",
+      advances: "",
     };
+  },
+  computed: {
+    lcList() {
+      return this.$pinia.state.value?.personalAccount?.personalItemData;
+    },
   },
   methods: {
     changeAccruals(e) {
@@ -169,6 +211,9 @@ export default defineComponent({
     changeSumTO(e) {
       this.$data.sumTO = e.target.value;
     },
+    changeAdvances(e) {
+      this.$data.advances = e.target.value;
+    },
     paymentHandler() {
       if (
         this.$data.accruals !== "" ||
@@ -178,16 +223,17 @@ export default defineComponent({
         this.$router.push({
           name: "personalAccountPay",
           params: {
-            ...this.$route.params,
+            ...this.lcList,
             sberPay: JSON.stringify({
               accruals: this.$data.accruals,
               penalties: this.$data.penalties,
               sumTO: this.$data.sumTO,
+              advances: this.$data.advances,
             }),
           },
         });
       } else {
-        this.$data.error = "Заполните все поля";
+        this.$data.error = "Заполните поля";
       }
     },
   },

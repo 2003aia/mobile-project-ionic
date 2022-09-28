@@ -30,6 +30,7 @@
       <div class="outline">
         <Button
           @click="method2"
+          :loading="loading2"
           v-if="outlineBtn !== '.'"
           :outline="true"
           :name="outlineBtn"
@@ -64,6 +65,7 @@ export default defineComponent({
     title: String,
     height: String,
     loading: Boolean,
+    loading2: Boolean,
   },
 });
 </script>

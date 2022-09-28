@@ -1,13 +1,13 @@
 <template>
   <ion-page>
-    <Back />
+    <Back v-show="!tabs" />
     <Layout
       btnSrc="/registrPage"
       height="false"
       outlineBtn="."
       filledBtn="."
       title="Лицевой счёт"
-      v-if="lcList?.length === 0"
+      v-show="lcList?.length === 0"
     >
       <template v-slot:main-content>
         <ion-item router-link="/personalAccountNew">
@@ -48,7 +48,7 @@
       outlineBtn="."
       filledBtn="."
       title="Лицевой счёт"
-      v-else
+      v-show="lcList?.length !== 0"
     >
       <template v-slot:main-content>
         <ion-item lines="none">
@@ -110,9 +110,13 @@
           <ion-item>
             <ion-text> Задолженность: </ion-text>
             <ion-text slot="end" class="text-blue">{{
-              lcList[0]?.debts?.accruals
+              lcList[0]?.debts?.accruals +
+              lcList[0]?.debts?.penalties +
+              lcList[0]?.debts?.sumTO +
+              lcList[0]?.debts?.advances
             }}</ion-text>
           </ion-item>
+
           <ion-item>
             <ion-text> Пени: </ion-text>
             <ion-text class="text-blue" slot="end">{{
@@ -124,15 +128,13 @@
           class="btn"
           name="Оплата"
           @click="
-            () =>
+            () => {
+              personalItemDataHandler(lcList[0]);
+
               router.push({
                 name: 'personalAccountPayment',
-                params: {
-                  ...lcList[0],
-                  debts: JSON.stringify(lcList[0].debts),
-                  counters: JSON.stringify(lcList[0].counters),
-                },
-              })
+              });
+            }
           "
         />
 
@@ -141,16 +143,12 @@
           :outline="true"
           name="Внести показания"
           @click="
-            () =>
+            () => {
+              personalItemDataHandler(lcList[0]);
               router.push({
                 name: 'personalAccountIndication',
-                params: {
-                  ...lcList[0],
-                  debts: JSON.stringify(lcList[0].debts),
-
-                  counters: JSON.stringify(lcList[0].counters),
-                },
-              })
+              });
+            }
           "
         />
 
@@ -168,7 +166,7 @@
         />
       </template>
       <template v-slot:content>
-        <div v-if="lcList?.length > 1">
+        <div v-show="lcList?.length > 1">
           <div v-for="el in lcList2" :key="el">
             <LayoutBox>
               <template v-slot:content>
@@ -232,7 +230,10 @@
                   <ion-item>
                     <ion-text> Задолженность: </ion-text>
                     <ion-text slot="end" class="text-blue">{{
-                      el.debts?.accruals
+                      el?.debts?.accruals +
+                      el?.debts?.penalties +
+                      el?.debts?.sumTO +
+                      el?.debts?.advances
                     }}</ion-text>
                   </ion-item>
                   <ion-item>
@@ -245,7 +246,15 @@
                 <Button
                   class="btn"
                   name="Оплата"
-                  router-link="/personalAccountPayment"
+                  @click="
+                    () => {
+                      personalItemDataHandler(el);
+
+                      router.push({
+                        name: 'personalAccountPayment',
+                      });
+                    }
+                  "
                 />
 
                 <Button
@@ -253,14 +262,13 @@
                   :outline="true"
                   name="Внести показания"
                   @click="
-                    () =>
+                    () => {
+                      personalItemDataHandler(el);
+
                       router.push({
                         name: 'personalAccountIndication',
-                        params: {
-                          ...el,
-                          counters: JSON.stringify(el?.counters[0]),
-                        },
-                      })
+                      });
+                    }
                   "
                 />
                 <Button
@@ -321,7 +329,6 @@
   </ion-page>
 </template>
 
-
 <script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
@@ -368,6 +375,7 @@ export default defineComponent({
     IonPopover,
     IonContent,
   },
+  props: ["tabs"],
   methods: {
     ...mapActions(usePersonalAccountStore, ["getAccount", "delAccount"]),
     delAccountHandler(lc) {
@@ -378,6 +386,12 @@ export default defineComponent({
       delAccount.then(() => {
         this.$data.loadingDel = false;
       });
+    },
+    personalItemDataHandler(data) {
+      Object.assign(
+        this.$pinia.state.value?.personalAccount?.personalItemData,
+        data
+      );
     },
   },
   computed: {
