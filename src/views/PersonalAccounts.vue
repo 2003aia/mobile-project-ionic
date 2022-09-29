@@ -176,13 +176,25 @@
                       Лицевой счет №{{ el.code }}
                     </p></ion-text
                   >
-                  <ion-icon slot="end" :icon="ellipsisVertical" :id="el.code" />
+                  <ion-icon
+                    @click="
+                      (e) => {
+                        el.event = e;
+                        el.open = true;
+                      }
+                    "
+                    slot="end"
+                    v-model="el.open"
+                    :icon="ellipsisVertical"
+                  /><!-- :id="el.code" -->
                   <ion-popover
                     class="history-wrapper"
                     mode="ios"
-                    :trigger="el.code"
-                    trigger-action="click"
-                  >
+                    :event="el.event"
+                    :is-open="el?.open"
+                    @didDismiss="el.open = false"
+                    ><!--  :trigger="el?.code"
+                    trigger-action="click" -->
                     <ion-content class="ion-padding">
                       <div>
                         <ion-item
@@ -201,7 +213,16 @@
                             :src="require('@/assets/img/history.png')"
                           />
                         </ion-item>
-                        <ion-item @click="delAccountHandler(el.code)">
+                        <ion-item
+                          @click="
+                            (e) => {
+                              delAccountHandler(el.code).then(() => {
+                                el.open = false;
+                                el.event = e;
+                              });
+                            }
+                          "
+                        >
                           <ion-text> Удалить</ion-text>
                           <ion-icon
                             class="history-icon"
@@ -356,7 +377,7 @@ import LayoutBox from "../components/LayoutBox.vue";
 import Button from "../components/Button.vue";
 import { mapActions } from "pinia";
 import { usePersonalAccountStore } from "../stores/personalAccount";
-// import {Storage} from '@ionic/storage'
+// import { Storage } from "@ionic/storage";
 
 export default defineComponent({
   name: "personalAccountPage",
@@ -378,11 +399,13 @@ export default defineComponent({
   props: ["tabs"],
   methods: {
     ...mapActions(usePersonalAccountStore, ["getAccount", "delAccount"]),
-    delAccountHandler(lc) {
+    async delAccountHandler(lc) {
       this.$data.loadingDel = true;
+
       const delAccount = new Promise((resolve) => {
         resolve(this.delAccount(lc));
       });
+
       delAccount.then(() => {
         this.$data.loadingDel = false;
       });
@@ -410,6 +433,7 @@ export default defineComponent({
   },
   mounted() {
     this.getAccount();
+
   },
   data() {
     return {
@@ -420,29 +444,14 @@ export default defineComponent({
         debt: "-680,92 руб.",
         penalties: "0 руб.",
       },
+      open2: false,
       lcList3: [],
       loadingDel: false,
     };
   },
   setup() {
     const router = useRouter();
-    /*  const { getAccount } = usePersonalAccountStore();
-    const store = new Storage()
 
-    onIonViewDidEnter(() => {
-      getAccount();
-    }); */
-    /* let getAccountData = null
-    const storageHandler= async ()=>{
-await store.create()
-const token = await store.get("token");
-        getAccountData = JSON.parse(token);
-getAccount()
-      }
-    if (getAccountData.lics) {
-      
-
-    } */
     return {
       router,
       pencilOutline,

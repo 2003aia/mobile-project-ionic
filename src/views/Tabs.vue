@@ -147,7 +147,7 @@
             <!-- <div class="badge"></div> -->
 
             <ion-label :class="{ active: selected === 'main' }"
-              >Прочие</ion-label
+              >Новости и объявления</ion-label
             >
           </ion-tab-button>
         </ion-tab-bar>

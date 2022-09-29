@@ -69,7 +69,6 @@
         </div>
 
         <ion-text class="ion-text-center">Еще не зарегистрированы? </ion-text>
-
         <ion-button
           fill="clear"
           class="textURL ion-text-wrap"
@@ -89,7 +88,14 @@ import Button from "../components/Button.vue";
 import Input from "../components/Input.vue";
 import { storeToRefs } from "pinia";
 import { useLoginStore } from "../stores/login";
-import { IonPage, IonButton, IonContent, IonText, IonImg } from "@ionic/vue";
+import {
+  IonPage,
+  IonButton,
+  IonContent,
+  IonText,
+  IonImg,
+  onIonViewDidEnter,
+} from "@ionic/vue";
 import { mask } from "vue-the-mask";
 import { Storage } from "@ionic/storage";
 
@@ -111,29 +117,36 @@ export default defineComponent({
     const router = useRouter();
     const { authResponse, authError } = storeToRefs(useLoginStore());
     const { authUser } = useLoginStore();
-    let phone = "";
-    let password = "";
+    let phone = ref("");
+    let password = ref("");
     let errorText = ref("");
-    let loading = ref(false)
+    let loading = ref(false);
     const authUserHandler = () => {
-      const myModel = phone.replace(/\D+/g, "");
-      if (password === "" || phone === "") {
+      let myModel = phone.value.replace(/\D+/g, "");
+      if (password.value === "" || phone.value === "") {
         errorText.value = "Заполните поля!";
       } else {
-        loading.value = true
-        authUser(myModel, password)
+        loading.value = true;
+        if (myModel[0] !== 7) {
+          myModel = "7" + myModel;
+        }
+        authUser(myModel, password.value)
           .then(async () => {
-            loading.value = false
+            loading.value = false;
             if (authResponse?.value?.error === false) {
               const store = new Storage();
               await store.create();
               await store.set(
                 "token",
-                JSON.stringify({...authResponse?.value?.data, phone: phone, password: password}),
+                JSON.stringify({
+                  ...authResponse?.value?.data,
+                  phone: phone.value,
+                  password: password.value,
+                })
               );
-              router.push("/tabs");
+              router.push("/tabs/personalAccounts");
             } else {
-              errorText.value = authResponse.value?.message
+              errorText.value = authResponse.value?.message;
             }
           })
           .catch((e) => {
@@ -143,11 +156,24 @@ export default defineComponent({
       }
     };
     const phoneChange = (e) => {
-      phone = e.target.value;
+      phone.value = e.target.value;
     };
     const passwordChange = (e) => {
-      password = e.target.value;
+      password.value = e.target.value;
     };
+
+    onIonViewDidEnter(() => {
+      const getPhone = async () => {
+        const store = new Storage();
+        await store.create();
+        const token = await store.get("token");
+        if (token !== null) {
+          const myModel = JSON.parse(token)?.phone?.replace(/\D+/g, "");
+          phone.value = myModel.substring(1);
+        }
+      };
+      getPhone();
+    });
     return {
       loading,
       router,

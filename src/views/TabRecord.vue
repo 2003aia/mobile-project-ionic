@@ -115,7 +115,7 @@
             Выходной: суббота, воскресенье
           </p>
         </ion-text>
-        <ion-item class="check">
+        <ion-item @click="() => router.push('/tabs/recordTerms')" class="check">
           <ion-checkbox slot="start" v-model="agreement"></ion-checkbox>
           <ion-text>Согласен (-на) на обработку персональных данных</ion-text>
         </ion-item>

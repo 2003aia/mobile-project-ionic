@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
-import { useLoginStore } from "./login";
+// import { useLoginStore } from "./login";
 
 export const usePersonalAccountStore = defineStore({
   id: "personalAccount",
@@ -26,7 +26,7 @@ export const usePersonalAccountStore = defineStore({
     getIndicesError: null,
     setIndicesResponse: null,
     setIndicesError: null,
-    personalItemData: {}
+    personalItemData: {},
   }),
   getters: {
     getSettlementsList: (state) => {
@@ -111,27 +111,26 @@ export const usePersonalAccountStore = defineStore({
           )
           .then(async (response) => {
             this.addAccountResponse = response.data;
-            if (response.data.error === false) {
-              const counterStorage = useLoginStore();
-              const store = new Storage();
-              await store.create();
-              const token = await store.get("token");
-              const tokenParsed = JSON.parse(token);
-              counterStorage
+
+            // const counterStorage = useLoginStore();
+            const store = new Storage();
+            await store.create();
+            const token = await store.get("token");
+            const tokenParsed = JSON.parse(token);
+            // console.log(response.data, tokenParsed, "test addaccount");
+            /* counterStorage
                 .authUser(tokenParsed.phone, tokenParsed.password)
                 .then(async () => {
                   const store = new Storage();
-                  await store.create();
-                  await store.set(
-                    "token",
-                    JSON.stringify({
-                      ...tokenParsed,
-                      lics: counterStorage?.authResponse?.data?.lics,
-                      token: counterStorage?.authResponse?.data?.token,
-                    })
-                  );
-                });
-            }
+                  await store.create(); */
+            await store.set(
+              "token",
+              JSON.stringify({
+                ...tokenParsed,
+                lics: [...tokenParsed.lics, lc],
+              })
+            );
+            /*  }); */
           });
       } catch (error) {
         this.addAccountError = error;
@@ -155,15 +154,16 @@ export const usePersonalAccountStore = defineStore({
               }
             );
             const userData = JSON.parse(token);
+            const lics = this.getAccountResponse?.data.filter((el) => {
+              return el?.code !== lc;
+            });
             const userObject = {
               name: userData.name,
               phone: userData.phone,
               email: userData.email,
               password: userData.password,
               token: userData.token,
-              lics: this.getAccountResponse?.data.filter((el) => {
-                return el.code !== lc;
-              }),
+              lics: lics?.map((el) => el?.code),
             };
             await store.set("token", JSON.stringify(userObject));
             this.delAccountResponse = response.data;
@@ -225,7 +225,7 @@ export const usePersonalAccountStore = defineStore({
           .then((response) => {
             /* const counterStorage = usePersonalAccountStore()
             counterStorage.getIndices(counterId) */
-            this.getIndices(counterId)
+            this.getIndices(counterId);
             this.setIndicesResponse = response.data;
           });
       } catch (error) {
@@ -239,10 +239,15 @@ export const usePersonalAccountStore = defineStore({
         const token = await store.get("token");
         const tokenParsed = JSON.parse(token);
         await axios
-          .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/SberPay`,
-            { token: tokenParsed.token, phone: phone, email: email, LC: lc, accruals: accruals, penalties: penalties, sumTO: sumTO, }
-          )
+          .post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/SberPay`, {
+            token: tokenParsed.token,
+            phone: phone,
+            email: email,
+            LC: lc,
+            accruals: accruals,
+            penalties: penalties,
+            sumTO: sumTO,
+          })
           .then((response) => {
             /* const counterStorage = usePersonalAccountStore()
             counterStorage.getIndices(counterId) */

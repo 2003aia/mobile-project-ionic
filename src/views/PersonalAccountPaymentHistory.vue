@@ -13,6 +13,7 @@
         <ion-spinner name="bubbles" />
       </template>
     </Layout>
+
     <Layout
       :btnSrc="'/personalAccountPayment'"
       height="false"
@@ -21,10 +22,34 @@
       v-else
       title="Лицевые счета"
     >
+      <template v-slot:header-content>
+        <ion-text class="main-title">История платежей</ion-text>
+      </template>
       <template v-slot:main-content>
         <!-- <ion-list v-for="el in paymentHistory" :key="el.date"> -->
-        <ion-text class="title">История платежей</ion-text>
-        <ion-item>
+        <!-- <ion-text class="title">История платежей</ion-text> -->
+        <ion-row>
+          <ion-col>№</ion-col>
+          <ion-col>Дата</ion-col>
+
+          <ion-col>Сумма</ion-col>
+
+          <ion-col>Автор</ion-col>
+        </ion-row>
+
+        <ion-list v-for="el in paymentHistory" :key="el">
+          <ion-row>
+            <ion-col class="sub-title"> {{ el?.number }} </ion-col>
+            <ion-col class="sub-title">
+              {{ el?.date ? el?.date : "-" }}
+            </ion-col>
+
+            <ion-col class="sub-title">{{ el?.summ }} руб.</ion-col>
+            <ion-col class="sub-title">{{ paymentHistory[0]?.author }}</ion-col>
+          </ion-row>
+        </ion-list>
+
+        <!-- <ion-item>
           <ion-text>Дата</ion-text>
           <ion-text class="sub-title" slot="end">
             {{ paymentHistory[0]?.date ? paymentHistory[0]?.date : "-" }}
@@ -48,12 +73,12 @@
           <ion-text class="sub-title" slot="end">
             {{ paymentHistory[0]?.author }}
           </ion-text>
-        </ion-item>
+        </ion-item> -->
 
         <!-- </ion-list> -->
       </template>
 
-      <template v-slot:content>
+      <!-- <template v-slot:content>
         <div v-if="paymentHistory?.length > 1">
           <ion-list v-for="el in paymentHistory2" :key="el">
             <LayoutBox>
@@ -88,24 +113,30 @@
             </LayoutBox>
           </ion-list>
         </div>
-      </template>
+      </template> -->
     </Layout>
   </ion-page>
 </template>
-  
-  
-  <script>
+
+<script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonItem, IonList, IonSpinner, } from "@ionic/vue";
+import {
+  IonPage,
+  IonText,
+  IonList,
+  IonSpinner,
+  IonCol,
+  IonRow,
+} from "@ionic/vue";
 import {
   pencilOutline,
   documentTextOutline,
   chevronForwardOutline,
 } from "ionicons/icons";
 import Back from "../components/Back.vue";
-import LayoutBox from "../components/LayoutBox.vue";
+// import LayoutBox from "../components/LayoutBox.vue";
 import { mapActions } from "pinia";
 import { usePersonalAccountStore } from "../stores/personalAccount";
 // import moment from "moment";
@@ -115,12 +146,13 @@ export default defineComponent({
   components: {
     Back,
     IonList,
-    IonItem,
     IonPage,
     Layout,
     IonText,
-    LayoutBox,
+    // LayoutBox,
     IonSpinner,
+    IonCol,
+    IonRow,
   },
   methods: {
     ...mapActions(usePersonalAccountStore, ["getPayments"]),
@@ -185,8 +217,19 @@ export default defineComponent({
   },
 });
 </script>
-  
-  <style scoped>
+
+<style scoped>
+ion-row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: solid 1px #e0e0e0;
+}
+ion-row:last-child {
+  border-bottom: none;
+}
+ion-col {
+  word-break: break-all;
+}
 ion-list {
   /* background: #f5f5f5; */
   background-color: rgba(0, 0, 0, 0);

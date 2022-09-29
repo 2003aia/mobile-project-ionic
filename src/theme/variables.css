@@ -350,7 +350,9 @@ ion-item {
   --inner-padding-start: 0;
   --inner-padding-end: 0;
 }
-
+.blue {
+  color: #62D0CE;
+}
 
 ion-spinner {
   display: flex;

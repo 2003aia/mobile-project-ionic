@@ -1,4 +1,7 @@
-import { createRouter, /* createWebHistory, */ createWebHashHistory } from "@ionic/vue-router";
+import {
+  createRouter,
+  /* createWebHistory, */ createWebHashHistory,
+} from "@ionic/vue-router";
 import AuthPage from "../views/Auth.vue";
 import RegistrPage from "../views/Registr.vue";
 import TermsPage from "../views/Terms.vue";
@@ -151,7 +154,7 @@ const routes = [
       {
         path: "personalAccounts",
         props: {
-          tabs: true
+          tabs: true,
         },
         component: () => import("@/views/PersonalAccounts.vue"),
       },
@@ -162,6 +165,13 @@ const routes = [
       {
         path: "recordSelect",
         component: () => import("@/views/RecordSelect.vue"),
+      },
+      {
+        path: "recordTerms",
+        props: {
+          record: true,
+        },
+        component: () => import("@/views/Terms.vue"),
       },
       {
         path: "date",

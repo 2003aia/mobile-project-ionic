@@ -1,10 +1,10 @@
 <template>
   <ion-page>
     <Layout
-      btnSrc="/registrPage"
+      :btnSrc="record ? '/tabs/record' :'/registrPage'"
       height="false"
       outlineBtn="."
-      filledBtn="Перейти к регистрации"
+      :filledBtn="record ? 'Перейти к пред. записи' : 'Перейти к регистрации'"
       title="Соглашение на обработку персональных данных"
     >
       <template v-slot:main-content>
@@ -33,6 +33,7 @@ export default defineComponent({
     IonText,
     IonSpinner,
   },
+  props: ["record"],
   setup() {
     const router = useRouter();
     let data = ref(null);
@@ -54,5 +55,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

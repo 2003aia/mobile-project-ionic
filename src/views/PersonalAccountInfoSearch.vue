@@ -4,7 +4,7 @@
     <!-- :btnSrc="'/personalAccountInfo'" -->
     <!-- :method2="() => router.push('/personalAccountNew')" -->
     <Layout
-      :method2="addAccount"
+      :method2="addAccountHandler"
       height="false"
       outlineBtn="Добавить лицевой счёт"
       filledBtn="."
@@ -92,7 +92,11 @@
           </ion-accordion>
 
           <ion-accordion
-            v-show="apartmentsList?.length >= 0"
+            v-show="
+              housesList?.length !== 0 &&
+              housesList !== undefined &&
+              housesList[0]?.apartments
+            "
             value="fourth"
             :toggle-icon="caretDownSharp"
           >
@@ -116,34 +120,49 @@
             </div>
           </ion-accordion>
         </ion-accordion-group>
-        <!-- {{ apartmentsList }} -->
-        <div v-if="licsList?.length === 1">
-          <ion-text v-for="el in licsList" :key="el">
+
+        <div v-show="licsList?.length !== 0">
+          <div v-for="el in licsList" :key="el">
             <ion-text v-for="el2 in el?.lics" :key="el2?.code">
-              <p class="ion-text-start">Лицевой счет: {{ el2?.code }}</p>
-              <p class="ion-text-start">
-                Наименование лицевого счета: {{ el2?.name }}
-              </p>
+              <ion-item lines="none" class="check">
+                <ion-text class="lics" slot="start">
+                  <p class="ion-text-start">Лицевой счет: {{ el2?.code }}</p>
+                  <p class="ion-text-start">
+                    Наименование лицевого счета: {{ el2?.name }}
+                  </p>
+                </ion-text>
+                <ion-checkbox v-model="el2.value" slot="end" />
+              </ion-item>
             </ion-text>
-          </ion-text>
+          </div>
         </div>
-        <div v-if="licsApartmentsList?.length === 1">
-          <ion-text v-for="el in licsApartmentsList" :key="el">
+        <div
+          v-show="
+            housesList?.length !== 0 &&
+            housesList !== undefined &&
+            housesList[0]?.apartments &&
+            licsApartmentsList?.length !== 0
+          "
+        >
+          <div v-for="el in licsApartmentsList" :key="el">
             <ion-text v-for="el2 in el?.lics" :key="el2?.code">
-              <p class="ion-text-start">Лицевой счет: {{ el2?.code }}</p>
-              <p class="ion-text-start">
-                Наименование лицевого счета: {{ el2?.name }}
-              </p>
+              <ion-item class="check" lines="none">
+                <ion-text class="lics" slot="start">
+                  <p class="ion-text-start">Лицевой счет: {{ el2?.code }}</p>
+                  <p class="ion-text-start">
+                    Наименование лицевого счета: {{ el2?.name }}
+                  </p>
+                </ion-text>
+                <ion-checkbox v-model="el2.value" slot="end" />
+              </ion-item>
             </ion-text>
-          </ion-text>
+          </div>
         </div>
-        <ion-text v-show="response">
-          <p>{{ response }}</p>
+        <ion-text v-show="response?.length !== 0">
+          <p class="blue">{{ response }}</p>
         </ion-text>
-        <ion-text v-show="error">
-          <p class="ion-text-start error">
-            {{ error }}
-          </p>
+        <ion-text v-show="error?.length !== 0">
+          <p class="ion-text-start error">{{ error }}</p>
         </ion-text>
       </template>
     </Layout>
@@ -162,6 +181,7 @@ import {
   IonList,
   IonItem,
   IonSpinner,
+  IonCheckbox,
   // onIonViewDidEnter,
 } from "@ionic/vue";
 import {
@@ -171,6 +191,7 @@ import {
 } from "ionicons/icons";
 import Back from "../components/Back.vue";
 import { caretDownSharp } from "ionicons/icons";
+import { Storage } from "@ionic/storage";
 import { mapActions } from "pinia";
 import { usePersonalAccountStore } from "../stores/personalAccount";
 
@@ -186,6 +207,7 @@ export default defineComponent({
     IonList,
     IonItem,
     IonSpinner,
+    IonCheckbox,
   },
   data() {
     return {
@@ -194,9 +216,9 @@ export default defineComponent({
       street: "",
       country: "",
       apartment: "",
-      lc: "",
+      lc: [],
       loading: false,
-      response: "",
+      response: [],
       arrMapLics: [],
       loading2: true,
       loading3: false,
@@ -270,6 +292,7 @@ export default defineComponent({
       "getStreets",
       "getHouses",
       "addAccount",
+      "getAccount",
     ]),
     onFocusText: function () {
       console.log("focus");
@@ -296,7 +319,6 @@ export default defineComponent({
     },
     fetchLicsHandler(street) {
       this.$refs.accordion.$el.value = undefined;
-
       this.$data.house = street;
     },
     fetchLicsHandler2(street) {
@@ -304,17 +326,40 @@ export default defineComponent({
 
       this.$data.apartment = street;
     },
-    async addAccount() {
-      this.$data.loading = true;
+    async addAccountHandler() {
       const store = new Storage();
       await store.create();
       const token = await store.get("token");
-      this.addAccount(JSON.parse(token).token, this.$data.lc).then(() => {
-        this.$data.loading = false;
-        this.$data.response =
-          this.$pinia.state.value.personalAccount?.addAccountResponse?.message;
-      });
-      // this.$router.push("/personalAccountNew");
+      const lics = this.licsList[0]?.lics?.filter((el) => el?.value === true);
+      const licsApartments = this.licsApartmentsList[0]?.lics?.filter(
+        (el) => el?.value === true
+      );
+      if (
+        (lics?.length !== 0 && lics !== undefined) ||
+        (licsApartments?.length !== 0 && licsApartments !== undefined)
+      ) {
+        this.$data.loading = true;
+        const licsCodes =
+          lics !== undefined
+            ? lics?.map((v) => v?.code)
+            : licsApartments?.map((v) => v?.code);
+
+        const addAccount = new Promise((resolve) => {
+          resolve(this.addAccount(JSON.parse(token).token, licsCodes));
+        });
+        addAccount.then(() => {
+          this.$data.error = "";
+          this.getAccount().then(() => {
+            this.$router.push("/tabs/personalAccounts");
+          });
+          this.$data.loading = false;
+          this.$data.response =
+            this.$pinia.state.value.personalAccount?.addAccountResponse[0]?.message;
+        });
+      } else {
+        this.$data.response = "";
+        this.$data.error = "Выберите лицевой счет";
+      }
     },
   },
 
@@ -333,8 +378,19 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.lics {
+  width: 80%;
+  margin: 0;
+}
+.check {
+  --inner-padding-start: 0px;
+}
+ion-checkbox {
+  margin: 0;
+}
 p {
   margin-bottom: 20px;
+  word-break: break-all;
 }
 ion-item {
   --inner-padding-start: 15px;
