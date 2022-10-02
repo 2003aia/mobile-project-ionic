@@ -1,25 +1,18 @@
 <template>
   <ion-page>
-    <Back
-      :btnSrc="
-        () => {
-          if (sent === true) sent = false;
-          else {
-            router.push('/tabs/servicesTechAllianceChoose');
-          }
-        }
-      "
-    />
+    <Back />
     <Layout
       :method="
-        () => {
+        storageHandler
+        /*  () => {
           if (sent === false) {
             sent = true;
           } else {
             router.push('/tabs/services');
           }
-        }
+        } */
       "
+      :loading="loading"
       height="false"
       :filledBtn="sent === false ? 'Далее' : 'Готово'"
       outlineBtn="."
@@ -31,7 +24,7 @@
         </ion-text>
       </template>
       <template v-slot:main-content>
-        <div v-if="sent === false">
+        <div v-show="sent === false">
           <ion-item>
             <ion-text>
               <p>
@@ -48,14 +41,42 @@
             <ion-text>
               <p class="text">
                 {{ el.text }}
+                <ion-text class="blue" v-show="el.required">*</ion-text>
               </p>
             </ion-text>
-            <InputFile name="0" />
+            <ion-item lines="none" v-show="el?.value">
+              <ion-text class="file-text blue">
+                <!-- {{ el?.value?.name }} -->
+                {{ el.value?.name }}
+              </ion-text>
+              <ion-icon
+                @click="() => (el.value = null)"
+                class="history-icon"
+                slot="end"
+                :icon="trashOutline"
+              />
+            </ion-item>
+            <ion-text v-show="el.error === true && el.value == null">
+              <p class="error">Выберите файл</p>
+            </ion-text>
+            <InputFile
+              :data="el.field"
+              :changeHandler="(e) => el.fn(e, el)"
+              :accept="'image/jpeg, application/pdf, .zip, image/png,'"
+            />
           </ion-list>
         </div>
-        <div v-if="sent === true">
+        <div
+          v-show="
+            sent === true &&
+            this.$pinia.state.value?.services?.servicesResponse?.error === false
+          "
+        >
           <ion-text>
             <p class="title ion-text-start">Спасибо!</p>
+            <p>
+              {{ this.$pinia.state.value?.services?.servicesResponse?.message }}
+            </p>
             <p>
               Ваша заявка принята в обработку. После процедуры идентификации на
               предмет соответствия достоверности введенных данных, с Вами
@@ -65,19 +86,22 @@
           </ion-text>
         </div>
       </template>
+      <InputFile :accept="'image/jpeg, application/pdf, .zip, image/png,'" />
     </Layout>
   </ion-page>
 </template>
-
 
 <script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonItem, IonList } from "@ionic/vue";
+import { IonPage, IonText, IonItem, IonList, IonIcon } from "@ionic/vue";
 import Back from "../components/Back.vue";
-import { caretDownSharp } from "ionicons/icons";
+import { caretDownSharp, trashOutline } from "ionicons/icons";
 import InputFile from "../components/InputFile.vue";
+import { mapActions } from "pinia";
+import { useServicesStore } from "../stores/services";
+import { Storage } from "@ionic/storage";
 
 export default defineComponent({
   name: "servicesTechAllianceFiles",
@@ -89,59 +113,137 @@ export default defineComponent({
     InputFile,
     Back,
     IonItem,
+    IonIcon,
+  },
+  methods: {
+    ...mapActions(useServicesStore, ["services"]),
+
+    changeFile(e, el) {
+      console.log(e.target.files, "test", el);
+      this.$data.files.push({ field: e.target.files[0] });
+    },
+    async storageHandler() {
+      const store = new Storage();
+      await store.create();
+      // const servicesTechAlliance = await store.get('servicesTechAlliance')
+      let formFiles = {};
+      let check = this.$data.data.filter((el) => {
+        if (el.required === true) {
+          el.error = true;
+          return el.value === null;
+        }
+      });
+      if (check.length === 0) {
+        for (let index = 0; index < this.$data.data.length; index++) {
+          const element = this.$data.data[index];
+          formFiles[element.field] = {
+            NAME: element.text,
+            VALUE: element.value,
+          };
+        }
+        let userObject = {
+          ...this.$pinia.state.value?.services?.form[1],
+          ...formFiles,
+        };
+        this.$data.loading = true;
+        this.services(userObject).then(() => {
+          this.$data.sent = true;
+          this.$data.loading = false;
+          console.log(
+            userObject,
+            "test",
+            this.$pinia.state.value?.services?.servicesResponse
+          );
+        });
+
+        if (this.$pinia.state.value?.services?.form) {
+          this.$pinia.state.value?.services?.form?.push(userObject);
+        }
+      }
+    },
   },
   data() {
     return {
       sent: false,
+      file: null,
+
+      loading: false,
       data: [
         {
           text: "Топографическая карта участка в масштабе 1 к 500 (не прилагается, если заказчик - физическое лицо, осуществляющее создание (реконструкцию) объекта индивидуального жилищного строительства)",
           fn: function (e) {
-            console.log("files", e);
+            this.value = e.target.files[0];
           },
+          value: null,
+          required: false,
+          field: "FILE_C_3",
         },
         {
-          text: "Копия документа, подтверждающего право собственности или иное предусмотренное законом основание на объект капитального строительства и (или) земельный участок, на котором расположены (будут располагаться) объекты капитального строительства заявителя *",
+          text: "Копия документа, подтверждающего право собственности или иное предусмотренное законом основание на объект капитального строительства и (или) земельный участок, на котором расположены (будут располагаться) объекты капитального строительства заявителя",
           fn: function (e) {
-            console.log("files", e);
+            this.value = e.target.files[0];
+            console.log("files32423", e);
           },
+          required: true,
+          value: null,
+          field: "FILE_C_1",
         },
         {
-          text: "Ситуационный план расположения земельного участка с привязкой к территории населенного пункта (формат А4) *",
+          text: "Ситуационный план расположения земельного участка с привязкой к территории населенного пункта (формат А4)",
           fn: function (e) {
+            this.value = e.target.files[0];
             console.log("files", e);
           },
+          required: true,
+          value: null,
+          field: "FILE_C2_2",
         },
         {
           text: "Расчет максимального часового расхода газа (не прилагается, если планируемый максимальный часовой расход газа не более 7 куб. метров)",
           fn: function (e) {
+            this.value = e.target.files[0];
             console.log("files", e);
           },
+          required: false,
+          value: null,
+          field: "FILE_C2_5",
         },
         {
-          text: `Копия документа, подтверждающего право собственности или иное предусмотренное законом основание на объект капитального строительства и (или) земельный участок, на котором расположены (будут располагаться) объекты капитального строительства заявителя * Загрузить документ`,
+          text: `Согласие осн-го абонента на подключение к сетям газораспределения и (или) газопотребления осн-го абонента, а также строител-во газопровода на з/у осн-го абонента, если подключение осуществляется на з/у, правообладателем которого является осн-ой абонент`,
           fn: function (e) {
+            this.value = e.target.files[0];
             console.log("files", e);
           },
+          value: null,
+          required: false,
+          field: "FILE_C2_7_SOGLASIE",
         },
         {
           text: `Заверенная в установленном порядке копия договора о пользовании объектами инфраструктуры и другим имуществом общего пользования НКО`,
           fn: function (e) {
+            this.value = e.target.files[0];
             console.log("files", e);
           },
+          value: null,
+          required: false,
+          field: "FILE_C2_7_CDOOI",
         },
         {
           text: `Доверенность или иные документы, подтверждающие полномочия представителя заявителя (в случае если заявка о подключении (технологическом присоединении) подается представителем заявителя)`,
           fn: function (e) {
+            this.value = e.target.files[0];
             console.log("files", e);
           },
+          value: null,
+          required: false,
+          field: "FILE_C2_14_1",
         },
       ],
     };
   },
   setup() {
     const router = useRouter();
-    return { router, caretDownSharp };
+    return { router, caretDownSharp, trashOutline };
   },
 });
 </script>
@@ -150,5 +252,8 @@ export default defineComponent({
 .text {
   margin-bottom: 10px;
   margin-top: 5px;
+}
+.file-text {
+  word-break: break-all;
 }
 </style>

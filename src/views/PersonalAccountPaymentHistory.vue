@@ -6,50 +6,46 @@
       height="false"
       outlineBtn="."
       filledBtn="."
-      v-if="paymentHistory?.length === 0"
-      title="Лицевые счета"
-    >
-      <template v-slot:main-content>
-        <ion-spinner name="bubbles" />
-      </template>
-    </Layout>
-
-    <Layout
-      :btnSrc="'/personalAccountPayment'"
-      height="false"
-      outlineBtn="."
-      filledBtn="."
-      v-else
       title="Лицевые счета"
     >
       <template v-slot:header-content>
         <ion-text class="main-title">История платежей</ion-text>
       </template>
       <template v-slot:main-content>
-        <!-- <ion-list v-for="el in paymentHistory" :key="el.date"> -->
-        <!-- <ion-text class="title">История платежей</ion-text> -->
-        <ion-row>
-          <ion-col>№</ion-col>
-          <ion-col>Дата</ion-col>
-
-          <ion-col>Сумма</ion-col>
-
-          <ion-col>Автор</ion-col>
-        </ion-row>
-
-        <ion-list v-for="el in paymentHistory" :key="el">
+        <div v-if="paymentHistory?.length === 0">
+          <ion-text
+            >У №{{ route.params?.lc }} лицевого счета нет платежей</ion-text
+          >
+        </div>
+        <div v-else>
           <ion-row>
-            <ion-col class="sub-title"> {{ el?.number }} </ion-col>
-            <ion-col class="sub-title">
-              {{ el?.date ? el?.date : "-" }}
-            </ion-col>
+            <ion-col>№</ion-col>
+            <ion-col>Дата</ion-col>
 
-            <ion-col class="sub-title">{{ el?.summ }} руб.</ion-col>
-            <ion-col class="sub-title">{{ paymentHistory[0]?.author }}</ion-col>
+            <ion-col>Сумма</ion-col>
+
+            <ion-col>Автор</ion-col>
           </ion-row>
-        </ion-list>
 
-        <!-- <ion-item>
+          <ion-list v-for="el in paymentHistory" :key="el">
+            <ion-row
+              :class="{
+                'ion-row-last':
+                  paymentHistory[paymentHistory?.length - 1]?.number ===
+                  el?.number,
+              }"
+            >
+              <ion-col class="sub-title"> {{ el?.number }} </ion-col>
+              <ion-col class="sub-title">
+                {{ el?.date ? el?.date : "-" }}
+              </ion-col>
+
+              <ion-col class="sub-title">{{ maskMoney(el?.summ) }}</ion-col>
+              <ion-col class="sub-title">{{ el?.author }}</ion-col>
+            </ion-row>
+          </ion-list>
+
+          <!-- <ion-item>
           <ion-text>Дата</ion-text>
           <ion-text class="sub-title" slot="end">
             {{ paymentHistory[0]?.date ? paymentHistory[0]?.date : "-" }}
@@ -75,52 +71,17 @@
           </ion-text>
         </ion-item> -->
 
-        <!-- </ion-list> -->
-      </template>
-
-      <!-- <template v-slot:content>
-        <div v-if="paymentHistory?.length > 1">
-          <ion-list v-for="el in paymentHistory2" :key="el">
-            <LayoutBox>
-              <template v-slot:content>
-                <ion-text class="title">История платежей</ion-text>
-                <ion-item>
-                  <ion-text>Дата</ion-text>
-                  <ion-text class="sub-title" slot="end">
-                    {{ el?.date ? el?.date : "-" }}
-                  </ion-text>
-                </ion-item>
-                <ion-item>
-                  <ion-text>№</ion-text>
-                  <ion-text class="sub-title" slot="end">
-                    {{ el?.number }}
-                  </ion-text>
-                </ion-item>
-
-                <ion-item>
-                  <ion-text>Сумма</ion-text>
-                  <ion-text class="sub-title" slot="end">
-                    {{ el?.summ }}
-                  </ion-text>
-                </ion-item>
-                <ion-item>
-                  <ion-text>Автор</ion-text>
-                  <ion-text class="sub-title" slot="end">
-                    {{ el?.author }}
-                  </ion-text>
-                </ion-item>
-              </template>
-            </LayoutBox>
-          </ion-list>
+          <!-- </ion-list> -->
         </div>
-      </template> -->
+      </template>
+      <ion-spinner name="bubbles" />
     </Layout>
   </ion-page>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import Layout from "../components/Layout.vue";
 import {
   IonPage,
@@ -156,6 +117,13 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(usePersonalAccountStore, ["getPayments"]),
+    maskMoney(value) {
+      const valueAsNumber = value;
+      return new Intl.NumberFormat("ru-RU", {
+        style: "currency",
+        currency: "RUB",
+      }).format(valueAsNumber / 100);
+    },
   },
   computed: {
     paymentHistory() {
@@ -170,45 +138,17 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.getPayments(
-      this.$route.params.lc
-      /*  "20010101",
-      moment().format("YYYYMMDD") */
-    );
+    this.getPayments(this.$route.params.lc);
     console.log(this.$route.params, "params");
   },
   data() {
-    return {
-      data: [
-        {
-          title: "Разовые услуги для абонентов АО «Сахатранснефтегаз»",
-          address: "-",
-          status: "В обработке",
-          number: "19.04.2022",
-          dateAdmission: "19.04.2022",
-          dateDue: "19.04.2022",
-          comment: "-",
-          contract: "-",
-          dateBussiness: "-",
-        },
-        /*      {
-            title: "Разовые услуги для абонентов АО «Сахатранснефтегаз»",
-            address: "-",
-            status: "В обработке",
-            number: "19.04.2022",
-            dateAdmission: "19.04.2022",
-            dateDue: "19.04.2022",
-            comment: "-",
-            contract: "-",
-            dateBussiness: "-",
-          }, */
-      ],
-    };
+    return {};
   },
   setup() {
     const router = useRouter();
-
+    const route = useRoute();
     return {
+      route,
       router,
       pencilOutline,
       documentTextOutline,
@@ -220,11 +160,11 @@ export default defineComponent({
 
 <style scoped>
 ion-row {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   border-bottom: solid 1px #e0e0e0;
 }
-ion-row:last-child {
+.ion-row-last {
   border-bottom: none;
 }
 ion-col {

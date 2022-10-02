@@ -169,7 +169,7 @@ export default defineComponent({
         const token = await store.get("token");
         if (token !== null) {
           const myModel = JSON.parse(token)?.phone?.replace(/\D+/g, "");
-          phone.value = myModel.substring(1);
+          phone.value = myModel
         }
       };
       getPhone();

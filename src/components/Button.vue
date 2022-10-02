@@ -7,10 +7,15 @@
       outline: outline === true,
     }"
   >
-    <ion-text class="name ion-text-wrap" v-if="loading===false">
+    <ion-text class="name ion-text-wrap" v-if="loading === false">
       {{ name }}
     </ion-text>
-    <ion-spinner :class="{dark: outline === true}" v-if="loading === true" name="bubbles" color="light"/>
+    <ion-spinner
+      :class="{ dark: outline === true }"
+      v-if="loading === true"
+      name="bubbles"
+      color="light"
+    />
   </ion-button>
 </template>
 
@@ -31,18 +36,17 @@ export default defineComponent({
     IonText,
     IonSpinner,
   },
-  setup() {
-  }
+  setup() {},
 });
 </script>
 
 <style scoped>
-ion-spinner{
+ion-spinner {
   margin-top: 0px;
   color: #fff;
 }
 .dark {
-  color: #9E9E9E;
+  color: #9e9e9e;
 }
 .button {
   --border-radius: 25px;

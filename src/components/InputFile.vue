@@ -1,6 +1,7 @@
 <template>
-  <label for="file">
-    <input id="file" type="file" />
+  <label :for="data">
+    
+    <input :name="data" :id="data" type="file" @change="changeHandler" :accept='accept'/>
     <ion-item>
       <ion-icon slot="start" :icon="documentTextOutline" />
       <ion-text class="sub-title"> Загрузить документ </ion-text>
@@ -27,7 +28,6 @@ export default defineComponent({
   },
   methods: {
     onFocusText: function () {
-      console.log("focus");
       this.$refs.text.focus();
     },
   },
@@ -36,9 +36,11 @@ export default defineComponent({
   },
   name: "inputFileView",
   props: {
-    required: Boolean,
-    textBlue: Boolean,
+    data:String,
     name: String,
+    accept: String,
+    changeHandler: Function,
+    value: Object,
   },
 });
 </script>

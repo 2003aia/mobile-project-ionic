@@ -12,7 +12,10 @@ export const useServicesStore = defineStore({
     servicesResponse: null,
     servicesResponseError: null,
     form: [],
-    select: [],
+    select: {
+      GAS_SLUCHI: null,
+      GAS_HARAKTER: null,
+    },
   }),
   getters: {
     setForm: (state) => {
@@ -34,16 +37,43 @@ export const useServicesStore = defineStore({
     },
     async services(forms) {
       console.log("services");
+      const store = new Storage();
+      await store.create();
+      const token = await store.get("token");
+      const tokenParsed = JSON.parse(token).token;
       try {
         await axios
           .post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Services`, {
-            status: [
-              {
-                CODE: "24",
-                VALUE: "Требуется документ",
-              },
-            ],
-            forms: forms,
+            token: tokenParsed,
+            data: {
+              status: [
+                {
+                  CODE: "120",
+                  VALUE: "Принят",
+                },
+                {
+                  CODE: "23",
+                  VALUE: "В обработке",
+                },
+                {
+                  CODE: "26",
+                  VALUE: "Выполнено",
+                },
+                {
+                  CODE: "24",
+                  VALUE: "Требуется документ",
+                },
+                {
+                  CODE: "25",
+                  VALUE: "Требует оплаты",
+                },
+                {
+                  CODE: "22",
+                  VALUE: "Отклонен",
+                },
+              ],
+              forms: forms,
+            },
           })
           .then((response) => (this.servicesResponse = response.data));
       } catch (error) {

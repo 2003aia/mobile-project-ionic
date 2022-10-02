@@ -40,7 +40,6 @@ export default defineComponent({
   setup() {},
   methods: {
     onFocusText: function () {
-      console.log("focus");
       this.$refs.text.focus();
     },
   },

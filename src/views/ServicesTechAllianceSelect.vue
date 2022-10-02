@@ -46,7 +46,6 @@
   </ion-page>
 </template>
 
-
 <script>
 import { defineComponent } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -103,19 +102,15 @@ export default defineComponent({
     async storageHandler(value) {
       if (this.$pinia.state.value?.services?.form) {
         if (this.$route.params.connection === "true") {
-          this.$pinia.state.value?.services?.select?.push({
-            GAS_SLUCHI: {
-              NAME: "Подключение в случаях (выбрать один из следующих вариантов)",
-              VALUE: value,
-            },
-          });
+          this.$pinia.state.value.services.select.GAS_SLUCHI = {
+            NAME: "Подключение в случаях (выбрать один из следующих вариантов)",
+            VALUE: value,
+          };
         } else {
-          this.$pinia.state.value?.services?.select?.push({
-            GAS_HARAKTER: {
-              NAME: "Характер потребления газа",
-              VALUE: value,
-            },
-          });
+          this.$pinia.state.value.services.select.GAS_HARAKTER = {
+            NAME: "Характер потребления газа",
+            VALUE: value,
+          };
         }
 
         this.$router.go(-1);

@@ -56,23 +56,37 @@
             ><p class="title ion-text-start">
               Лицевой счет №{{ lcList[0]?.code }}
             </p></ion-text
-          >
-          <ion-icon id="click-trigger" slot="end" :icon="ellipsisVertical" />
+          ><!-- id="click-trigger" -->
+          <ion-icon
+            slot="end"
+            @click="
+              (e) => {
+                lcList[0].open = true;
+                lcList[0].event = e;
+              }
+            "
+            :icon="ellipsisVertical"
+          />
           <ion-popover
             class="history-wrapper"
             mode="ios"
-            trigger="click-trigger"
-            trigger-action="click"
-          >
+            :event="lcList[0]?.event"
+            :is-open="lcList[0]?.open"
+            @didDismiss="lcList[0].open = false"
+            ><!--   trigger="click-trigger"
+            trigger-action="click" -->
             <ion-content class="ion-padding">
               <div>
                 <ion-item
                   @click="
-                    () =>
+                    (e) => {
+                      lcList[0].open = false;
+                      lcList[0].event = e;
                       router.push({
                         name: 'personalAccountPaymentHistory',
                         params: { lc: lcList[0]?.code },
-                      })
+                      });
+                    }
                   "
                 >
                   <ion-text> История </ion-text>
@@ -82,7 +96,16 @@
                     :src="require('@/assets/img/history.png')"
                   />
                 </ion-item>
-                <ion-item @click="delAccountHandler(lcList[0].code)">
+                <ion-item
+                  @click="
+                    (e) => {
+                      delAccountHandler(lcList[0].code).then(() => {
+                        lcList[0].open = false;
+                        lcList[0].event = e;
+                      });
+                    }
+                  "
+                >
                   <ion-text> Удалить</ion-text>
                   <ion-icon
                     class="history-icon"
@@ -110,17 +133,19 @@
           <ion-item>
             <ion-text> Задолженность: </ion-text>
             <ion-text slot="end" class="text-blue">{{
-              lcList[0]?.debts?.accruals +
-              lcList[0]?.debts?.penalties +
-              lcList[0]?.debts?.sumTO +
-              lcList[0]?.debts?.advances
+              maskMoney(
+                lcList[0]?.debts?.accruals +
+                  lcList[0]?.debts?.penalties +
+                  lcList[0]?.debts?.sumTO +
+                  lcList[0]?.debts?.advances
+              )
             }}</ion-text>
           </ion-item>
 
           <ion-item>
             <ion-text> Пени: </ion-text>
             <ion-text class="text-blue" slot="end">{{
-              lcList[0]?.debts?.penalties
+              maskMoney(lcList[0]?.debts?.penalties)
             }}</ion-text>
           </ion-item>
         </ion-list>
@@ -199,11 +224,14 @@
                       <div>
                         <ion-item
                           @click="
-                            () =>
+                            (e) => {
+                              el.open = false;
+                              el.event = e;
                               router.push({
                                 name: 'personalAccountPaymentHistory',
                                 params: { lc: el?.code },
-                              })
+                              });
+                            }
                           "
                         >
                           <ion-text> История </ion-text>
@@ -250,17 +278,21 @@
                   </ion-item>
                   <ion-item>
                     <ion-text> Задолженность: </ion-text>
-                    <ion-text slot="end" class="text-blue">{{
-                      el?.debts?.accruals +
-                      el?.debts?.penalties +
-                      el?.debts?.sumTO +
-                      el?.debts?.advances
-                    }}</ion-text>
+                    <ion-text slot="end" class="text-blue"
+                      >{{
+                        maskMoney(
+                          el?.debts?.accruals +
+                            el?.debts?.penalties +
+                            el?.debts?.sumTO +
+                            el?.debts?.advances
+                        )
+                      }}
+                    </ion-text>
                   </ion-item>
                   <ion-item>
                     <ion-text> Пени: </ion-text>
                     <ion-text class="text-blue" slot="end">{{
-                      el.debts?.penalties
+                      maskMoney(el.debts?.penalties)
                     }}</ion-text>
                   </ion-item>
                 </ion-list>
@@ -416,6 +448,13 @@ export default defineComponent({
         data
       );
     },
+    maskMoney(value) {
+      const valueAsNumber = value;
+      return new Intl.NumberFormat("ru-RU", {
+        style: "currency",
+        currency: "RUB",
+      }).format(valueAsNumber / 100);
+    },
   },
   computed: {
     lcList() {
@@ -433,17 +472,9 @@ export default defineComponent({
   },
   mounted() {
     this.getAccount();
-
   },
   data() {
     return {
-      data: {
-        number: "№123456789",
-        name: "Иванов Иван Иванович",
-        address: "Якутск, ул. Автодорожная 11/4",
-        debt: "-680,92 руб.",
-        penalties: "0 руб.",
-      },
       open2: false,
       lcList3: [],
       loadingDel: false,

@@ -50,13 +50,12 @@
   </ion-page>
 </template>
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import { airplaneOutline } from "ionicons/icons";
 import {
   IonPage,
   IonContent,
   IonText,
-  onIonViewWillEnter,
   IonSpinner,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
@@ -64,7 +63,7 @@ import {
 import Button from "../components/Button.vue";
 import NewsItem from "../components/NewsItem.vue";
 import { useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
+import { mapActions } from "pinia";
 import { useNewsStore } from "../stores/news";
 
 export default defineComponent({
@@ -74,78 +73,42 @@ export default defineComponent({
       adsButton: true,
       newsButton: false,
       detail: null,
-      list23: [
-        {
-          image: "",
-
-          name: "Якутия. Еженедельный дайджест новостей газификации",
-          preview:
-            "Главные новости АО «Сахатранснефтегаз» за неделю с 9 по 15 мая – в еженедельном дайджесте газификации. ",
-          detail: "Lorem1",
-          id: 1,
-          date: "16.05.2022",
-        },
-        {
-          image:
-            "https://studio.everypixel.com/ru/blog/wp-content/uploads/2015/03/Funny-Stock-Unfinished-Business-6.jpg",
-
-          name: "Якутия. Еженедельный дайджест новостей газификации",
-          preview:
-            "Главные новости АО «Сахатранснефтегаз» за неделю с 9 по 15 мая – в еженедельном дайджесте газификации. ",
-          detail: "Lorem2",
-          id: 2,
-          date: "16.05.2022",
-        },
-        {
-          name: "Якутия. Еженедельный дайджест новостей газификации",
-          image:
-            "https://studio.everypixel.com/ru/blog/wp-content/uploads/2015/03/Funny-Stock-Unfinished-Business-6.jpg",
-
-          preview:
-            "Главные новости АО «Сахатранснефтегаз» за неделю с 9 по 15 мая – в еженедельном дайджесте газификации. ",
-          detail: "Lorem3",
-          id: 3,
-          date: "16.05.2022",
-        },
-      ],
+      list: [],
+      page: 0,
+      loading: false,
     };
   },
-  setup() {
-    const router = useRouter();
-    const { news } = storeToRefs(useNewsStore());
-    const { fetchNews } = useNewsStore();
-    let list = ref([]);
-    let loading = ref(false);
-    let page = 0;
-
-    function fetchMoreNews(e) {
-      page = page + 1;
-      loading.value = true;
-      fetchNews(page).then(() => {
-        loading.value = false;
-        for (let index = 0; index < news.value.data.length; index++) {
-          const element = news.value.data[index];
-          list.value.push(element);
+  methods: {
+    ...mapActions(useNewsStore, ["fetchNews"]),
+    fetchMoreNews(e) {
+      this.$data.page = this.$data.page + 1;
+      this.$data.loading = true;
+      this.fetchNews(this.$data.page).then(() => {
+        this.$data.loading = false;
+        for (let index = 0; index < this.news?.length; index++) {
+          const element = this.news[index];
+          this.$data.list.push(element);
         }
         e?.target?.complete();
       });
-    }
-
-    onIonViewWillEnter(() => {
-      fetchMoreNews();
-    });
-    
+    },
+  },
+  computed: {
+    news() {
+      return this.$pinia.state.value?.news?.news?.data;
+    },
+  },
+  mounted() {
+    this.fetchMoreNews();
+  },
+  setup() {
+    const router = useRouter();
 
     return {
-      loading,
-      list,
       router,
-      fetchMoreNews,
       airplaneOutline,
     };
   },
-
-  methods: {},
   components: {
     IonPage,
     IonContent,

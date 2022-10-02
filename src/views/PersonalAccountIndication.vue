@@ -36,7 +36,7 @@
           <layout-box>
             <template v-slot:content>
               <ion-text>
-                <p class="title ion-text-start">Счетчик №{{ el?.name }}</p>
+                <p class="title ion-text-start">Счетчик {{ el?.name }}</p>
               </ion-text>
               <ion-row>
                 <ion-col size="2" size-sm>№</ion-col>
@@ -48,12 +48,20 @@
                 v-for="(indice, index) in el?.indications"
                 :key="indice"
               >
-                <ion-row>
+                <ion-row
+                  :class="{
+                    'ion-row-last':
+                      el?.indications[el?.indications?.length - 1]?.date ===
+                      indice?.date,
+                  }"
+                >
                   <ion-col class="sub-title" size="2" size-sm
                     >{{ index + 1 }}.</ion-col
                   >
 
-                  <ion-col class="text-end">{{ indice?.date }}</ion-col>
+                  <ion-col class="text-end">{{
+                    indice?.date.substring(0, 10)
+                  }}</ion-col>
                   <ion-col class="text-end">{{ indice?.indication }}</ion-col>
                 </ion-row>
 
@@ -91,23 +99,27 @@
                   >Введите показания счетчика</ion-text
                 >
               </div>
+              {{ el.response }}
+              <ion-text v-show="el.response === 'Заполните поле'">
+                <p class="ion-text-start error">
+                  {{ el.response }}
+                </p>
+              </ion-text>
+              <ion-text v-show="el.response">
+                <p class="ion-text-center">
+                  {{ el.response }}
+                </p>
+              </ion-text>
               <Button
-                :loading="el.loading"
+                v-model="el.loading"
+                :loading="el.loading !== true ? false : el.loading"
                 :name="'Подтвердить'"
                 @click="
                   () => {
-                    el.loading = true;
-                    setIndicesHandler(el.id, el.value).then(
-                      () => (el.loading = false)
-                    );
+                    setIndicesHandler(el.id, el.value, el.loading, el.response);
                   }
                 "
               />
-              <ion-text>
-                <p class="ion-text-center">
-                  {{ setIndicesMessage }}
-                </p>
-              </ion-text>
             </template>
           </layout-box>
         </div>
@@ -131,9 +143,14 @@
                 :changeHandler="changeIndication"
                 :name="'Введите показания счетчика'"
               />
-              <ion-text v-if="error">
+              <ion-text v-show="error">
                 <p class="ion-text-start error">
                   {{ error }}
+                </p>
+              </ion-text>
+              <ion-text v-show="response">
+                <p class="ion-text-center">
+                  {{ response }}
                 </p>
               </ion-text>
               <Button
@@ -142,7 +159,12 @@
                 @click="
                   () => {
                     if (counterId?.length !== 0) {
-                      setIndicesHandler(counterId, indication);
+                      setIndicesHandler(
+                        counterId,
+                        indication,
+                        loading,
+                        response
+                      );
                     } else {
                       error = 'Заполните все поля';
                     }
@@ -198,19 +220,30 @@ export default defineComponent({
       counterId: "",
       error: "",
       loading: false,
+      response: "",
     };
   },
   methods: {
     ...mapActions(usePersonalAccountStore, ["getIndices", "setIndices"]),
-    setIndicesHandler(counterId, indice) {
-      // this.$data.loading = true;
-
-      if (indice?.length !== 0) {
+    async setIndicesHandler(counterId, indice, loading, response) {
+      
+      if (
+        (indice !== undefined || indice?.length >= 0) &&
+        loading === undefined &&
+        response === undefined
+      ) {
+        this.$data.loading = true;
         const setIndices = new Promise((resolve) => {
           resolve(this.setIndices(counterId, indice));
         });
-        setIndices;
+        setIndices.then(() => {
+          response =
+            this.$pinia.state.value?.personalAccount?.setIndicesResponse
+              ?.message;
+          loading = false;
+        });
       } else {
+        response = "Заполните поле";
         this.$data.error = "Заполните поле";
       }
     },
@@ -233,7 +266,6 @@ export default defineComponent({
     },
     lcList() {
       return this.$pinia.state.value?.personalAccount?.personalItemData;
-      // return this.$route.params;
     },
     setIndicesMessage() {
       return this.$pinia.state.value?.personalAccount?.setIndicesResponse?.data
@@ -241,18 +273,11 @@ export default defineComponent({
     },
   },
   mounted() {
-    for (
-      let index = 0;
-      index < this.lcList?.counters?.length;
-      // index < JSON.parse(this.$route.params.counters).length;
-      index++
-    ) {
+    for (let index = 0; index < this.lcList?.counters?.length; index++) {
       const element = this.lcList?.counters[index];
 
-      // const element = JSON.parse(this.$route.params.counters)[index];
       this.getIndices(element.counterId);
     }
-    // console.log(this.lcList,'tesssss', this.$pinia.state.value?.personalAccount?.personalItemData)
   },
   names: "personalAccauntIndication",
   components: {
@@ -273,11 +298,11 @@ export default defineComponent({
 
 <style scoped>
 ion-row {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   border-bottom: solid 1px #e0e0e0;
 }
-ion-row:last-child {
+.ion-row-last {
   border-bottom: none;
 }
 ion-col {

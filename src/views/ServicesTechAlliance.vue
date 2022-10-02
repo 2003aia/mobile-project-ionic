@@ -2,13 +2,12 @@
   <ion-page>
     <Back :btnSrc="() => router.push('/tabs/services')" />
     <Layout
-      btnSrc="/tabs/servicesTechAllianceChoose"
       :method="storageHandler"
       height="false"
       filledBtn="Далее"
       outlineBtn="."
       title="Онлайн-заявка на технологическое подключение"
-    >
+      ><!--       btnSrc="/tabs/servicesTechAllianceChoose" -->
       <template v-slot:header-content>
         <ion-text>
           <p class="text-20-600">Общие сведения заявления</p>
@@ -28,7 +27,17 @@
                 :type="el.type"
                 class="input"
                 placeholder=" "
+                v-mask="el.mask"
                 v-model="el.value"
+                v-if="el.mask"
+              />
+              <input
+                ref="text"
+                :type="el.type"
+                class="input"
+                placeholder=" "
+                v-model="el.value"
+                v-else
               />
               <ion-text class="input-text" @click="onFocusText(index)"
                 >{{ el.name
@@ -36,6 +45,9 @@
                   >*</ion-text
                 ></ion-text
               >
+              <ion-text v-show="el.value.length === 0 && el.error">
+                <p class="error">Заполните поле</p>
+              </ion-text>
             </div>
           </div>
         </ion-text>
@@ -59,6 +71,16 @@
                   class="input"
                   placeholder=" "
                   v-model="el.value"
+                  v-mask="el.mask"
+                  v-if="el.mask"
+                />
+                <input
+                  ref="text2"
+                  :type="el.type"
+                  class="input"
+                  placeholder=" "
+                  v-model="el.value"
+                  v-else
                 />
                 <ion-text class="input-text" @click="onFocusText2(index)"
                   >{{ el.name
@@ -66,6 +88,9 @@
                     >*</ion-text
                   ></ion-text
                 >
+                <ion-text v-show="el.value.length === 0 && el.error">
+                  <p class="error">Заполните поле</p>
+                </ion-text>
               </div>
             </div>
           </template>
@@ -82,11 +107,27 @@
                 Наименование объекта капитального строительства
               </p>
             </ion-text>
-
-            <InputCheckbox name="Жилой дом" />
-            <InputCheckbox name="Гараж" />
-            <InputCheckbox name="Баня" />
-            <InputCheckbox name="Другое" />
+            <div v-for="el in formGasName" :key="el">
+              <ion-item class="check">
+                <input
+                  @click="
+                    (e) => {
+                      uniqueCheck(e);
+                    }
+                  "
+                  :value="el.name"
+                  v-model="gasHome"
+                  @change="uniqueCheck"
+                  class="check2"
+                  type="checkbox"
+                  slot="start"
+                />
+                {{ el.name }}
+              </ion-item>
+            </div>
+            <ion-text v-show="gasHome?.error === true">
+              <p class="error">Выберите вариант</p>
+            </ion-text>
 
             <ion-text>
               <p class="sub-title">
@@ -98,6 +139,11 @@
               :changeHandler="changeAddress"
               :name="'Введите данные '"
             />
+            <ion-text
+              v-show="validation.address === true && address.length === 0"
+            >
+              <p class="error">Заполните поле</p>
+            </ion-text>
             <ion-text>
               <p class="sub-title">
                 Подключение в случаях (выбрать один из следующих вариантов)
@@ -112,7 +158,11 @@
                     params: { connection: true },
                   })
               "
-              :name="'Выберите вариант'"
+              :name="
+                this.select?.GAS_SLUCHI?.VALUE
+                  ? this.select?.GAS_SLUCHI?.VALUE
+                  : 'Выберите вариант'
+              "
             />
             <ion-text>
               <p class="sub-title">
@@ -128,8 +178,21 @@
                     params: { connection: false },
                   })
               "
-              :name="'Выберите вариант'"
+              :name="
+                this.select?.GAS_HARAKTER?.VALUE
+                  ? this.select?.GAS_HARAKTER?.VALUE
+                  : 'Выберите вариант'
+              "
             />
+            <ion-text
+              v-show="
+                validation.select === true &&
+                this.select?.GAS_HARAKTER?.VALUE === undefined &&
+                this.select?.GAS_SLUCHI?.VALUE === undefined
+              "
+            >
+              <p class="error">Заполните поля</p>
+            </ion-text>
             <ion-text>
               <p class="sub-title">
                 Сроки проектирования, строительства и ввода в эксплуатацию
@@ -143,6 +206,11 @@
               :changeHandler="changeDeadlines"
               :name="'Введите данные'"
             />
+            <ion-text
+              v-show="validation.deadlines === true && deadlines.length === 0"
+            >
+              <p class="error">Заполните поле</p>
+            </ion-text>
           </template>
         </LayoutBox>
       </template>
@@ -150,42 +218,38 @@
   </ion-page>
 </template>
 
-
 <script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText } from "@ionic/vue";
+import { IonPage, IonText, IonItem } from "@ionic/vue";
 import Input from "../components/Input.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Back from "../components/Back.vue";
-import InputCheckbox from "../components/InputCheckbox.vue";
 import ButtonSelect from "../components/ButtonSelect.vue";
 import { mapActions } from "pinia";
 import { useServicesStore } from "../stores/services";
-import { Storage } from "@ionic/storage";/* 
-<?if ($arItem["LINK"] == 'jur'):?>
-			<li class="header__site-section"><a href="https://aostng.ru/"><?=$arItem["TEXT"]?></a></li>
-	<?else:?> 
-  
-  //content
+import { Storage } from "@ionic/storage";
+import moment from "moment";
+import { mask } from "vue-the-mask";
 
-<?endif?>
-  */
 export default defineComponent({
   name: "servicesTechAlliance",
   components: {
     IonPage,
     Layout,
-    InputCheckbox,
     IonText,
     Input,
     Back,
     ButtonSelect,
     LayoutBox,
+    IonItem,
   },
+
+  directives: { mask },
+
   computed: {
-    test() {
+    formFields() {
       return this.$pinia.state.value?.services?.formResponse?.result?.forms.filter(
         (el) => {
           return (
@@ -196,6 +260,9 @@ export default defineComponent({
         }
       );
     },
+    select() {
+      return this.$pinia.state.value?.services?.select;
+    },
   },
   methods: {
     ...mapActions(useServicesStore, ["getForms"]),
@@ -203,52 +270,116 @@ export default defineComponent({
       const store = new Storage();
       await store.create();
       let formPass = {};
-      for (let index = 0; index < this.$data.formPass.length; index++) {
-        const element = this.$data.formPass[index];
-        formPass[element.field] = { NAME: element.name, VALUE: element.value };
-      }
+      let checkUser = this.$data.formUser.filter((el) => {
+        if (el.required === true) {
+          el.error = true;
+          return el.value === "";
+        }
+      });
+      let checkPass = this.$data.formPass.filter((el) => {
+        if (el.required === true) {
+          el.error = true;
+          return el.value === "";
+        }
+      });
+      let checkGasHome =
+        this.$data.gasHome.length === 0
+          ? (this.$data.gasHome = { error: true })
+          : null;
 
-      let formUser = {
-        ...this.test[0],
-        ...formPass,
-        // ...this.$pinia.state.value?.services?.form[0],
+      let checkRest = () => {
+        if (this.$data.address.length === 0) {
+          this.$data.validation.address = true;
+        } else {
+          this.$data.validation.address = false;
+        }
+        if (this.$data.deadlines.length === 0) {
+          this.$data.validation.deadlines = true;
+        } else {
+          this.$data.validation.deadlines = false;
+        }
+        if (
+          this.select?.GAS_SLUCHI?.VALUE === undefined &&
+          this.select?.GAS_HARAKTER?.VALUE === undefined
+        ) {
+          this.$data.validation.select = true;
+        } else {
+          this.$data.validation.select = false;
+        }
       };
-      for (let index = 0; index < this.$data.formUser.length; index++) {
-        const element = this.$data.formUser[index];
-        formUser[element.field] = { NAME: element.name, VALUE: element.value };
-      }
+      checkRest();
 
-      let userObject = {
-        ...formUser,
+      if (
+        checkUser.length === 0 &&
+        checkPass.length === 0 &&
+        checkGasHome === null &&
+        Object.keys(this.$data.validation).every(
+          (k) => !this.$data.validation[k]
+        )
+      ) {
+        for (let index = 0; index < this.$data.formPass.length; index++) {
+          const element = this.$data.formPass[index];
+          formPass[element.field] = {
+            NAME: element.name,
+            VALUE: element.value,
+          };
+        }
 
-        GAS_ADDRESS: { NAME: "Адрес объекта", VALUE: this.$data.address },
-        GAS__SROK: {
-          NAME: "Сроки проектирования, строительства и ввода в эксплуатацию объекта капитального строительства (в том числе по этапам и очередям)*",
-          VALUE: this.$data.deadlines,
-        },
-        GAS_SLUCHI: {
-          NAME: "Подключение в случаях (выбрать один из следующих вариантов)",
-          VALUE: this.$pinia.state.value?.services?.select[0]?.GAS_SLUCHI
-            ? this.$pinia.state.value?.services?.select[0]?.GAS_SLUCHI.VALUE
-            : this.$pinia.state.value?.services?.select[1]?.GAS_SLUCHI?.VALUE,
-        },
-        GAS_HARAKTER: {
-          NAME: "Характер потребления газа",
-          VALUE: this.$pinia.state.value?.services?.select[0]?.GAS_HARAKTER
-            ? this.$pinia.state.value?.services?.select[0]?.GAS_HARAKTER?.VALUE
-            : this.$pinia.state.value?.services?.select[1]?.GAS_HARAKTER?.VALUE,
-        },
-      };
-      if (this.$pinia.state.value?.services?.form) {
-        this.$pinia.state.value?.services?.form?.push(userObject);
+        let formUser = {
+          ...this.formFields[0],
+          ...formPass,
+          // ...this.$pinia.state.value?.services?.form[0],
+        };
+        for (let index = 0; index < this.$data.formUser.length; index++) {
+          const element = this.$data.formUser[index];
+          formUser[element.field] = {
+            NAME: element.name,
+            VALUE: element.value,
+          };
+        }
+
+        let userObject = {
+          ...formUser,
+          DATE_CREATE: {
+            NAME: "Дата создания",
+            VALUE: `${moment().format("DD.MM.YYYY hh:mm:ss")} `,
+          },
+          TIMESTAMP_X: {
+            NAME: "Время последнего изменения",
+            VALUE: `${moment().format("DD.MM.YYYY hh:mm:ss")} `,
+          },
+          USER: { NAME: "USER", VALUE: "", VALUE_ID: 0 },
+          GAS_ADDRESS: { NAME: "Адрес объекта", VALUE: this.$data.address },
+          GAS__SROK: {
+            NAME: "Сроки проектирования, строительства и ввода в эксплуатацию объекта капитального строительства (в том числе по этапам и очередям)*",
+            VALUE: this.$data.deadlines,
+          },
+          GAS_SLUCHI: {
+            NAME: "Подключение в случаях (выбрать один из следующих вариантов)",
+            VALUE: this.select?.GAS_SLUCHI.VALUE,
+          },
+          GAS_HARAKTER: {
+            NAME: "Характер потребления газа",
+            VALUE: this.select?.GAS_HARAKTER.VALUE,
+          },
+          GAS_HOME: {
+            NAME: "Наименование объекта капитального строительства",
+            VALUE: this.$data.gasHome[0],
+          },
+        };
+        if (this.$pinia.state.value?.services?.form) {
+          this.$pinia.state.value?.services?.form?.push(userObject);
+          await store.set("servicesTechAlliance", JSON.stringify(userObject));
+        }
+        this.$router.push("/tabs/servicesTechAllianceChoose");
       }
-      // let test = JSON.parse(this.$pinia.state.value?.services?.form)
-      console.log(
-        "tessss",
-        userObject,
-        this.$pinia.state.value?.services?.select
-      );
-      await store.set("servicesTechAlliance", JSON.stringify(userObject));
+    },
+    async uniqueCheck(e) {
+      console.log(e.currentTarget.value, "test");
+      this.$data.gasHome = [];
+      if (e.currentTarget.checked === false) {
+        this.$data.gasHome.push(e.currentTarget.value);
+      }
     },
     onFocusText(index) {
       this.$refs.text[index].focus();
@@ -271,36 +402,39 @@ export default defineComponent({
       const servicesTechAlliance = await store.get("servicesTechAlliance");
       console.log(JSON.parse(servicesTechAlliance), "servicesTechAlliance");
     };
-    console.log(this.form, "choosetest");
     fetchStoreHandler();
-    console.log("test", this.test);
+    console.log("test", this.formFields);
   },
   data() {
     return {
+      validation: {
+        address: false,
+        deadlines: false,
+        select: false,
+      },
       formGasName: [
         {
           name: "Жилой дом",
-          value: "Жилой дом",
         },
         {
           name: "Гараж",
-          value: "Гараж",
         },
         {
           name: "Баня",
-          value: "Баня",
         },
         {
           name: "Другое",
-          value: "Другое",
         },
       ],
       address: "",
       deadlines: "",
+      gasHome: [],
       formPass: [
         {
           field: "USER_PASSPORT_SERIAL",
           name: "Серия паспорта",
+          mask: "####",
+
           type: "text",
           required: true,
           value: "",
@@ -309,6 +443,7 @@ export default defineComponent({
           field: "USER_PASSPORT_NUM",
           type: "text",
           name: "Номер паспорта",
+          mask: "######",
 
           required: true,
           value: "",
@@ -323,6 +458,7 @@ export default defineComponent({
         },
         {
           field: "USER_PASS_DATE",
+          mask: "##.##.####",
 
           name: "Дата выдачи паспорта",
           type: "text",
@@ -345,9 +481,11 @@ export default defineComponent({
           type: "text",
           required: true,
           value: "",
+          mask: null,
         },
         {
           field: "USER_LAST_NAME",
+          mask: null,
 
           name: "Фамилия",
           type: "text",
@@ -356,6 +494,7 @@ export default defineComponent({
         },
         {
           field: "USER_SECOND_NAME",
+          mask: null,
 
           name: "Отчество",
           type: "text",
@@ -364,7 +503,7 @@ export default defineComponent({
         },
         {
           field: "USER_BIRTHDATE",
-
+          mask: "##.##.####",
           name: "Дата рождения",
           type: "text",
           required: true,
@@ -372,6 +511,7 @@ export default defineComponent({
         },
         {
           field: "USER_BIRTHPLACE",
+          mask: null,
 
           name: "Место рождения",
           type: "text",
@@ -380,6 +520,7 @@ export default defineComponent({
         },
         {
           field: "USER_ADDRESS",
+          mask: null,
 
           name: "Место жительства",
           type: "text",
@@ -388,6 +529,7 @@ export default defineComponent({
         },
         {
           field: "USER_PHONE",
+          mask: "+7 (###) ###-##-##",
 
           name: "Контактный телефон",
           type: "text",
@@ -396,6 +538,7 @@ export default defineComponent({
         },
         {
           field: "USER_PHONE_2",
+          mask: null,
 
           name: "Дополнительный контактный номер",
           type: "text",
@@ -404,6 +547,7 @@ export default defineComponent({
         },
         {
           field: "USER_EMAIL",
+          mask: null,
 
           name: "E-mail",
           type: "text",
