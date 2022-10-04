@@ -3,14 +3,7 @@
     <Back />
     <Layout
       :method="
-        storageHandler
-        /*  () => {
-          if (sent === false) {
-            sent = true;
-          } else {
-            router.push('/tabs/services');
-          }
-        } */
+        sent === false ? storageHandler : () => router.push('/tabs/services')
       "
       :loading="loading"
       height="false"
@@ -142,13 +135,18 @@ export default defineComponent({
           };
         }
         let userObject = {
-          ...this.$pinia.state.value?.services?.form[1],
+          ...this.$pinia.state.value?.services?.form,
           ...formFiles,
         };
         this.$data.loading = true;
         this.services(userObject).then(() => {
           this.$data.sent = true;
           this.$data.loading = false;
+          if (
+            this.$pinia.state.value?.services?.servicesResponse?.error === true
+          )
+            this.$data.sent = false;
+
           console.log(
             userObject,
             "test",
@@ -157,7 +155,7 @@ export default defineComponent({
         });
 
         if (this.$pinia.state.value?.services?.form) {
-          this.$pinia.state.value?.services?.form?.push(userObject);
+          this.$pinia.state.value.services.form = userObject;
         }
       }
     },

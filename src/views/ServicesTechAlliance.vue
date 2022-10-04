@@ -368,7 +368,7 @@ export default defineComponent({
           },
         };
         if (this.$pinia.state.value?.services?.form) {
-          this.$pinia.state.value?.services?.form?.push(userObject);
+          this.$pinia.state.value.services.form = userObject
           await store.set("servicesTechAlliance", JSON.stringify(userObject));
         }
         this.$router.push("/tabs/servicesTechAllianceChoose");

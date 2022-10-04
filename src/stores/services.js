@@ -11,7 +11,7 @@ export const useServicesStore = defineStore({
     callInspectorError: null,
     servicesResponse: null,
     servicesResponseError: null,
-    form: [],
+    form: {},
     select: {
       GAS_SLUCHI: null,
       GAS_HARAKTER: null,

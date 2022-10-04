@@ -9,17 +9,18 @@
           }
         }
       "
-    />
-    <Layout
-      :method="
-        () => {
+    /><!-- () => {
           if (sent === false) {
             sent = true;
           } else {
             router.push('/tabs/services');
           }
-        }
+        } -->
+    <Layout
+      :method="
+        sent === false ? storageHandler : () => router.push('/tabs/services')
       "
+      :loading="loading"
       height="false"
       :filledBtn="sent === false ? 'Далее' : 'Готово'"
       outlineBtn="."
@@ -47,13 +48,45 @@
           <ion-list v-for="el in data" :key="el.text">
             <ion-text>
               <p class="text">
-                {{ el.text }}
+                {{ el.text
+                }}<ion-text class="blue" v-show="el.required">*</ion-text>
               </p>
             </ion-text>
-            <InputFile name="0" />
+            <ion-item lines="none" v-show="el?.value">
+              <ion-text class="file-text blue">
+                <!-- {{ el?.value?.name }} -->
+                {{ el.value?.name }}
+              </ion-text>
+              <ion-icon
+                @click="() => (el.value = null)"
+                class="history-icon"
+                slot="end"
+                :icon="trashOutline"
+              />
+            </ion-item>
+            <ion-text v-show="el.error === true && el.value == null">
+              <p class="error">Выберите файл</p>
+            </ion-text>
+            <InputFile
+              :accept="'image/jpeg, application/pdf, .zip, image/png,'"
+              name="0"
+              :changeHandler="(e) => el.fn(e)"
+            />
           </ion-list>
+          <ion-text
+            v-show="
+              this.$pinia.state.value?.services?.servicesResponse?.error ===
+              true
+            "
+          >
+            <p class="error">Что то пошло не так</p>
+          </ion-text>
         </div>
-        <div v-if="sent === true">
+        <div
+          v-if="
+            this.$pinia.state.value?.services?.servicesResponse?.error === false
+          "
+        >
           <ion-text>
             <p class="title ion-text-start">Спасибо!</p>
             <p>
@@ -69,15 +102,16 @@
   </ion-page>
 </template>
 
-
 <script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonItem, IonList } from "@ionic/vue";
+import { IonPage, IonText, IonItem, IonList, IonIcon } from "@ionic/vue";
 import Back from "../components/Back.vue";
-import { caretDownSharp } from "ionicons/icons";
+import { caretDownSharp, trashOutline } from "ionicons/icons";
 import InputFile from "../components/InputFile.vue";
+import { mapActions } from "pinia";
+import { useServicesStore } from "../stores/services";
 
 export default defineComponent({
   name: "servicesRequestFiles",
@@ -88,40 +122,103 @@ export default defineComponent({
     IonText,
     InputFile,
     Back,
+    IonIcon,
     IonItem,
+  },
+  methods: {
+    ...mapActions(useServicesStore, ["services"]),
+    async storageHandler() {
+      let check = this.$data.data.filter((el) => {
+        if (el.required === true) {
+          el.error = true;
+          return el.value === null;
+        }
+      });
+      if (check.length === 0) {
+        let formFiles = {};
+        for (let index = 0; index < this.$data.data.length; index++) {
+          const element = this.$data.data[index];
+          formFiles[element.field] = {
+            NAME: element.text,
+            VALUE: element.value,
+          };
+        }
+        let userObject = {
+          ...this.$pinia.state.value?.services?.form,
+          ...formFiles,
+        };
+        this.$data.loading = true;
+        this.services(userObject).then(() => {
+          this.$data.sent = true;
+          this.$data.loading = false;
+          if (
+            this.$pinia.state.value?.services?.servicesResponse?.error === true
+          ) {
+            this.$data.sent = false;
+          }
+          console.log(
+            userObject,
+            "test",
+            this.$pinia.state.value?.services?.servicesResponse
+          );
+        });
+
+        if (this.$pinia.state.value?.services?.form) {
+          this.$pinia.state.value.services.form = userObject;
+        }
+      }
+    },
   },
   data() {
     return {
+      loading: false,
       sent: false,
+
       data: [
         {
+          field: "FILE_C_3",
+          value: null,
+          required: false,
           text: "Топографическая карта участка в масштабе 1 к 500 (не прилагается, если заказчик - физическое лицо, осуществляющее создание (реконструкцию) объекта индивидуального жилищного строительства)",
           fn: function (e) {
-            console.log("files", e);
+            this.value = e.target.files[0];
           },
         },
         {
-          text: "Копия документа, подтверждающего право собственности или иное предусмотренное законом основание на домовладение *",
+          required: true,
+          field: "FILE_C_9",
+          value: null,
+          text: "Копия документа, подтверждающего право собственности или иное предусмотренное законом основание на домовладение",
           fn: function (e) {
-            console.log("files", e);
+            this.value = e.target.files[0];
           },
         },
         {
-          text: "Копия документа, подтверждающего право собственности или иное предусмотренное законом основание на земельный участок, на котором расположено домовладение заявителя *",
+          required: true,
+          field: "FILE_C_10",
+          value: null,
+          text: "Копия документа, подтверждающего право собственности или иное предусмотренное законом основание на земельный участок, на котором расположено домовладение заявителя",
           fn: function (e) {
-            console.log("files", e);
+            this.value = e.target.files[0];
           },
         },
         {
-          text: "Ситуационный план расположения земельного участка с привязкой к территории населенного пункта (формат А4) *",
+          value: null,
+          field: "FILE_C2_2",
+          required: true,
+          text: "Ситуационный план расположения земельного участка с привязкой к территории населенного пункта (формат А4)",
           fn: function (e) {
-            console.log("files", e);
+            this.value = e.target.files[0];
           },
         },
         {
+          field: "FILE_C2_14_1",
+          value: null,
+          required: false,
+
           text: `Доверенность или иные документы, подтверждающие полномочия представителя заявителя (в случае если заявка о подключении (технологическом присоединении) подается представителем заявителя)`,
           fn: function (e) {
-            console.log("files", e);
+            this.value = e.target.files[0];
           },
         },
       ],
@@ -129,7 +226,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    return { router, caretDownSharp };
+    return { router, caretDownSharp, trashOutline };
   },
 });
 </script>
@@ -138,5 +235,9 @@ export default defineComponent({
 .text {
   margin-bottom: 10px;
   margin-top: 5px;
+}
+
+.file-text {
+  word-break: break-all;
 }
 </style>

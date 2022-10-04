@@ -127,9 +127,9 @@ export default defineComponent({
         errorText.value = "Заполните поля!";
       } else {
         loading.value = true;
-        if (myModel[0] !== 7) {
+       /*  if (myModel[0] !== 7) {
           myModel = "7" + myModel;
-        }
+        } */
         authUser(myModel, password.value)
           .then(async () => {
             loading.value = false;

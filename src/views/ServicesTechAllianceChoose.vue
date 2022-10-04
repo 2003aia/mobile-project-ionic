@@ -84,7 +84,7 @@
                 </p>
               </ion-text>
               <ion-item lines="none" v-show="file?.name">
-                <ion-text>
+                <ion-text class="blue">
                   {{ file?.name }}
                 </ion-text>
                 <ion-icon
@@ -242,10 +242,10 @@ export default defineComponent({
         this.$data.validation.big === false
           ? null
           : false;
-console.log(check2, check3,this.$data.validation)
+      console.log(check2, check3, this.$data.validation);
       if (check2 == null || check3 == null) {
         let userObject = {
-          ...this.formFields[0],
+          ...this.formFields,
           FORM_TEMPLATE_MAX: {
             NAME: "Планируемая величина максимального  часового расхода газа: ",
             VALUE: this.$data.big,
@@ -272,11 +272,10 @@ console.log(check2, check3,this.$data.validation)
         };
 
         if (this.$pinia.state.value?.services?.form) {
-          this.$pinia.state.value?.services?.form?.push(
+          this.$pinia.state.value.services.form =
             this.$refs.gasAccordion.$el.value === "first"
               ? userObject2
-              : userObject
-          );
+              : userObject;
         }
         console.log(userObject, "tests");
         this.$router.push("/tabs/servicesTechAllianceFiles");
