@@ -40,11 +40,11 @@
             Номер телефона</ion-label
           ></ion-item
         >
-        <div class="input" v-if="route.params?.edit === 'true'">
+        <div class="input-container" v-if="route.params?.edit === 'true'">
           <ion-text class="sub-title sub-margin">Введите код</ion-text>
           <Input :code="code" @change="codeChange" name="Введите код" />
         </div>
-        <div class="input">
+        <div class="input-container">
           <ion-text class="sub-title sub-margin">Новый пароль</ion-text>
           <Input
             :value="password"
@@ -52,7 +52,7 @@
             name="Новый пароль"
           />
         </div>
-        <div class="input">
+        <div class="input-container">
           <ion-text class="sub-title sub-margin"
             >Повторите новый пароль</ion-text
           >
@@ -200,47 +200,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* 
-.background {
-  height: 100%;
-}
-
-.container {
-  padding: 15px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-color: #f5f5f5;
-} */
-.header {
-  padding: 15px;
-  padding-top: 84px;
-  padding-bottom: 56px;
-  background: linear-gradient(327.65deg, #0378b4 -6.98%, #7ae6e4 119.27%);
-}
-.main {
-  background: #ffffff;
-  padding: 15px;
-  border-radius: 15px;
-  position: relative;
-  top: -50px;
-  left: 0;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-ion-item {
-  --padding-start: 0px;
-}
-
-.button {
-  margin-top: -30px;
-}
 
 .sub-margin {
   margin-bottom: 15px;
 }
-.input {
+.input-container {
   display: flex;
   flex-direction: column;
 }

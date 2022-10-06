@@ -24,32 +24,63 @@
         </ion-text>
 
         <div v-for="(el, index) in formUser" :key="el">
-          <div class="input-wrapper">
-            <input
-              ref="text"
-              :type="el.type"
-              class="input"
-              placeholder=" "
-              v-model="el.value"
-              v-mask="el.mask"
-              v-if="el.mask"
-            />
-            <input
-              ref="text"
-              :type="el.type"
-              class="input"
-              placeholder=" "
-              v-model="el.value"
-              v-else
-            />
-            <ion-text class="input-text" @click="onFocusText(index)"
-              >{{ el.name
-              }}<ion-text v-if="el.required" class="dot">*</ion-text></ion-text
-            >
-            <ion-text v-show="el.value.length === 0 && el.error">
-              <p class="error">Заполните поле</p>
-            </ion-text>
-          </div>
+          <ion-accordion-group ref="addressQuery">
+            <ion-accordion value="first" :toggle-icon="caretDownSharp">
+              <Input
+                :mask="el.mask"
+                slot="header"
+                :value="el.value"
+                :name="el.name"
+                :required="el.required"
+                @input="
+                  (e) => {
+                    el.value = e.target.value;
+                    addressQueryHandler(e, el.field);
+                  }
+                "
+              />
+              <div
+                slot="content"
+                v-show="
+                  el.field === 'USER_BIRTHPLACE' ||
+                  (el.field === 'USER_ADDRESS' && el.value)
+                "
+              >
+                <div
+                  v-show="
+                    el.field === 'USER_BIRTHPLACE' ||
+                    ('USER_ADDRESS' && el.value)
+                  "
+                  v-for="address in addressList"
+                  :key="address"
+                >
+                  <ion-item
+                    button
+                    @click="
+                      () => {
+                        this.$refs.addressQuery[index].$el.value = undefined;
+                        el.value = address.value;
+                      }
+                    "
+                    :lines="
+                      addressList[addressList.length - 1]?.value ===
+                      address.value
+                        ? 'none'
+                        : 'full'
+                    "
+                  >
+                    <ion-text>{{ address.value }}</ion-text>
+                  </ion-item>
+                </div>
+                <ion-item lines="none" v-show="addressList?.length === 0">
+                  <ion-text>Не найдено</ion-text>
+                </ion-item>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+          <ion-text v-show="el.value.length === 0 && el.error">
+            <p class="error">Заполните поле</p>
+          </ion-text>
         </div>
       </template>
 
@@ -64,34 +95,57 @@
               </p>
             </ion-text>
             <div v-for="(el, index) in formPass" :key="el">
-              <div class="input-wrapper">
-                <input
-                  ref="text2"
-                  :type="el.type"
-                  class="input"
-                  placeholder=" "
-                  v-model="el.value"
-                  v-mask="el.mask"
-                  v-if="el.mask"
-                />
-                <input
-                  ref="text2"
-                  :type="el.type"
-                  class="input"
-                  placeholder=" "
-                  v-model="el.value"
-                  v-else
-                />
-                <ion-text class="input-text" @click="onFocusText2(index)"
-                  >{{ el.name
-                  }}<ion-text v-if="el.required" class="dot"
-                    >*</ion-text
-                  ></ion-text
-                >
-                <ion-text v-show="el.value.length === 0 && el.error">
-                  <p class="error">Заполните поле</p>
-                </ion-text>
-              </div>
+              <ion-accordion-group ref="addressQuery2">
+                <ion-accordion value="first">
+                  <Input
+                    :mask="el.mask"
+                    slot="header"
+                    :value="el.value"
+                    :name="el.name"
+                    :required="el.required"
+                    @input="
+                      (e) => {
+                        el.value = e.target.value;
+                        addressQueryHandler(e, el.field);
+                      }
+                    "
+                  />
+
+                  <div
+                    slot="content"
+                    v-show="el.field === 'USER_REGION' && el.value"
+                  >
+                    <div>
+                      <div v-for="address in addressList" :key="address">
+                        <ion-item
+                          button
+                          @click="
+                            () => {
+                              this.$refs.addressQuery2[index].$el.value =
+                                undefined;
+                              el.value = address.value;
+                            }
+                          "
+                          :lines="
+                            addressList[addressList.length - 1]?.value ===
+                            address.value
+                              ? 'none'
+                              : 'full'
+                          "
+                        >
+                          <ion-text>{{ address.value }}</ion-text>
+                        </ion-item>
+                      </div>
+                      <ion-item v-show="addressList?.length === 0" lines="none">
+                        Не найдено
+                      </ion-item>
+                    </div>
+                  </div>
+                </ion-accordion>
+              </ion-accordion-group>
+              <ion-text v-show="el.value.length === 0 && el.error">
+                <p class="error">Заполните поле</p>
+              </ion-text>
             </div>
           </template>
         </LayoutBox>
@@ -108,11 +162,47 @@
               </p>
             </ion-text>
 
-            <Input
-              :value="address"
-              :changeHandler="changeAddress"
-              name="Введите данные  "
-            />
+            <ion-accordion-group ref="addressQuery3">
+              <ion-accordion value="first">
+                <Input
+                  slot="header"
+                  :value="address"
+                  name="Введите данные  "
+                  @input="
+                    (e) => {
+                      changeAddress(e);
+                      addressQueryHandler(e, 'GAS_ADDRESS');
+                    }
+                  "
+                /><!--  :changeHandler="changeAddress" -->
+                <div slot="content" v-show="address">
+                  <div>
+                    <div v-for="addressItem in addressList" :key="addressItem">
+                      <ion-item
+                        button
+                        @click="
+                          () => {
+                            this.$refs.addressQuery3.$el.value = undefined;
+                            address = addressItem.value;
+                          }
+                        "
+                        :lines="
+                          addressList[addressList.length - 1]?.value ===
+                          addressItem.value
+                            ? 'none'
+                            : 'full'
+                        "
+                      >
+                        <ion-text>{{ addressItem.value }}</ion-text>
+                      </ion-item>
+                    </div>
+                    <ion-item v-show="addressList?.length === 0" lines="none">
+                      Не найдено
+                    </ion-item>
+                  </div>
+                </div>
+              </ion-accordion>
+            </ion-accordion-group>
             <ion-text v-show="validation.address === true">
               <p class="error">Заполните поле</p>
             </ion-text>
@@ -141,15 +231,20 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText } from "@ionic/vue";
+import {
+  IonPage,
+  IonText,
+  IonAccordion,
+  IonAccordionGroup,
+  IonItem,
+} from "@ionic/vue";
 import Back from "../components/Back.vue";
-import { documentTextOutline } from "ionicons/icons";
+import { documentTextOutline, caretDownSharp } from "ionicons/icons";
 import Input from "../components/Input.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import { mapActions } from "pinia";
 // import axios from "axios";
 import moment from "moment";
-import { mask } from "vue-the-mask";
 import { Storage } from "@ionic/storage";
 import { useServicesStore } from "../stores/services";
 
@@ -162,11 +257,12 @@ export default defineComponent({
     Layout,
     IonText,
     Back,
+    IonAccordion,
+    IonAccordionGroup,
+    IonItem,
   },
-  directives: { mask },
-
   methods: {
-    ...mapActions(useServicesStore, ["getForms"]),
+    ...mapActions(useServicesStore, ["getForms", "addressQuery"]),
     changeNumber(e) {
       this.$data.number = e.target.value;
     },
@@ -176,8 +272,20 @@ export default defineComponent({
     onFocusText(index) {
       this.$refs.text[index].focus();
     },
+
     onFocusText2(index) {
       this.$refs.text2[index].focus();
+    },
+    addressQueryHandler(v, field) {
+      if (field === "USER_BIRTHPLACE") {
+        this.addressQuery(v.target.value, field);
+      }
+      if (field === "USER_ADDRESS") {
+        this.addressQuery(v.target.value, field);
+      }
+      if (field === "USER_REGION" || field === "GAS_ADDRESS") {
+        this.addressQuery(v.target.value, field);
+      }
     },
     async storageHandler() {
       const store = new Storage();
@@ -259,6 +367,7 @@ export default defineComponent({
             VALUE: this.$data.number,
           },
         };
+        console.log(userObject, "testuserObject");
         if (this.$pinia.state.value?.services?.form) {
           this.$pinia.state.value.services.form = userObject;
           await store.set("servicesTechAlliance", JSON.stringify(userObject));
@@ -275,8 +384,12 @@ export default defineComponent({
         }
       );
     },
+    addressList() {
+      return this.$pinia.state.value?.services?.addressResponse?.suggestions;
+    },
   },
   mounted() {
+    // this.addressQueryHandler()
     this.getForms();
     console.log(
       this.formFields,
@@ -284,9 +397,10 @@ export default defineComponent({
       "testtt222222"
     );
   },
+
   setup() {
     const router = useRouter();
-    return { router, documentTextOutline };
+    return { router, documentTextOutline, caretDownSharp };
   },
   data() {
     return {
@@ -350,7 +464,6 @@ export default defineComponent({
         {
           field: "USER_BIRTHPLACE",
           mask: null,
-
           name: "Место рождения",
           type: "text",
           required: true,
@@ -497,5 +610,11 @@ input:not(:placeholder-shown) + ion-text {
 
 .dot {
   color: #62d0ce;
+}
+
+ion-item {
+  --inner-padding-start: 15px;
+  --inner-padding-bottom: 0px;
+  --padding-bottom: 0px;
 }
 </style>

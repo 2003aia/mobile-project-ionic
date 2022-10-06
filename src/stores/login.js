@@ -2,6 +2,8 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
 
+const apiUrl = "https://api.aostng.ru/api/v2";
+
 export const useLoginStore = defineStore({
   id: "login",
   state: () => ({
@@ -25,7 +27,7 @@ export const useLoginStore = defineStore({
     async registrUser(phone) {
       const store = new Storage();
       await store.create();
-      await store.set('token', JSON.stringify({phone: phone}))
+      await store.set("token", JSON.stringify({ phone: phone }));
       try {
         await axios
           .post(
@@ -48,7 +50,35 @@ export const useLoginStore = defineStore({
             `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Registration`,
             { token: tokenParsed, SMS: sms, password: password }
           )
-          .then((response) => (this.registrResponse2 = response.data));
+          .then(async (response) => {
+            this.registrResponse2 = response.data;
+
+            if (response.data.error === false) {
+              await axios
+                .post(`${apiUrl}/user/create`, {
+                  login: JSON.parse(token).phone,
+                  password: password,
+                })
+                .then(async (res) => {
+                  if (res.data.status === false) {
+                    await axios
+                      .post(`${apiUrl}/user/auth`, {
+                        login: JSON.parse(token).phone,
+                        password: password,
+                      })
+                      .then(async (res2) => {
+                        await store.set("support", {
+                          token: res2.data.data.token,
+                        });
+                      });
+                  } else {
+                    await store.set("support", {
+                      token: res.data.data.token,
+                    });
+                  }
+                });
+            }
+          });
       } catch (error) {
         this.registrError = error;
       }
@@ -69,6 +99,7 @@ export const useLoginStore = defineStore({
     async authUser(phone, password) {
       const store = new Storage();
       await store.create();
+
       try {
         await axios
           .post(
@@ -78,7 +109,34 @@ export const useLoginStore = defineStore({
               password: password,
             }
           )
-          .then((response) => (this.authResponse = response.data));
+          .then(async (response) => {
+            this.authResponse = response.data;
+            if (response.data.error === false) {
+              await axios
+                .post(`${apiUrl}/user/auth`, {
+                  login: phone,
+                  password: password,
+                })
+                .then(async (res) => {
+                  if (res.data.status === false) {
+                    await axios
+                      .post(`${apiUrl}/user/create`, {
+                        login: phone,
+                        password: password,
+                      })
+                      .then(async (res2) => {
+                        await store.set("support", {
+                          token: res2.data.data.token,
+                        });
+                      });
+                  } else {
+                    await store.set("support", {
+                      token: res.data.data.token,
+                    });
+                  }
+                });
+            }
+          });
       } catch (error) {
         this.authError = error;
       }
@@ -87,6 +145,7 @@ export const useLoginStore = defineStore({
       const store = new Storage();
       await store.create();
       const profileData = await store.get("token");
+      const supportToken = await store.get('support')
       try {
         await axios
           .post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
@@ -94,7 +153,16 @@ export const useLoginStore = defineStore({
             password: password,
             name: JSON.parse(profileData).name,
           })
-          .then((response) => (this.changePassResponse = response.data));
+          .then(async (response) => {
+            if (response.data.error === false) {
+              console.log("changepass");
+              await axios.post(`${apiUrl}/user/password/change/`, {
+                token: supportToken.token,
+                password: password
+              });
+            }
+            this.changePassResponse = response.data;
+          });
       } catch (error) {
         this.changePassError = error;
       }

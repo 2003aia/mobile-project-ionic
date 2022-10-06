@@ -39,7 +39,7 @@
           ><p class="title">Выберите удобный вам способ оплаты</p></ion-text
         >
         <layout-box :onClick="sberPayHanler">
-          <template v-slot:content >
+          <template v-slot:content>
             <ion-img :src="require('@/assets/img/Sberpay.png')" />
           </template>
         </layout-box>
@@ -59,7 +59,6 @@
     </ion-content>
   </ion-page>
 </template>
-
 
 <script>
 import { defineComponent } from "vue";
@@ -112,7 +111,8 @@ export default defineComponent({
         this.$data.email,
         JSON.parse(this.$route.params.sberPay).accruals,
         JSON.parse(this.$route.params.sberPay).sumTO,
-        JSON.parse(this.$route.params.sberPay).penalties
+        JSON.parse(this.$route.params.sberPay).penalties,
+        JSON.parse(this.$route.params.sberPay).advances
       );
       this.$data.paySent = true;
     },
@@ -125,7 +125,10 @@ export default defineComponent({
         JSON.parse(this.$route.params.sberPay).sumTO,
         JSON.parse(this.$route.params.sberPay).penalties
       ); */
-        window.open(this.$pinia.state.value?.personalAccount?.sberPayResponse?.link, '_system')
+      window.open(
+        this.$pinia.state.value?.personalAccount?.sberPayResponse?.link,
+        "_system"
+      );
     },
   },
   setup() {

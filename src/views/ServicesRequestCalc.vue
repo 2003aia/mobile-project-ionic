@@ -74,7 +74,7 @@
             :changeHandler="changeArea"
           />
           <ion-text>
-            <p class="input-text">
+            <p class="text">
               Уточнять у заявителя, площадь всех помещений суммарно
             </p>
           </ion-text>
@@ -88,7 +88,7 @@
             :changeHandler="changeHeight"
           />
           <ion-text>
-            <p class="input-text">
+            <p class="text">
               У заявителя высота здания снаружи (без кровли)
             </p>
           </ion-text>
@@ -283,8 +283,8 @@ export default defineComponent({
 .dot {
   color: #62d0ce;
 }
-.input-text {
-  margin-top: -6px;
+.text {
+  margin-top: 2px;
 }
 .input-checkbox {
   margin-top: -10px;

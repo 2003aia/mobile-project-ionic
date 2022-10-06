@@ -260,7 +260,7 @@ export default defineComponent({
           },
         };
         let userObject2 = {
-          ...this.formFields[0],
+          ...this.formFields,
           FORM_TEMPLATE_MAX: {
             NAME: "Планируемая величина максимального  часового расхода газа: ",
             VALUE: this.$data.little,
@@ -277,7 +277,6 @@ export default defineComponent({
               ? userObject2
               : userObject;
         }
-        console.log(userObject, "tests");
         this.$router.push("/tabs/servicesTechAllianceFiles");
         await store.set(
           "servicesTechAlliance",

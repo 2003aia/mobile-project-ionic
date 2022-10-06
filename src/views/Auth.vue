@@ -125,14 +125,17 @@ export default defineComponent({
       let myModel = phone.value.replace(/\D+/g, "");
       if (password.value === "" || phone.value === "") {
         errorText.value = "Заполните поля!";
+
       } else {
         loading.value = true;
        /*  if (myModel[0] !== 7) {
           myModel = "7" + myModel;
         } */
+        console.log(phone.value, 'tests')
         authUser(myModel, password.value)
           .then(async () => {
             loading.value = false;
+             console.log('auth test',authResponse?.value)
             if (authResponse?.value?.error === false) {
               const store = new Storage();
               await store.create();
@@ -144,6 +147,7 @@ export default defineComponent({
                   password: password.value,
                 })
               );
+             
               router.push("/tabs/personalAccounts");
             } else {
               errorText.value = authResponse.value?.message;

@@ -58,6 +58,14 @@
               :accept="'image/jpeg, application/pdf, .zip, image/png,'"
             />
           </ion-list>
+          <ion-text
+            v-show="
+              this.$pinia.state.value?.services?.servicesResponse?.error ===
+              true
+            "
+          >
+            <p class="error">Что-то пошло не так</p>
+          </ion-text>
         </div>
         <div
           v-show="
@@ -109,7 +117,7 @@ export default defineComponent({
     IonIcon,
   },
   methods: {
-    ...mapActions(useServicesStore, ["services"]),
+    ...mapActions(useServicesStore, ["services", "uploadFiles"]),
 
     changeFile(e, el) {
       console.log(e.target.files, "test", el);
@@ -120,6 +128,7 @@ export default defineComponent({
       await store.create();
       // const servicesTechAlliance = await store.get('servicesTechAlliance')
       let formFiles = {};
+      let formFilesEmpty = {};
       let check = this.$data.data.filter((el) => {
         if (el.required === true) {
           el.error = true;
@@ -127,36 +136,88 @@ export default defineComponent({
         }
       });
       if (check.length === 0) {
+        let files = [];
+        const toBase64 = (file) =>
+          new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = () => {
+              resolve(reader.result);
+            };
+            reader.onerror = (error) => reject(error);
+          });
+        let checkf = this.$data.data.filter((el) => {
+          if (el.value === null) {
+            return el;
+          }
+        });
+        for (let index = 0; index < checkf.length; index++) {
+          const element = checkf[index];
+          formFilesEmpty[element.field] = {
+            NAME: element.text,
+            VALUE: element.value,
+          };
+        }
         for (let index = 0; index < this.$data.data.length; index++) {
+          const element = this.$data.data[index];
+          files.push({
+            field: element.field,
+            text: element.text,
+            title: element.value?.name,
+            file:
+              element.value !== null ? await toBase64(element.value) : false,
+          });
+        }
+
+        /* for (let index = 0; index < this.$data.data.length; index++) {
           const element = this.$data.data[index];
           formFiles[element.field] = {
             NAME: element.text,
             VALUE: element.value,
           };
-        }
-        let userObject = {
-          ...this.$pinia.state.value?.services?.form,
-          ...formFiles,
-        };
-        this.$data.loading = true;
-        this.services(userObject).then(() => {
-          this.$data.sent = true;
-          this.$data.loading = false;
-          if (
-            this.$pinia.state.value?.services?.servicesResponse?.error === true
-          )
-            this.$data.sent = false;
+        } */
 
-          console.log(
-            userObject,
-            "test",
-            this.$pinia.state.value?.services?.servicesResponse
-          );
+        this.uploadFiles(files).then(() => {
+          for (
+            let index = 0;
+            index < this.$pinia.state.value?.services?.filesResponse.length;
+            index++
+          ) {
+            const element =
+              this.$pinia.state.value?.services?.filesResponse[index];
+            formFiles[element.field] = {
+              NAME: element.text,
+              VALUE: element.fileId,
+            };
+          }
+
+          let userObject = {
+            ...this.$pinia.state.value?.services?.form,
+            ...formFiles,
+            ...formFilesEmpty,
+          };
+          this.$data.loading = true;
+          this.services(userObject).then(() => {
+            this.$data.sent = true;
+            this.$data.loading = false;
+            if (
+              this.$pinia.state.value?.services?.servicesResponse?.error ===
+              true
+            )
+              this.$data.sent = false;
+
+            console.log(
+              userObject,
+              "test",
+              this.$pinia.state.value?.services?.servicesResponse
+            );
+          });
         });
 
-        if (this.$pinia.state.value?.services?.form) {
+        /*  if (this.$pinia.state.value?.services?.form) {
           this.$pinia.state.value.services.form = userObject;
-        }
+        } */
       }
     },
   },

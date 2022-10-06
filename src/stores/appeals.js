@@ -22,9 +22,12 @@ export const useAppealsStore = defineStore({
         }
     },
     actions: {
-        async getAppealsList(token) {
+        async getAppealsList() {
+            const store = new Storage();
+            await store.create();
+            const token = await store.get('support')
             try {
-                this.appealsListResponse = await axios.post(`https://api.aostng.ru/api/v2/support/list/`, { token: token })
+                this.appealsListResponse = await axios.post(`https://api.aostng.ru/api/v2/support/list/`, { token: token.token })
                     .then((response) => response.data)
 
             } catch (error) {

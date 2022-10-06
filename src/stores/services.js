@@ -15,7 +15,14 @@ export const useServicesStore = defineStore({
     select: {
       GAS_SLUCHI: null,
       GAS_HARAKTER: null,
+      GAS_VID_USLUG: null,
     },
+    addressResponse: null,
+    addressError: null,
+    filesResponse: [],
+    filesResponseError: null,
+    listServicesResponse: null,
+    listServicesResponseError: null,
   }),
   getters: {
     setForm: (state) => {
@@ -23,6 +30,25 @@ export const useServicesStore = defineStore({
     },
   },
   actions: {
+    async getListServices() {
+      console.log("getting listServices");
+      const store = new Storage();
+      await store.create();
+      const token = await store.get("token");
+      const tokenParsed = JSON.parse(token).token;
+      try {
+        await axios
+          .post(
+            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/ListServices`,
+            {
+              token: tokenParsed,
+            }
+          )
+          .then((response) => (this.listServicesResponse = response.data));
+      } catch (error) {
+        this.listServicesResponseError = error;
+      }
+    },
     async getForms() {
       console.log("getting forms");
       try {
@@ -33,6 +59,41 @@ export const useServicesStore = defineStore({
           .then((response) => (this.formResponse = response.data));
       } catch (error) {
         this.formResponseError = error;
+      }
+    },
+    async uploadFiles(files) {
+      console.log("uploading files");
+      const store = new Storage();
+      await store.create();
+      const token = await store.get("token");
+      const tokenParsed = JSON.parse(token).token;
+      try {
+        let check = files.filter((el) => {
+          if (el.file !== false) {
+            return el;
+          }
+        });
+        for (let index = 0; index < check.length; index++) {
+          const element = check[index];
+          await axios
+            .post(
+              `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/get_file`,
+              {
+                token: tokenParsed,
+                title: element.title,
+                file: element.file,
+              }
+            )
+            .then((response) =>
+              this.filesResponse.push({
+                ...response.data,
+                field: element.field,
+                text: element.text,
+              })
+            );
+        }
+      } catch (error) {
+        this.filesResponseError = error;
       }
     },
     async services(forms) {
@@ -94,6 +155,51 @@ export const useServicesStore = defineStore({
           .then((response) => (this.callInspectorResponse = response.data));
       } catch (error) {
         this.callInspectorError = error;
+      }
+    },
+    async addressQuery(query, type) {
+      try {
+        await axios({
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization:
+              "Token " + "f135ebe81ca212b9d61fedadba1e0111159f0d6b",
+          },
+          url: `https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address`,
+          data:
+            type === "USER_REGION" || type === "GAS_ADDRESS"
+              ? JSON.stringify({
+                  query: query,
+                  locations_boost: [{ kladr_id: "4100000100000" }],
+                  count: 5,
+                })
+              : JSON.stringify({
+                  query: query,
+                  count: 5,
+                  restrict_value: false,
+                  locations: [
+                    {
+                      city: "Якутск",
+                    },
+                    {
+                      country: "Узбекистан",
+                    },
+                    {
+                      country: "Таджикистан",
+                    },
+                    {
+                      country: "Киргизия",
+                    },
+                    {
+                      country: "Армения",
+                    },
+                  ],
+                }),
+        }).then((response) => (this.addressResponse = response.data));
+      } catch (error) {
+        this.addressError = error;
       }
     },
   },

@@ -16,7 +16,7 @@
       :title="'Обращение'"
     >
       <template v-slot:main-content>
-        <div v-if="appealsListResponse !== null">
+        <div v-show="appealsListResponse?.data.length !== 0">
           <ion-list v-for="el in appealsListResponse?.data" :key="el.title">
             <div
               class="item"
@@ -36,6 +36,9 @@
             </div>
           </ion-list>
         </div>
+       <!--  <ion-item lines="none" v-show="loading">
+          <ion-spinner name="bubbles"></ion-spinner>
+        </ion-item> -->
         <div
           @click="
             () =>
@@ -44,7 +47,7 @@
                 params: { newAppeal: true },
               })
           "
-          v-else
+          v-show="appealsListResponse?.data.length === 0 && !loading"
         >
           <ion-text class="sub-title ion-text-start"> Обращение </ion-text>
           <ion-item>
@@ -63,12 +66,12 @@
           </ion-item>
         </div>
       </template>
-
       <ion-spinner name="bubbles"></ion-spinner>
+
       <!-- <div v-else class="loading">
 
 		</div> -->
-      <template v-slot:content v-if="appealsListResponse !== null">
+      <template v-slot:content v-if="appealsListResponse?.data?.length !== 0">
         <LayoutBox>
           <template v-slot:content>
             <div
@@ -102,7 +105,6 @@
     </Layout>
   </ion-page>
 </template>
-
 
 <script>
 import { defineComponent, ref } from "vue";
@@ -178,7 +180,7 @@ export default defineComponent({
       const token = JSON.parse(storeValue).token;
       console.log(token, "token");
       loading.value = true;
-      await getAppealsList(token).then(async () => {
+      await getAppealsList().then(async () => {
         await store.create();
         loading.value = false;
         console.log("getAppealsList", appealsListResponse.value);
@@ -201,6 +203,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+ion-item{
+  --padding-bottom: 0;
+}  
 .footer-item {
   display: flex;
   width: 100%;
@@ -236,9 +242,6 @@ export default defineComponent({
   margin-bottom: 0;
 }
 
-ion-spinner {
-  top: -20px;
-}
 .loading {
   display: flex;
   justify-content: center;

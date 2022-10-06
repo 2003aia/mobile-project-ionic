@@ -15,12 +15,13 @@
       "
     />
     <Layout
+      :loading="loading"
       :method="
         () => {
-          if (route.params.next === 'true' && finished === false) {
-            finished = true;
+          if (this.$route.params.next == 'true' && finished == false) {
+            storageHandler();
           } else {
-            router.push('/tabs/services');
+            this.$router.push('/tabs/services');
           }
         }
       "
@@ -39,6 +40,9 @@
         <div v-if="finished">
           <ion-text
             ><p class="title ion-text-start">Спасибо!</p>
+            <p>
+              {{ this.$pinia.state.value?.services?.servicesResponse?.message }}
+            </p>
             <p>
               Ваша заявка принята в обработку. После процедуры идентификации на
               предмет соответствия достоверности введенных данных, с Вами
@@ -73,11 +77,19 @@
               >
             </ion-item>
           </ion-list>
+          <ion-text
+            v-show="
+              this.$pinia.state.value?.services?.servicesResponse?.error ===
+              true
+            "
+          >
+            <p class="error">Что-то пошло не так</p>
+          </ion-text>
         </div>
         <div v-if="route.params.next !== 'true'">
           <ion-text class="title">Выберите варианты</ion-text>
           <ion-list v-for="variant in variants" v-bind:key="variant.id">
-            <ion-item>
+            <ion-item @click="selectHandler(variant.name)">
               <ion-text class="sub-title">{{ variant.name }} </ion-text>
             </ion-item>
           </ion-list>
@@ -86,7 +98,6 @@
     </Layout>
   </ion-page>
 </template>
-
 
 <script>
 import { defineComponent } from "vue";
@@ -102,6 +113,8 @@ import {
 } from "@ionic/vue";
 import Back from "../components/Back.vue";
 import { documentTextOutline, arrowDownOutline } from "ionicons/icons";
+import { mapActions } from "pinia";
+import { useServicesStore } from "../stores/services";
 
 export default defineComponent({
   name: "chooseWorkPage",
@@ -117,6 +130,7 @@ export default defineComponent({
   },
   data() {
     return {
+      loading: false,
       selected: false,
       finished: false,
       variants: [
@@ -137,9 +151,31 @@ export default defineComponent({
     };
   },
   methods: {
-    nextHandler: function () {
-      this.next = true;
+    ...mapActions(useServicesStore, ["services"]),
+
+    selectHandler(value) {
+      this.$pinia.state.value.services.select.GAS_VID_USLUG = {
+        NAME: "Вид работ",
+        VALUE: value,
+      };
+
+      this.$router.go(-1);
+    },
+    storageHandler: function () {
       console.log("test");
+      this.$data.loading = true;
+
+      this.services(this.$pinia.state.value?.services?.form).then(() => {
+        this.$data.finished = true;
+        this.$data.loading = false;
+        if (this.$pinia.state.value?.services?.servicesResponse?.error === true)
+          this.$data.finished = false;
+
+        console.log(
+          "test",
+          this.$pinia.state.value?.services?.servicesResponse
+        );
+      });
     },
   },
   setup() {

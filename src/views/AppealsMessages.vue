@@ -23,16 +23,19 @@
               : `Обращение №${route.params?.id ? route.params.id : ""}`
           }}
         </ion-text>
-        
+
         <ion-text
-          ><p v-if="!route.params.newAppeal && category">
+          ><p v-show="!route.params.newAppeal && category">
             {{ category }}
           </p></ion-text
         >
-        <ion-accordion-group v-if="route.params?.newAppeal">
+        <ion-accordion-group
+          ref="accordionSupport"
+          v-show="route.params?.newAppeal"
+        >
           <ion-accordion :toggle-icon="caretDownSharp" value="second">
             <ButtonSelect
-            class="btn-select"
+              class="btn-select"
               slot="header"
               :name="
                 selected?.category
@@ -43,17 +46,29 @@
 
             <div slot="content">
               <ion-list
-                v-for="el in appealsCategoriesResponse.data"
-                :key="el.id"
+                v-for="el in appealsCategoriesResponse?.data"
+                :key="el?.id"
               >
-                <ion-item @click="selectCategorie(el)">
-                  <ion-text class="sub-title">{{ el.category }}</ion-text>
+                <ion-item
+                  @click="
+                    () => {
+                      this.$refs.accordionSupport.$el.value = undefined;
+                      selectCategorie(el);
+                    }
+                  "
+                >
+                  <ion-text class="sub-title">{{ el?.category }}</ion-text>
                 </ion-item>
               </ion-list>
             </div>
           </ion-accordion>
         </ion-accordion-group>
-        <div v-if="route.params.title && appealsInfoMessages">
+        <div
+          v-show="
+            (route.params.title && appealsInfoMessages && !loading) ||
+            supportCreate
+          "
+        >
           <div v-for="el in appealsInfoMessages" :key="el.id">
             <div class="message" v-if="el.support_message == false">
               <div class="message-main">
@@ -75,51 +90,52 @@
             </div>
           </div>
         </div>
-
-        <div class="loading" v-if="!appealsInfoMessages || !category">
-          <ion-spinner name="bubbles"></ion-spinner>
-        </div>
+        <ion-item lines="none" v-show="loading">
+          <ion-spinner name="bubbles" />
+        </ion-item>
       </template>
     </Layout>
 
     <div class="input-container">
       <ion-item lines="none" class="input-wrapper">
-        <label for="file">
-          <input
-            :value="files.value"
-            @change="filesChange"
-            class="input-file"
-            multiple
-            id="file"
-            type="file"
-          />
+        <ion-button mode="ios" class="btn-support" fill="clear">
+          <label for="file">
+            <input
+              :value="files.value"
+              @change="filesChange"
+              class="input-file"
+              multiple
+              id="file"
+              type="file"
+            />
 
-          <ion-img
-            class="input-icon-left"
-            slot="start"
-            :src="require('@/assets/img/scrape.png')"
-          ></ion-img>
-        </label>
+            <ion-img
+              class="input-icon-left"
+              :src="require('@/assets/img/scrape.png')"
+            ></ion-img>
+          </label>
+        </ion-button>
 
         <ion-input
           :value="message.value"
-          @change="messageChange"
+          @input="messageChange"
           class="input"
-          
           placeholder="Напишите сообщение"
         />
-        <ion-img
-          @click="
-            () => {
-              route.params?.newAppeal
-                ? createAppealHandler()
-                : createMessageHandler()
-            }
-          "
-          class="input-icon"
-          slot="end"
-          :src="require('@/assets/img/send.png')"
-        ></ion-img>
+        <ion-button mode="ios" fill="clear" class="btn-support">
+          <ion-img
+            @click="
+              () => {
+                route.params?.newAppeal && !supportCreate
+                  ? createAppealHandler()
+                  : createMessageHandler();
+              }
+            "
+            class="input-icon"
+            slot="end"
+            :src="require('@/assets/img/send.png')"
+          ></ion-img>
+        </ion-button>
       </ion-item>
       <div class="chip-container" v-if="files">
         <ion-chip>
@@ -150,10 +166,13 @@ import {
   IonIcon,
   onIonViewDidEnter,
   IonSpinner,
+  IonButton,
+  IonInput,
 } from "@ionic/vue";
 import { storeToRefs } from "pinia";
 import { Storage } from "@ionic/storage";
 import { useAppealsStore } from "../stores/appeals";
+import moment from "moment";
 
 export default defineComponent({
   name: "appealsMessages",
@@ -163,10 +182,13 @@ export default defineComponent({
     IonText,
     Back,
     IonItem,
+    IonButton,
+
     ButtonSelect,
     IonAccordion,
     IonImg,
     IonList,
+    IonInput,
     IonChip,
     IonIcon,
     IonSpinner,
@@ -189,16 +211,18 @@ export default defineComponent({
       ],
     };
   },
+
   setup() {
     const router = useRouter();
     const route = useRoute();
     const selected = ref("");
     const store = new Storage();
+    const loading = ref(false);
     const category = ref("");
     const appealsInfoMessages = ref([]);
     const {
       appealsCategoriesResponse,
-      createAppealResponse,
+      // createAppealResponse,
       appealsInfoResponse,
       createMessageResponse,
     } = storeToRefs(useAppealsStore());
@@ -210,44 +234,56 @@ export default defineComponent({
     } = useAppealsStore();
     let message = ref("");
     let files = ref("");
+    let supportCreate = ref(false);
 
     const selectCategorie = (props) => {
       selected.value = props;
     };
 
-    const getAppealsCategoreisHandler = () => {
+    const getAppealsCategoriesHandler = () => {
+      loading.value = true;
       getAppealsCategoreis().then(() => {
         appealsCategoriesResponse.value?.data.filter((value) => {
-          if (value.id === JSON.parse(route.params.category_id))
+          loading.value = false;
+          if (value.id === parseInt(route.params.category_id))
             category.value = value.category;
         });
       });
     };
     const getAppealsInfoHandler = async () => {
+      loading.value = true;
+
       await store.create();
-      const storeValue = await store.get("token");
-      const token = JSON.parse(storeValue)?.token;
+      const storeValue = await store.get("support");
+      const token = storeValue.token;
       if (route.params?.id) {
         getAppealsInfo(token, route.params?.id).then(() => {
+          loading.value = false;
           appealsInfoMessages.value = appealsInfoResponse.value?.data.reverse();
         });
       }
     };
     const createAppealHandler = async () => {
       await store.create();
-      const storeValue = await store.get("token");
-      const token = JSON.parse(storeValue).token;
-      if (message.value !== "") {
+      const storeValue = await store.get("support");
+      const token = storeValue.token;
+      if (message.value !== "" && selected.value?.id) {
         createAppeal(token, message.value, selected.value?.id).then(() => {
-          console.log("test", createAppealResponse);
+          supportCreate.value = true;
+          appealsInfoMessages.value = [
+            {
+              support_message: false,
+              message: message.value,
+              date_create: moment().format("DD.MM.YYYY hh:ss"),
+            },
+          ];
         });
       }
     };
     const createMessageHandler = async () => {
       await store.create();
-      const storeValue = await store.get("token");
-      const token = JSON.parse(storeValue).token;
-      console.log("route,params test", route.params, message.value);
+      const storeValue = await store.get("support");
+      const token = storeValue.token;
       if (message.value !== "") {
         createMessage(
           token,
@@ -255,6 +291,11 @@ export default defineComponent({
           route.params.category_id,
           route.params.id
         ).then(() => {
+          appealsInfoMessages.value.push({
+            support_message: false,
+            message: message.value,
+            date_create: moment().format("DD.MM.YYYY hh:ss"),
+          });
           console.log("test", createMessageResponse.value);
         });
       }
@@ -269,13 +310,15 @@ export default defineComponent({
     };
 
     onIonViewDidEnter(() => {
-      getAppealsCategoreisHandler();
+      getAppealsCategoriesHandler();
       getAppealsInfoHandler();
     });
     return {
+      supportCreate,
       router,
       route,
       messageChange,
+      loading,
       message,
       files,
       filesChange,
@@ -294,6 +337,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.btn-support {
+  --padding-start: 0;
+  --padding-end: 0;
+  width: 30px;
+}
 .btn-select {
   /* background: green; */
   margin-top: 10px;
@@ -338,22 +386,18 @@ export default defineComponent({
   margin-right: 10px;
 }
 .input-icon {
-  width: 35px;
-  height: 35px;
-  margin-right: 10px;
-  margin-left: 10px;
+  width: 30px;
+  height: 30px;
 }
 .input-icon-left {
-  margin-left: 10px;
-  width: 35px;
-  height: 35px;
-
-  margin-right: 0;
+  width: 30px;
+  height: 30px;
 }
 .input {
   border: none;
   width: 100%;
   padding: 22px 0px 22px 10px;
+  margin-bottom: 0;
 }
 .input:focus {
   outline: none !important;
@@ -404,14 +448,5 @@ label {
 }
 .input-file[type="file"] {
   display: none;
-}
-
-ion-spinner {
-  top: -20px;
-}
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 </style>

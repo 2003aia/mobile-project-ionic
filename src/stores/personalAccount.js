@@ -234,7 +234,7 @@ export const usePersonalAccountStore = defineStore({
         this.setIndicesError = error;
       }
     },
-    async sberPay(lc, phone, email, accruals, sumTO, penalties) {
+    async sberPay(lc, phone, email, accruals, sumTO, penalties, advances) {
       try {
         const store = new Storage();
         await store.create();
@@ -248,6 +248,7 @@ export const usePersonalAccountStore = defineStore({
             LC: lc,
             accruals: accruals,
             penalties: penalties,
+            advances: advances,
             sumTO: sumTO,
           })
           .then((response) => {

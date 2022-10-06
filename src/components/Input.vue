@@ -1,25 +1,34 @@
 <template>
   <div class="input-wrapper">
-    
     <input
-    v-if="type === 'number' && min === 0"
+      v-if="type === 'number' && min === 0"
       ref="text"
       :type="type"
       :min="min"
       oninput="validity.valid||(value='');"
-      class="input"
+      :class="{ input: true }"
       placeholder=" "
       :value="value"
       @change="changeHandler"
     />
     <input
-    v-else
       ref="text"
       :type="type"
       class="input"
       placeholder=" "
+      v-mask="mask"
       :value="value"
       @change="changeHandler"
+      v-if="mask"
+    />
+    <input
+      :value="value"
+      @change="changeHandler"
+      ref="text"
+      :type="type"
+      class="input"
+      placeholder=" "
+      v-else
     />
     <ion-text
       :class="{ inputTextBlue: textBlue === true }"
@@ -32,11 +41,13 @@
 <script>
 import { defineComponent } from "vue";
 import { IonText } from "@ionic/vue";
+import { mask } from "vue-the-mask";
 
 export default defineComponent({
   components: {
     IonText,
   },
+  directives: { mask },
   setup() {},
   methods: {
     onFocusText: function () {
@@ -68,6 +79,7 @@ export default defineComponent({
     type: String,
     changeHandler: Function,
     min: Number,
+    mask: String,
   },
 });
 </script>
@@ -84,6 +96,10 @@ export default defineComponent({
   --padding-top: 14px;
   --placeholder-color: #9e9e9e;
   --placeholder-font-weight: 400;
+}
+
+.error {
+  border: solid 1px #dd2c00;
 }
 
 .input:focus {

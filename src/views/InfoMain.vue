@@ -2,9 +2,10 @@
   <ion-page>
     <ion-content class="background">
       <Back />
-      <ion-spinner v-if="loading === true" name="bubbles" />
-      <div v-if="loading === false">
-        <div class="img" :class="{ imgHeight: detail?.image === '' }">
+      <ion-spinner class="loading" v-show="loading === true" name="bubbles" />
+
+      <div v-show="loading === false">
+        <div class="img" :class="{ imgHeight: !detail?.image }">
           <div class="img-wrapper">
             <ion-text>
               <p class="main-title">
@@ -12,7 +13,7 @@
               </p>
             </ion-text>
           </div>
-          <ion-img v-if="detail?.image !== null" :src="detail?.image" />
+          <ion-img v-show="detail?.image !== null" :src="detail?.image" />
         </div>
 
         <div class="container">
@@ -44,7 +45,7 @@ import Back from "../components/Back.vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useNewsStore } from "../stores/news";
-import { useNoticeStore } from '../stores/notice'
+import { useNoticeStore } from "../stores/notice";
 
 export default defineComponent({
   name: "infoMainPage",
@@ -89,8 +90,8 @@ export default defineComponent({
       if (route.params.for === "news") {
         fetchNewsDetails();
       } else {
-        fetchNoticeDetails()
-      }       
+        fetchNoticeDetails();
+      }
     });
 
     console.log(route.params, "params");
@@ -103,7 +104,14 @@ export default defineComponent({
     };
   },
   methods: {},
-  components: { IonPage, IonContent, IonText, Back, IonImg, IonSpinner },
+  components: {
+    IonPage,
+    IonContent,
+    IonText,
+    Back,
+    IonImg,
+    IonSpinner,
+  },
 });
 </script>
 
@@ -140,6 +148,11 @@ ion-img {
   flex-direction: column;
   justify-content: center;
   background-color: #f5f5f5;
+}
+
+.loading {
+  background: #f5f5f5;
+  margin-top: 20px;
 }
 
 .main-text {
