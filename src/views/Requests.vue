@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back :btnSrc="() => router.push('/tabs/main')" />
+    <Back />
     <Layout
       :btnSrc="'/tabs/services'"
       height="false"
@@ -9,46 +9,47 @@
       title="Мои заявки"
     >
       <template v-slot:main-content>
-        <ion-row>
-          <ion-col> № </ion-col>
-          <ion-col> Дата </ion-col>
-          <ion-col> Сервис </ion-col>
-          <ion-col> Статус </ion-col>
-          <ion-col> Адрес </ion-col>
-        </ion-row>
-        <ion-list v-for="el in listServices" :key="el">
-          <ion-row
-            :class="{
-              'ion-row-last':
-                listServices[listServices?.length - 1]?.number === el?.number,
-            }"
-          >
-            <ion-col>
-              <ion-text class="sub-title">{{ el.number }}</ion-text>
-            </ion-col>
-            <ion-col>
-              <ion-text class="sub-title">
-                {{ el.date }}
-              </ion-text>
-            </ion-col>
-            <ion-col>
-              <ion-text class="sub-title">
-                {{ el.service }}
-              </ion-text>
-            </ion-col>
-            <ion-col>
-              <ion-text class="sub-title">
-                {{ el.status }}
-              </ion-text>
-            </ion-col>
-            <ion-col>
-              <ion-text class="sub-title">
-                {{ el.address }}
-              </ion-text>
-            </ion-col>
+        <div class="wrapper">
+          <ion-row>
+            <ion-col> № </ion-col>
+            <ion-col> Дата </ion-col>
+            <ion-col> Сервис </ion-col>
+            <ion-col> Статус </ion-col>
+            <ion-col> Адрес </ion-col>
           </ion-row>
-        </ion-list>
-        
+          <ion-list v-for="el in listServices" :key="el">
+            <ion-row
+              :class="{
+                'ion-row-last':
+                  listServices[listServices?.length - 1]?.number === el?.number,
+              }"
+            >
+              <ion-col>
+                <ion-text class="sub-title">{{ el.number }}</ion-text>
+              </ion-col>
+              <ion-col>
+                <ion-text class="sub-title">
+                  {{ el.date }}
+                </ion-text>
+              </ion-col>
+              <ion-col>
+                <ion-text class="sub-title">
+                  {{ el.service }}
+                </ion-text>
+              </ion-col>
+              <ion-col>
+                <ion-text class="sub-title">
+                  {{ el.status }}
+                </ion-text>
+              </ion-col>
+              <ion-col>
+                <ion-text class="sub-title">
+                  {{ el.address }}
+                </ion-text>
+              </ion-col>
+            </ion-row>
+          </ion-list>
+        </div>
       </template>
     </Layout>
   </ion-page>
@@ -113,6 +114,12 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.wrapper {
+  width: 100%;
+/*   min-width: 400px;
+  overflow: hidden;
+  overflow: auto; */
+}
 .text {
   margin-top: 15px;
   margin-bottom: 10px;
@@ -122,10 +129,10 @@ ion-row {
   padding-bottom: 5px;
   border-bottom: solid 1px #e0e0e0;
 }
+ion-col {
+  word-break: break-all;
+}
 .ion-row-last {
   border-bottom: none;
-}
-.sub-title {
-  word-break: break-all;
 }
 </style>

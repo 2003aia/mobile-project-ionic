@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
+const apiUrl = "https://api.aostng.ru/api/v2";
 
 export const useServicesStore = defineStore({
   id: "services",
@@ -23,6 +24,8 @@ export const useServicesStore = defineStore({
     filesResponseError: null,
     listServicesResponse: null,
     listServicesResponseError: null,
+    camerasResponse: null,
+    camerasError: null,
   }),
   getters: {
     setForm: (state) => {
@@ -30,6 +33,16 @@ export const useServicesStore = defineStore({
     },
   },
   actions: {
+    async getCameras() {
+      console.log("getting cameras");
+      try {
+        await axios
+          .get(`${apiUrl}/camera/get`)
+          .then((response) => (this.camerasResponse = response.data));
+      } catch (error) {
+        this.camerasError = error;
+      }
+    },
     async getListServices() {
       console.log("getting listServices");
       const store = new Storage();

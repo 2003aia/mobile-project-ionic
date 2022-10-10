@@ -42,7 +42,7 @@
             <ion-item>
               <ion-text>Задолженность:</ion-text>
               <ion-text slot="end" class="text-end"
-                >{{ lcList?.debts?.accruals }} руб.</ion-text
+                >{{ maskMoney(lcList?.debts?.accruals) }} руб.</ion-text
               >
             </ion-item>
             <!--   <ion-item>
@@ -74,7 +74,7 @@
             <ion-item>
               <ion-text> Задолженность: </ion-text>
               <ion-text slot="end" class="text-end"
-                >{{ lcList.debts?.sumTO }} руб.</ion-text
+                >{{ maskMoney(lcList.debts?.sumTO) }} руб.</ion-text
               >
             </ion-item>
             <!-- <ion-item>
@@ -104,7 +104,7 @@
             <ion-item>
               <ion-text> Задолженность: </ion-text>
               <ion-text slot="end" class="text-end"
-                >{{ lcList.debts?.penalties }} руб.</ion-text
+                >{{ maskMoney(lcList.debts?.penalties) }} руб.</ion-text
               >
             </ion-item>
             <!--  <ion-item>
@@ -134,7 +134,7 @@
             <ion-item>
               <ion-text> Задолженность: </ion-text>
               <ion-text slot="end" class="text-end"
-                >{{ lcList.debts?.advances }} руб.</ion-text
+                >{{ maskMoney(lcList.debts?.advances) }} руб.</ion-text
               >
             </ion-item>
             <ion-text>
@@ -235,6 +235,13 @@ export default defineComponent({
       } else {
         this.$data.error = "Заполните поля";
       }
+    },
+    maskMoney(value) {
+      const valueAsNumber = value;
+      return new Intl.NumberFormat("ru-RU", {
+        style: "currency",
+        currency: "RUB",
+      }).format(valueAsNumber / 100);
     },
   },
   names: "personalAccauntPayment",

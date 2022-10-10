@@ -1,5 +1,5 @@
 <template>
-  <div class="main" @click="onClick">
+  <div class="main" v-bind:class="{ padding: padding }" @click="onClick">
     <slot name="content" />
   </div>
 </template>
@@ -10,6 +10,7 @@ export default defineComponent({
   name: "layoutBox",
   components: {},
   props: {
+    padding: Boolean,
     btnSrc: String,
     filledButton: String,
     title: String,
@@ -29,5 +30,10 @@ export default defineComponent({
   height: 100%;
   margin-bottom: 20px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.padding {
+  padding: 0;
+  margin-bottom: 20px;
 }
 </style>

@@ -77,7 +77,25 @@
                 />
               </div>
               <div slot="content">
+                <!-- <ion-row>
+                  <ion-col size="3"> Лицевой счет </ion-col>
+                  <ion-col> Наименование лицевого счета </ion-col>
+                </ion-row> -->
                 <div v-for="el in licsList" :key="el">
+                  <!-- <ion-row
+                    @click="licsHandler(el)"
+                    :class="{
+                      'ion-row-last':
+                        licsList[licsList?.length - 1]?.code === el?.code,
+                    }"
+                  >
+                    <ion-col size="3" class="sub-title">
+                      {{ el?.code }}
+                    </ion-col>
+                    <ion-col class="sub-title">
+                      {{ el?.name }}
+                    </ion-col>
+                  </ion-row> -->
                   <ion-item
                     @click="licsHandler(el)"
                     :lines="
@@ -86,7 +104,8 @@
                         : ''
                     "
                   >
-                    <ion-text>
+                   
+                     <ion-text>
                       <p class="ion-text-start">Лицевой счет: {{ el?.code }}</p>
                       <p class="ion-text-start">
                         Наименование лицевого счета: {{ el?.name }}
@@ -115,6 +134,7 @@
           </ion-text>
         </div>
       </template>
+      <ion-item>d</ion-item>
     </Layout>
   </ion-page>
 </template>
@@ -129,6 +149,7 @@ import {
   IonAccordion,
   IonAccordionGroup,
   IonItem,
+  IonIcon,
 } from "@ionic/vue";
 import Input from "../components/Input.vue";
 import Back from "../components/Back.vue";
@@ -148,6 +169,7 @@ export default defineComponent({
     IonPage,
     Layout,
     IonText,
+    IonIcon,
     Input,
     Back,
     IonAccordion,
@@ -219,17 +241,19 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.text-white {
-  color: #fff;
-}
-.dot {
-  color: #62d0ce;
-}
 ion-item {
-  --padding-bottom: -10px;
-  --padding-top: 0px;
-  --inner-padding-bottom: 0px;
-  --inner-padding-top: 0px;
+  --inner-padding-start: 15px;
+}
+ion-row {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-bottom: solid 1px #e0e0e0;
+}
+.ion-row-last {
+  border-bottom: none;
+}
+ion-col {
+  word-break: break-all;
 }
 
 ion-icon {
@@ -239,20 +263,12 @@ ion-icon {
   --ionicon-stroke-width: 35px;
 }
 
-.icon-start {
-  margin-right: 20px;
-}
 .icon-end {
   width: 24px;
   height: 24px;
   margin-left: 0px;
 }
 
-.text-blue {
-  color: #0378b4;
-  font-weight: 700;
-  margin-left: 0;
-}
 ion-icon {
   width: 20px;
   height: 20px;
@@ -264,18 +280,5 @@ ion-icon {
   height: 32px;
   margin-right: 20px;
 }
-.icon-end {
-  width: 24px;
-  height: 24px;
-  margin-left: 0px;
-}
 
-.btn {
-  margin-bottom: 15px;
-}
-.footer {
-  width: 100%;
-  margin-top: 30px;
-  height: 100%;
-}
 </style>

@@ -6,8 +6,7 @@
       height="false"
       filledBtn="Далее"
       outlineBtn="."
-      title="Запрос на предоставление информации о ходе выполнения мероприятий по подключению (технологическому присоединению) физического лица
-"
+      title="Запрос на предоставление информации о ходе выполнения мероприятий по подключению (технологическому присоединению) физического лица"
     >
       <template v-slot:header-content>
         <ion-text>
@@ -90,7 +89,6 @@
   </ion-page>
 </template>
 
-
 <script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
@@ -99,7 +97,8 @@ import { IonPage, IonText } from "@ionic/vue";
 import Input from "../components/Input.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Back from "../components/Back.vue";
-
+import { useServicesStore } from "../stores/services";
+import { mapActions } from "pinia";
 export default defineComponent({
   name: "servicesTracking",
   components: {
@@ -109,6 +108,22 @@ export default defineComponent({
     Input,
     Back,
     LayoutBox,
+  },
+  computed: {
+    formFields() {
+      return this.$pinia.state.value?.services?.formResponse?.result?.forms.filter(
+        (el) => {
+          return el.SERVICE.VALUE_ID === '68261'
+        }
+      );
+    },
+  },
+  methods: {
+    ...mapActions(useServicesStore, ["getForms"]),
+  },
+  mounted() {
+    this.getForms();
+    console.log(this.formFields, "test");
   },
   setup() {
     const router = useRouter();

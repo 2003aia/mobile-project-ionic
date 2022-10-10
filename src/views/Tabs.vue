@@ -1,56 +1,23 @@
 <template>
   <ion-page>
-    <!--    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-button>
-            <ion-icon :icon="menuOutline" />
-          </ion-button>
-        </ion-buttons>
-        <ion-title class="">Back Button</ion-title>
-      </ion-toolbar>
-    </ion-header> -->
     <ion-content>
       <ion-tabs @ionTabsDidChange="afterTabChange">
         <ion-router-outlet id="main"></ion-router-outlet>
         <ion-menu side="start" menu-id="first" content-id="main">
           <ion-content>
             <ion-toolbar> </ion-toolbar>
-            <ion-list>
+
+            <ion-list v-for="el in sideMenu" :key="el">
               <ion-item
                 @click="
                   () => {
-                    router.push('/tabs/profile');
+                    router.push(el.path);
                   }
                 "
               >
-                <ion-icon slot="start" :icon="personOutline"></ion-icon>
-                <ion-text class="sub-title">Личный кабинет</ion-text>
-              </ion-item>
-              <ion-item @click="() => router.push('/appeals')">
-                <ion-icon slot="start" :icon="paperPlaneOutline"></ion-icon>
-                <ion-text class="sub-title">Мои обращения</ion-text>
-              </ion-item>
-              <ion-item router-link="/requests">
-                <ion-icon slot="start" :icon="personOutline"></ion-icon>
-                <ion-text class="sub-title">Мои заявки</ion-text>
-              </ion-item>
-              <ion-item @click="() => router.push('/notifications')">
-                <ion-icon slot="start" :icon="notificationsOutline"></ion-icon>
-                <ion-text class="sub-title">Уведомления</ion-text>
-                <ion-badge slot="end">13</ion-badge>
-              </ion-item>
-              <ion-item router-link="/personalAccounts">
-                <ion-icon slot="start" :icon="documentTextOutline"></ion-icon>
-                <ion-text class="sub-title">Лицевые счета</ion-text>
-              </ion-item>
-              <ion-item @click="() => router.push('/contacts')">
-                <ion-icon slot="start" :icon="callOutline"></ion-icon>
-                <ion-text class="sub-title">Контакты</ion-text>
-              </ion-item>
-              <ion-item @click="() => router.push('/authPage')">
-                <ion-icon slot="start" :icon="exitOutline"></ion-icon>
-                <ion-text class="sub-title">Выйти</ion-text>
+                <ion-icon slot="start" :icon="el.icon"></ion-icon>
+                <ion-text class="sub-title">{{ el.name }}</ion-text>
+                <ion-badge slot="end">{{ el.number }}</ion-badge>
               </ion-item>
             </ion-list>
           </ion-content>
@@ -71,21 +38,6 @@
               >Быстрое меню</ion-label
             >
           </ion-tab-button>
-          <!-- <ion-tab-button class="badge-wrapper" tab="main" href="/tabs/main">
-            <ion-img
-              class="tabslogo"
-              :src="
-                selected !== 'main'
-                  ? require('@/assets/img/home.png')
-                  : require('@/assets/img/active-home.png')
-              "
-            />
-            <div class="badge"></div>
-
-            <ion-label :class="{ active: selected === 'main' }"
-              >Прочие</ion-label
-            >
-          </ion-tab-button> -->
 
           <ion-tab-button tab="services" href="/tabs/services">
             <ion-img
@@ -101,10 +53,7 @@
               >Услуги</ion-label
             >
           </ion-tab-button>
-          <ion-tab-button
-            tab="personalAccounts"
-            href="/tabs/personalAccounts"
-          >
+          <ion-tab-button tab="personalAccounts" href="/tabs/personalAccounts">
             <ion-img
               class="tabslogo"
               :src="
@@ -113,10 +62,8 @@
                   : require('@/assets/img/active-bills.png')
               "
             />
-            <!-- <ion-icon :class="{svg: selected !== 'personalAccounts', svgActive: selected === 'personalAccounts'}" :icon="documentTextOutline"></ion-icon> -->
 
-            <ion-label
-              :class="{ active: selected === 'personalAccounts' }"
+            <ion-label :class="{ active: selected === 'personalAccounts' }"
               >Лицевые счета</ion-label
             >
           </ion-tab-button>
@@ -144,7 +91,6 @@
                   : require('@/assets/img/active-dots.png')
               "
             />
-            <!-- <div class="badge"></div> -->
 
             <ion-label :class="{ active: selected === 'main' }"
               >Новости и объявления</ion-label
@@ -190,6 +136,8 @@ import {
   exitOutline,
   documentTextOutline,
   menuOutline,
+  pencilOutline,
+  videocamOutline,
 } from "ionicons/icons";
 
 export default defineComponent({
@@ -224,11 +172,56 @@ export default defineComponent({
       exitOutline,
       documentTextOutline,
       menuOutline,
+      videocamOutline,
     };
   },
   data() {
     return {
       selected: "",
+      sideMenu: [
+        {
+          name: "Личный кабинет",
+          path: "/tabs/profile",
+          icon: personOutline,
+        },
+        {
+          name: "Мои обращения",
+          path: "/appeals",
+          icon: paperPlaneOutline,
+        },
+        {
+          name: "Мои заявки",
+          path: "/requests",
+          icon: pencilOutline,
+        },
+        {
+          name: "Мониторинг АГЗС",
+          path: "/cameras",
+          icon: videocamOutline,
+        },
+
+        {
+          name: "Уведомления",
+          path: "/notifications",
+          icon: notificationsOutline,
+        },
+
+        {
+          name: "Лицевые счета",
+          path: "/personalAccounts",
+          icon: documentTextOutline,
+        },
+        {
+          name: "Контакты",
+          path: "/contacts",
+          icon: callOutline,
+        },
+        {
+          name: "Выйти",
+          path: "/authPage",
+          icon: exitOutline,
+        },
+      ],
     };
   },
   methods: {
@@ -253,6 +246,8 @@ export default defineComponent({
   border-top: 0;
   /* background: #EAEAEA; */
   background: #fff;
+  padding-top: 2px;
+  padding-bottom: 2px;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
 }
 ion-tab-bar {
@@ -261,6 +256,7 @@ ion-tab-bar {
 ion-item {
   --padding-start: 15px;
   --padding-end: 15px;
+  --padding-bottom: 10px;
 }
 ion-label {
   line-height: 10px;
@@ -285,13 +281,13 @@ ion-tab-button {
   height: 22px;
 }
 
-.svg{
+.svg {
   width: 20px;
   height: 22px;
-  color: #BDBDBD;
+  color: #bdbdbd;
 }
 
-.svgActive{
+.svgActive {
   width: 20px;
   height: 22px;
   color: #62d0ce;
@@ -322,17 +318,25 @@ ion-badge {
   --padding-end: 5px;
 }
 ion-label {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   margin-top: 3px;
+  font-size: 13px;
+  line-height: 12px;
   /* word-break: break-all; */
 }
 
 .active {
   color: #62d0ce;
 }
-
+ion-toolbar {
+  --background: #fff;
+}
 ion-tabs {
   background: #f5f5f5;
+}
+
+ion-list {
+  padding: 0;
 }
 </style>

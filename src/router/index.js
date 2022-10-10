@@ -281,6 +281,11 @@ const routes = [
     component: () => import("@/views/RequestsInfo.vue"),
   },
   {
+    name: "cameras",
+    path: "/cameras",
+    component: () => import("@/views/Cameras.vue"),
+  },
+  {
     name: "selectPage",
     path: "/selectPage",
     component: () => import("@/views/Select.vue"),

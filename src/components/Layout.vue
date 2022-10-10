@@ -11,7 +11,7 @@
         <slot name="header-content" />
       </div>
 
-      <div class="main">
+      <div class="main" v-bind:class="{ padding: padding }">
         <slot name="main-content" />
       </div>
 
@@ -62,6 +62,7 @@ export default defineComponent({
     outlineBtn: String,
     btnSrc: String,
     filledBtn: String,
+    padding: Boolean,
     title: String,
     height: String,
     loading: Boolean,
@@ -97,6 +98,10 @@ export default defineComponent({
   top: -50px;
   left: 0;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+.padding {
+  padding: 0px;
+
 }
 .main:nth-child() {
 }

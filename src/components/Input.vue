@@ -28,7 +28,7 @@
       :type="type"
       class="input"
       placeholder=" "
-      v-else
+      v-if="!mask && !type && !min"
     />
     <ion-text
       :class="{ inputTextBlue: textBlue === true }"
