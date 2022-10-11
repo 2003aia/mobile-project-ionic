@@ -3,117 +3,105 @@
     <Back />
     <!-- :btnSrc="'/personalAccountInfo'" -->
     <!-- :method2="() => router.push('/personalAccountNew')" -->
-    <Layout
-      :method2="addAccountHandler"
-      height="false"
-      outlineBtn="Добавить лицевой счёт"
-      filledBtn="."
-      :loading2="loading"
-      title="Лицевой счёт"
-    >
+    <Layout :method2="addAccountHandler" height="false" outlineBtn="Добавить лицевой счёт" filledBtn="."
+      :loading2="loading" title="Лицевой счёт">
       <template v-slot:main-content>
-        <ion-text
-          ><p class="title ion-text-start">Узнать лицевой счет</p></ion-text
-        >
+        <ion-text>
+          <p class="title ion-text-start">Узнать лицевой счет</p>
+        </ion-text>
         <ion-accordion-group ref="accordion">
           <ion-accordion value="first" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
-              <input
-                type="text"
-                v-model="country"
-                class="input"
-                placeholder="Введите населенный пункт по улусам"
-              />
+              <input type="text" v-model="country" class="input" placeholder="Введите населенный пункт по улусам" />
             </div>
 
             <div slot="content">
               <ion-item v-show="loading2">
                 <ion-spinner name="bubbles" />
               </ion-item>
-              <ion-list v-for="el in settlementsList" :key="el.s_id">
-                <ion-item
-                  v-on:click="fetchStreetsHandler(el.s_id, el.settlement)"
-                >
-                  <ion-text>{{ el.settlement }}</ion-text>
+              <div v-for="el in ulusList" :key="el.ulusId">
+                <ion-item :lines="ulusList[ulusList?.length - 1]?.ulus === el?.ulus && 'none'"
+                  v-on:click="fetchSettlementsHandler(el.ulusId, el.ulus)">
+                  <ion-text>{{ el.ulus }}</ion-text>
                 </ion-item>
-              </ion-list>
-              <ion-item v-show="settlementsList?.length === 0">
+              </div>
+              <ion-item v-show="ulusList?.length === 0">
                 <ion-text>не найдено</ion-text>
               </ion-item>
             </div>
           </ion-accordion>
-
           <ion-accordion value="second" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
-              <input
-                type="text"
-                v-model="street"
-                class="input"
-                placeholder="Введите улицу"
-              />
+              <input type="text" v-model="settlement" class="input" placeholder="Введите населенный пункт" />
             </div>
 
             <div slot="content">
-              <ion-item v-show="loading3">
-                <ion-spinner name="bubbles" />
-              </ion-item>
-              <ion-list v-for="el in streetsList" :key="el.street">
-                <ion-item v-on:click="fetchHousesHandler(el.ids, el.street)">
-                  <ion-text>{{ el.street }}</ion-text>
+              <div v-for="el in settlementsList" :key="el.s_id">
+                <ion-item :lines="settlementsList[settlementsList?.length - 1]?.settlement === el?.settlement && 'none'"
+                  v-on:click="fetchStreetsHandler(el.s_id, el.settlement)">
+                  <ion-text>{{ el.settlement }}</ion-text>
                 </ion-item>
-              </ion-list>
-              <ion-item v-show="streetsList?.length === 0">
+              </div>
+              <ion-item v-show="settlementsList?.length === 0">
                 <ion-text>не найдено</ion-text>
               </ion-item>
             </div>
           </ion-accordion>
           <ion-accordion value="third" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
-              <input
-                type="text"
-                v-model="house"
-                class="input"
-                placeholder="Введите дом улицы"
-              />
+              <input type="text" v-model="street" class="input" placeholder="Введите улицу" />
+            </div>
+
+            <div slot="content">
+              <ion-item v-show="loading3">
+                <ion-spinner name="bubbles" />
+              </ion-item>
+              <div v-for="el in streetsList" :key="el.street">
+                <ion-item :lines="streetsList[streetsList.length - 1]?.street === el.street && 'none'"
+                  v-on:click="fetchHousesHandler(el.ids, el.street)">
+                  <ion-text>{{ el.street }}</ion-text>
+                </ion-item>
+              </div>
+              <ion-item v-show="streetsList?.length === 0">
+                <ion-text>не найдено</ion-text>
+              </ion-item>
+            </div>
+          </ion-accordion>
+          <ion-accordion value="fourth" :toggle-icon="caretDownSharp">
+            <div class="input-wrapper" slot="header">
+              <input type="text" v-model="house" class="input" placeholder="Введите дом улицы" />
             </div>
             <div slot="content">
               <ion-item v-show="loading4">
                 <ion-spinner name="bubbles" />
               </ion-item>
-              <ion-list v-for="el in housesList" :key="el">
-                <ion-item v-on:click="fetchLicsHandler(el?.house)">
+              <div v-for="el in housesList" :key="el">
+                <ion-item :lines="housesList[housesList.length - 1]?.house === el?.house && 'none'"
+                  v-on:click="fetchLicsHandler(el?.house)">
                   <ion-text>{{ el?.house }}</ion-text>
                 </ion-item>
-              </ion-list>
+              </div>
               <ion-item v-show="housesList?.length === 0">
                 <ion-text>не найдено</ion-text>
               </ion-item>
             </div>
           </ion-accordion>
 
-          <ion-accordion
-            v-show="
-              housesList?.length !== 0 &&
-              housesList !== undefined &&
-              housesList[0]?.apartments
-            "
-            value="fourth"
-            :toggle-icon="caretDownSharp"
-          >
+          <ion-accordion v-show="
+            housesList?.length !== 0 &&
+            housesList !== undefined &&
+            housesList[0]?.apartments
+          " value="fifth" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
-              <input
-                type="text"
-                v-model="apartment"
-                class="input"
-                placeholder="Введите номер квартиры"
-              />
+              <input type="text" v-model="apartment" class="input" placeholder="Введите номер квартиры" />
             </div>
             <div slot="content">
-              <ion-list v-for="el in apartmentsList" :key="el">
-                <ion-item v-on:click="fetchLicsHandler2(el?.apartment)">
+              <div v-for="el in apartmentsList" :key="el">
+                <ion-item :lines="apartmentsList[apartmentsList.length - 1]?.apartment === el?.apartment && 'none'"
+                  v-on:click="fetchLicsHandler2(el?.apartment)">
                   <ion-text>{{ el?.apartment }}</ion-text>
                 </ion-item>
-              </ion-list>
+              </div>
               <ion-item v-show="apartmentsList?.length === 0">
                 <ion-text>не найдено</ion-text>
               </ion-item>
@@ -136,14 +124,12 @@
             </ion-text>
           </div>
         </div>
-        <div
-          v-show="
-            housesList?.length !== 0 &&
-            housesList !== undefined &&
-            housesList[0]?.apartments &&
-            licsApartmentsList?.length !== 0
-          "
-        >
+        <div v-show="
+          housesList?.length !== 0 &&
+          housesList !== undefined &&
+          housesList[0]?.apartments &&
+          licsApartmentsList?.length !== 0
+        ">
           <div v-for="el in licsApartmentsList" :key="el">
             <ion-text v-for="el2 in el?.lics" :key="el2?.code">
               <ion-item class="check" lines="none">
@@ -178,11 +164,9 @@ import {
   IonText,
   IonAccordionGroup,
   IonAccordion,
-  IonList,
   IonItem,
   IonSpinner,
   IonCheckbox,
-  // onIonViewDidEnter,
 } from "@ionic/vue";
 import {
   pencilOutline,
@@ -204,7 +188,6 @@ export default defineComponent({
     IonPage,
     Layout,
     IonText,
-    IonList,
     IonItem,
     IonSpinner,
     IonCheckbox,
@@ -214,6 +197,8 @@ export default defineComponent({
       error: "",
       house: "",
       street: "",
+      settlement: '',
+      settlementId: '',
       country: "",
       apartment: "",
       lc: [],
@@ -226,14 +211,19 @@ export default defineComponent({
     };
   },
   computed: {
+    ulusList() {
+      return this.$pinia.state.value?.personalAccount?.getSettlementsResponse?.data.filter((el) => {
+        return el.ulus
+          .toLowerCase()
+          .includes(this.$data.country.toLowerCase());
+      });
+    },
     settlementsList() {
-      return this.$pinia.state.value?.personalAccount?.getSettlementsResponse?.data
-        .flatMap((el) => el.settlements.flatMap((el) => el))
-        .filter((el) => {
-          return el.settlement
-            .toLowerCase()
-            .includes(this.$data.country.toLowerCase());
-        });
+      return this.ulusList?.filter((el) => {
+        return el?.ulusId === this.$data.settlementId
+      })[0]?.settlements?.filter((el2) => {
+        return el2?.settlement?.toLowerCase().includes(this.$data.settlement.toLowerCase())
+      })
     },
     streetsList() {
       return this.$pinia.state.value?.personalAccount?.getStreetsResponse?.data
@@ -295,8 +285,12 @@ export default defineComponent({
       "getAccount",
     ]),
     onFocusText: function () {
-      console.log("focus");
       this.$refs.text.focus();
+    },
+    fetchSettlementsHandler(ulus_id, ulus) {
+      this.$data.settlementId = ulus_id
+      this.$data.country = ulus
+      this.$refs.accordion.$el.value = undefined;
     },
     fetchStreetsHandler(s_id, settlement) {
       this.$data.loading3 = true;
@@ -305,7 +299,7 @@ export default defineComponent({
       });
       getStreets.then(() => (this.$data.loading3 = false));
       this.$refs.accordion.$el.value = undefined;
-      this.$data.country = settlement;
+      this.$data.settlement = settlement;
     },
     fetchHousesHandler(ids, street) {
       this.$data.loading4 = true;
@@ -382,19 +376,24 @@ export default defineComponent({
   width: 80%;
   margin: 0;
 }
+
 .check {
   --inner-padding-start: 0px;
 }
+
 ion-checkbox {
   margin: 0;
 }
+
 p {
   margin-bottom: 20px;
   word-break: break-all;
 }
+
 ion-item {
   --inner-padding-start: 15px;
 }
+
 ion-list {
   margin-top: -10px;
   /* background: blue; */
@@ -418,10 +417,12 @@ ion-list {
   border: solid 1px #62d0ce;
   caret-color: #000;
 }
+
 .input-wrapper {
   position: relative;
   width: 100%;
 }
+
 .input-text {
   z-index: 0;
   padding-left: 15px;
@@ -432,12 +433,13 @@ ion-list {
   white-space: nowrap;
   overflow: hidden;
 }
+
 .inputTextBlue {
   color: #0378b4;
   font-weight: 700;
 }
 
-input:not(:placeholder-shown) + ion-text {
+input:not(:placeholder-shown)+ion-text {
   display: none;
 }
 

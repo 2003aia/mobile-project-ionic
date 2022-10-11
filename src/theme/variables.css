@@ -179,9 +179,9 @@ http://ionicframework.com/docs/theming/ */
     --ion-color-step-900: #e6e6e6;
     --ion-color-step-950: #f2f2f2;
 
-    --ion-item-background: #000000;
+    --ion-item-background: #fff;
 
-    --ion-card-background: #1c1c1d;
+    --ion-card-background: #fff;
   }
 
   .ios ion-modal {
@@ -196,7 +196,7 @@ http://ionicframework.com/docs/theming/ */
    */
 
   .md body {
-    --ion-background-color: #121212;
+    --ion-background-color: #fff;
     --ion-background-color-rgb: 18, 18, 18;
 
     --ion-text-color: #ffffff;
@@ -224,13 +224,13 @@ http://ionicframework.com/docs/theming/ */
     --ion-color-step-900: #e7e7e7;
     --ion-color-step-950: #f3f3f3;
 
-    --ion-item-background: #1e1e1e;
+    --ion-item-background: #fff;
 
-    --ion-toolbar-background: #1f1f1f;
+    --ion-toolbar-background: #fff;
 
-    --ion-tab-bar-background: #1f1f1f;
+    --ion-tab-bar-background: #fff;
 
-    --ion-card-background: #1e1e1e;
+    --ion-card-background: #fff;
   }
 }
 
@@ -308,6 +308,7 @@ http://ionicframework.com/docs/theming/ */
 
 .check ion-checkbox {
   margin-bottom: 5px;
+  --background: #fff;
   margin-top: 5px;
   --border-radius: 50%;
   --size: 26px;
@@ -353,6 +354,12 @@ http://ionicframework.com/docs/theming/ */
   color: #ffffff;
 }
 
+ion-accordion {
+  background: #fff;
+}
+ion-accordion-group {
+  background: #fff;
+}
 ion-datetime {
   background-color: #fff;
 }
@@ -362,6 +369,11 @@ ion-item {
   --padding-bottom: 0px;
   --inner-padding-start: 0;
   --inner-padding-end: 0;
+  --background: #fff;
+  /* --border-color: #E0E0E0; */
+}
+ion-row{
+  background: #fff;
 }
 .blue {
   color: #62d0ce;
@@ -378,6 +390,12 @@ ion-badge {
   --background: #62d0ce;
   color: rgb(255, 255, 255);
   border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+ion-list{
+  background-color: #fff;
 }
 
 .ion-color-date {
@@ -391,7 +409,7 @@ ion-badge {
 
 .error {
   color: #dd2c00;
-  margin-top: 0;
+  margin-top: 10px;
 }
 
 .background {
@@ -425,6 +443,7 @@ ion-badge {
   padding: 15px;
   width: 100%;
   border: solid 1px #e0e0e0;
+  background: #fff;
   margin-bottom: 15px;
   --padding-start: 15px;
   --padding-bottom: 14px;

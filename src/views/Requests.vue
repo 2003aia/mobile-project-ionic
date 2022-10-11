@@ -1,13 +1,7 @@
 <template>
   <ion-page>
     <Back />
-    <Layout
-      :btnSrc="'/tabs/services'"
-      height="false"
-      outlineBtn="."
-      filledBtn="Создать заявку"
-      title="Мои заявки"
-    >
+    <Layout :btnSrc="'/tabs/services'" height="false" outlineBtn="." filledBtn="Создать заявку" title="Мои заявки">
       <template v-slot:main-content>
         <div class="wrapper">
           <ion-row>
@@ -18,12 +12,10 @@
             <ion-col> Адрес </ion-col>
           </ion-row>
           <ion-list v-for="el in listServices" :key="el">
-            <ion-row
-              :class="{
-                'ion-row-last':
-                  listServices[listServices?.length - 1]?.number === el?.number,
-              }"
-            >
+            <ion-row :class="{
+              'ion-row-last':
+                listServices[listServices?.length - 1]?.number === el?.number,
+            }">
               <ion-col>
                 <ion-text class="sub-title">{{ el.number }}</ion-text>
               </ion-col>
@@ -62,9 +54,9 @@ import Layout from "../components/Layout.vue";
 import {
   IonPage,
   IonText,
-  /*  IonItem, */ IonList,
   IonRow,
   IonCol,
+  IonList,
 } from "@ionic/vue";
 import {
   pencilOutline,
@@ -79,13 +71,13 @@ export default defineComponent({
   name: "myRequestsPage",
   components: {
     Back,
-    /* IonItem, */
     IonRow,
     IonCol,
     IonPage,
     Layout,
-    IonList,
     IonText,
+    IonList,
+
   },
   computed: {
     listServices() {
@@ -116,22 +108,26 @@ export default defineComponent({
 <style scoped>
 .wrapper {
   width: 100%;
-/*   min-width: 400px;
+  /*   min-width: 400px;
   overflow: hidden;
   overflow: auto; */
 }
+
 .text {
   margin-top: 15px;
   margin-bottom: 10px;
 }
+
 ion-row {
   padding-top: 5px;
   padding-bottom: 5px;
   border-bottom: solid 1px #e0e0e0;
 }
+
 ion-col {
   word-break: break-all;
 }
+
 .ion-row-last {
   border-bottom: none;
 }

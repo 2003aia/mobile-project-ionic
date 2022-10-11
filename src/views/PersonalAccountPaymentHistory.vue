@@ -1,21 +1,14 @@
 <template>
   <ion-page>
     <Back />
-    <Layout
-      :btnSrc="'/personalAccountPayment'"
-      height="false"
-      outlineBtn="."
-      filledBtn="."
-      title="Лицевые счета"
-    >
+    <Layout :btnSrc="'/personalAccountPayment'" height="false" outlineBtn="." filledBtn="." title="Лицевые счета">
       <template v-slot:header-content>
         <ion-text class="main-title">История платежей</ion-text>
       </template>
       <template v-slot:main-content>
         <div v-if="paymentHistory?.length === 0">
-          <ion-text
-            >У №{{ route.params?.lc }} лицевого счета нет платежей</ion-text
-          >
+          <ion-text>У №{{ this.$pinia.state.value?.personalAccount?.personalItemData?.code }} лицевого счета нет
+            платежей</ion-text>
         </div>
         <div v-else>
           <ion-row>
@@ -24,54 +17,26 @@
 
             <ion-col>Сумма</ion-col>
 
-            <ion-col>Автор</ion-col>
+            <!-- <ion-col>Автор</ion-col> -->
           </ion-row>
 
-          <ion-list v-for="el in paymentHistory" :key="el">
-            <ion-row
-              :class="{
-                'ion-row-last':
-                  paymentHistory[paymentHistory?.length - 1]?.number ===
-                  el?.number,
-              }"
-            >
+          <div v-for="el in paymentHistory" :key="el">
+            <ion-row :class="{
+              'ion-row-last':
+                paymentHistory[paymentHistory?.length - 1]?.number ===
+                el?.number,
+            }">
               <ion-col class="sub-title"> {{ el?.number }} </ion-col>
               <ion-col class="sub-title">
                 {{ el?.date ? el?.date : "-" }}
               </ion-col>
 
               <ion-col class="sub-title">{{ maskMoney(el?.summ) }}</ion-col>
-              <ion-col class="sub-title">{{ el?.author }}</ion-col>
+              <!--  <ion-col class="sub-title">{{ el?.author }}</ion-col> -->
             </ion-row>
-          </ion-list>
+          </div>
 
-          <!-- <ion-item>
-          <ion-text>Дата</ion-text>
-          <ion-text class="sub-title" slot="end">
-            {{ paymentHistory[0]?.date ? paymentHistory[0]?.date : "-" }}
-          </ion-text>
-        </ion-item>
-        <ion-item>
-          <ion-text>№</ion-text>
-          <ion-text class="sub-title" slot="end">
-            {{ paymentHistory[0]?.number }}
-          </ion-text>
-        </ion-item>
 
-        <ion-item>
-          <ion-text>Сумма</ion-text>
-          <ion-text class="sub-title" slot="end">
-            {{ paymentHistory[0]?.summ }}
-          </ion-text>
-        </ion-item>
-        <ion-item>
-          <ion-text>Автор</ion-text>
-          <ion-text class="sub-title" slot="end">
-            {{ paymentHistory[0]?.author }}
-          </ion-text>
-        </ion-item> -->
-
-          <!-- </ion-list> -->
         </div>
       </template>
       <ion-spinner name="bubbles" />
@@ -86,7 +51,6 @@ import Layout from "../components/Layout.vue";
 import {
   IonPage,
   IonText,
-  IonList,
   IonSpinner,
   IonCol,
   IonRow,
@@ -106,7 +70,6 @@ export default defineComponent({
   name: "personalAccountPaymentHistory",
   components: {
     Back,
-    IonList,
     IonPage,
     Layout,
     IonText,
@@ -130,7 +93,7 @@ export default defineComponent({
       return this.$pinia.state.value?.personalAccount?.paymentHistoryResponse
         ?.data[0]?.payments
         ? this.$pinia.state.value?.personalAccount?.paymentHistoryResponse
-            ?.data[0]?.payments
+          ?.data[0]?.payments
         : [];
     },
     paymentHistory2() {
@@ -138,8 +101,9 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.getPayments(this.$route.params.lc);
-    console.log(this.$route.params, "params");
+    this.getPayments(
+      this.$pinia.state.value?.personalAccount?.personalItemData?.code
+    );
   },
   data() {
     return {};
@@ -164,16 +128,20 @@ ion-row {
   padding-bottom: 5px;
   border-bottom: solid 1px #e0e0e0;
 }
+
 .ion-row-last {
   border-bottom: none;
 }
+
 ion-col {
   word-break: break-all;
 }
+
 ion-list {
   /* background: #f5f5f5; */
   background-color: rgba(0, 0, 0, 0);
 }
+
 .text {
   margin-top: 15px;
   margin-bottom: 10px;
@@ -183,6 +151,7 @@ ion-list {
   margin: 0;
   /* background: red; */
 }
+
 ion-spinner {
   margin: 0;
 }

@@ -86,7 +86,7 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonItem, IonList, IonIcon } from "@ionic/vue";
+import { IonPage, IonText, IonItem,  IonIcon } from "@ionic/vue";
 import {
   pencilOutline,
   documentTextOutline,
@@ -103,7 +103,6 @@ export default defineComponent({
     Back,
     IonPage,
     IonItem,
-    IonList,
     Button,
     Layout,
     IonText,

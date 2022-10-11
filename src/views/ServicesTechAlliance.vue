@@ -246,11 +246,12 @@
             </ion-text>
             <ButtonSelect
               :btnSrc="
-                () =>
+                () => {
+                  this.$pinia.state.value.services.techAllianceConnection = true;
                   router.push({
                     name: 'servicesTechAllianceSelect',
-                    params: { connection: true },
-                  })
+                  });
+                }
               "
               :name="
                 this.select?.GAS_SLUCHI?.VALUE
@@ -266,11 +267,12 @@
             </ion-text>
             <ButtonSelect
               :btnSrc="
-                () =>
+                () => {
+                  this.$pinia.state.value.services.techAllianceConnection = false;
                   router.push({
                     name: 'servicesTechAllianceSelect',
-                    params: { connection: false },
-                  })
+                  });
+                }
               "
               :name="
                 this.select?.GAS_HARAKTER?.VALUE
@@ -360,7 +362,6 @@ export default defineComponent({
           return (
             el.SERVICE.VALUE ===
             "Услуга технологического присоединения для физических лиц"
-            /*  "Услуга технологического присоединения для физических лиц" */
           );
         }
       );

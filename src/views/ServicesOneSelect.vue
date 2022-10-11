@@ -3,12 +3,17 @@
     <Back
       :btnSrc="
         () => {
-          if (route.params.next === 'true' && finished === false) {
+          if (
+            this.$pinia.state.value?.services.servicesOneNext === true &&
+            finished === false
+          ) {
             router.push('/tabs/servicesOne');
+            this.$pinia.state.value.services.servicesOneNext = false;
           } else {
             if (finished === true) finished = false;
             else {
               router.push('/tabs/servicesOne');
+              this.$pinia.state.value.services.servicesOneNext = false;
             }
           }
         }
@@ -18,7 +23,10 @@
       :loading="loading"
       :method="
         () => {
-          if (this.$route.params.next == 'true' && finished == false) {
+          if (
+            this.$pinia.state.value?.services.servicesOneNext == true &&
+            finished == false
+          ) {
             storageHandler();
           } else {
             this.$router.push('/tabs/services');
@@ -27,13 +35,18 @@
       "
       height="false"
       :filledBtn="
-        route.params?.next === 'true' && finished == false
+        this.$pinia.state.value?.services?.servicesOneNext === true &&
+        finished == false
           ? 'Далее'
           : finished
           ? 'Готово'
           : '.'
       "
-      :title="route.params?.next === 'true' ? 'Разовая услуга' : 'Вид работ'"
+      :title="
+        this.$pinia.state.value?.services?.servicesOneNext === true
+          ? 'Разовая услуга'
+          : 'Вид работ'
+      "
       outlineBtn="."
     >
       <template v-slot:main-content>
@@ -51,11 +64,16 @@
             </p>
           </ion-text>
         </div>
-        <div v-if="route.params?.next && finished == false">
+        <div
+          v-if="
+            this.$pinia.state.value?.services?.servicesOneNext &&
+            finished == false
+          "
+        >
           <ion-text
             ><p class="title ion-text-start">Согласие на условие договора</p>
           </ion-text>
-          <ion-list>
+          <div>
             <ion-item>
               <ion-icon
                 slot="start"
@@ -76,7 +94,7 @@
                 >Согласен (-на) на обработку персональных данных</ion-text
               >
             </ion-item>
-          </ion-list>
+          </div>
           <ion-text
             v-show="
               this.$pinia.state.value?.services?.servicesResponse?.error ===
@@ -86,13 +104,15 @@
             <p class="error">Что-то пошло не так</p>
           </ion-text>
         </div>
-        <div v-if="route.params.next !== 'true'">
+        <div
+          v-if="this.$pinia.state.value?.services.servicesOneNext !== true"
+        >
           <ion-text class="title">Выберите варианты</ion-text>
-          <ion-list v-for="variant in variants" v-bind:key="variant.id">
+          <div v-for="variant in variants" v-bind:key="variant.id">
             <ion-item @click="selectHandler(variant.name)">
               <ion-text class="sub-title">{{ variant.name }} </ion-text>
             </ion-item>
-          </ion-list>
+          </div>
         </div>
       </template>
     </Layout>
@@ -103,14 +123,7 @@
 import { defineComponent } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Layout from "../components/Layout.vue";
-import {
-  IonPage,
-  IonText,
-  IonList,
-  IonItem,
-  IonCheckbox,
-  IonIcon,
-} from "@ionic/vue";
+import { IonPage, IonText, IonItem, IonCheckbox, IonIcon } from "@ionic/vue";
 import Back from "../components/Back.vue";
 import { documentTextOutline, arrowDownOutline } from "ionicons/icons";
 import { mapActions } from "pinia";
@@ -120,7 +133,6 @@ export default defineComponent({
   name: "chooseWorkPage",
   components: {
     IonPage,
-    IonList,
     Layout,
     IonItem,
     Back,

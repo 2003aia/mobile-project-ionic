@@ -6,7 +6,9 @@ export const useNewsStore = defineStore({
     id: 'news',
     state: () => ({
         news: [],
-        newsDetail: null
+        newsDetail: null,
+        idNews: '',
+        forNews: '',
     }),
     getters: {
         getPostsPerAuthor: (state) => {

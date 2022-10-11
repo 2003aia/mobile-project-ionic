@@ -18,6 +18,8 @@ export const useServicesStore = defineStore({
       GAS_HARAKTER: null,
       GAS_VID_USLUG: null,
     },
+    servicesOneNext: false,
+    techAllianceConnection: false,
     addressResponse: null,
     addressError: null,
     filesResponse: [],
@@ -26,6 +28,7 @@ export const useServicesStore = defineStore({
     listServicesResponseError: null,
     camerasResponse: null,
     camerasError: null,
+    
   }),
   getters: {
     setForm: (state) => {

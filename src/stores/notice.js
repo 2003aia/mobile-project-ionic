@@ -8,6 +8,7 @@ export const useNoticeStore = defineStore({
         notice: [],
         noticeDetail: null,
         noticeError: null, 
+        idNotice: ''
     }),
     getters: {
         getPostsPerAuthor: (state) => {

@@ -4,17 +4,12 @@
     <ion-content :fullscreen="true" class="background">
       <div class="container">
         <div class="btn-wrapper">
-          <Button
-            class="btn"
-            :grey="true"
-            name="Оплата"
-            @click="
-              () =>
-                router.push({
-                  name: 'personalAccountPayment',
-                })
-            "
-          />
+          <Button class="btn" :grey="true" name="Оплата" @click="
+            () =>
+              router.push({
+                name: 'personalAccountPayment',
+              })
+          " />
           <Button class="btn" name="Показания" />
         </div>
         <layout-box>
@@ -39,65 +34,36 @@
                 <p class="title ion-text-start">Счетчик {{ el?.name }}</p>
               </ion-text>
               <ion-row>
-                <ion-col size="2" size-sm>№</ion-col>
+                <!-- <ion-col size="2" size-sm>№</ion-col> -->
                 <ion-col>Дата</ion-col>
                 <ion-col>Показания</ion-col>
               </ion-row>
 
-              <ion-list
-                v-for="(indice, index) in el?.indications"
-                :key="indice"
-              >
-                <ion-row
-                  :class="{
-                    'ion-row-last':
-                      el?.indications[el?.indications?.length - 1]?.date ===
-                      indice?.date,
-                  }"
-                >
-                  <ion-col class="sub-title" size="2" size-sm
+              <div v-for="(indice) in el?.indications" :key="indice">
+                <ion-row :class="{
+                  'ion-row-last':
+                    el?.indications[el?.indications?.length - 1]?.date ===
+                    indice?.date,
+                }">
+                  <!-- <ion-col class="sub-title" size="2" size-sm
                     >{{ index + 1 }}.</ion-col
-                  >
+                  > -->
 
                   <ion-col class="text-end">{{
-                    indice?.date.substring(0, 10)
+                  indice?.date.substring(0, 10)
                   }}</ion-col>
                   <ion-col class="text-end">{{ indice?.indication }}</ion-col>
                 </ion-row>
 
-                <!-- <ion-text>
-                  <p class="sub-title">{{ index + 1 }}.</p>
-                </ion-text>
-                <ion-item>
-                  <ion-text>Датa</ion-text>
-                  <ion-text slot="end" class="text-end">{{
-                    indice?.date
-                  }}</ion-text>
-                </ion-item>
-                <ion-item>
-                  <ion-text>Показания</ion-text>
-                  <ion-text slot="end" class="text-end">{{
-                    indice?.indication
-                  }}</ion-text>
-                </ion-item> -->
-              </ion-list>
+              </div>
               <ion-text>
                 <p class="title ion-text-start">Новые показания</p>
               </ion-text>
 
               <div class="input-wrapper">
-                <input
-                  ref="text2"
-                  type="text"
-                  class="input"
-                  v-model="el.value"
-                  placeholder=" "
-                />
-                <ion-text
-                  class="input-text inputTextBlue"
-                  @click="onFocusText(index)"
-                  >Введите показания счетчика</ion-text
-                >
+                <input ref="text2" type="text" class="input" v-model="el.value" placeholder=" " />
+                <ion-text class="input-text inputTextBlue" @click="onFocusText(index)">Введите показания счетчика
+                </ion-text>
               </div>
               {{ el.response }}
               <ion-text v-show="el.response === 'Заполните поле'">
@@ -110,16 +76,12 @@
                   {{ el.response }}
                 </p>
               </ion-text>
-              <Button
-                v-model="el.loading"
-                :loading="el.loading !== true ? false : el.loading"
-                :name="'Подтвердить'"
+              <Button v-model="el.loading" :loading="el.loading !== true ? false : el.loading" :name="'Подтвердить'"
                 @click="
                   () => {
                     setIndicesHandler(el.id, el.value, el.loading, el.response);
                   }
-                "
-              />
+                " />
             </template>
           </layout-box>
         </div>
@@ -129,20 +91,10 @@
               <ion-text>
                 <p class="title ion-text-start">Новые показания</p>
               </ion-text>
-              <Input
-                :textBlue="true"
-                type="text"
-                :value="counterId"
-                :changeHandler="changeCounterId"
-                :name="'Введите номер счетчика'"
-              />
-              <Input
-                :textBlue="true"
-                type="text"
-                :value="indication"
-                :changeHandler="changeIndication"
-                :name="'Введите показания счетчика'"
-              />
+              <Input :textBlue="true" type="text" :value="counterId" :changeHandler="changeCounterId"
+                :name="'Введите номер счетчика'" />
+              <Input :textBlue="true" type="text" :value="indication" :changeHandler="changeIndication"
+                :name="'Введите показания счетчика'" />
               <ion-text v-show="error">
                 <p class="ion-text-start error">
                   {{ error }}
@@ -153,24 +105,20 @@
                   {{ response }}
                 </p>
               </ion-text>
-              <Button
-                :loading="loading"
-                :name="'Подтвердить'"
-                @click="
-                  () => {
-                    if (counterId?.length !== 0) {
-                      setIndicesHandler(
-                        counterId,
-                        indication,
-                        loading,
-                        response
-                      );
-                    } else {
-                      error = 'Заполните все поля';
-                    }
+              <Button :loading="loading" :name="'Подтвердить'" @click="
+                () => {
+                  if (counterId?.length !== 0) {
+                    setIndicesHandler(
+                      counterId,
+                      indication,
+                      loading,
+                      response
+                    );
+                  } else {
+                    error = 'Заполните все поля';
                   }
-                "
-              />
+                }
+              " />
             </template>
           </layout-box>
         </div>
@@ -193,7 +141,6 @@ import {
   IonPage,
   IonText,
   IonItem,
-  IonList,
   IonRow,
   IonCol,
 } from "@ionic/vue";
@@ -226,7 +173,7 @@ export default defineComponent({
   methods: {
     ...mapActions(usePersonalAccountStore, ["getIndices", "setIndices"]),
     async setIndicesHandler(counterId, indice, loading, response) {
-      
+
       if (
         (indice !== undefined || indice?.length >= 0) &&
         loading === undefined &&
@@ -288,7 +235,6 @@ export default defineComponent({
     Button,
     IonText,
     IonItem,
-    IonList,
     Input,
     IonRow,
     IonCol,
@@ -302,16 +248,20 @@ ion-row {
   padding-bottom: 5px;
   border-bottom: solid 1px #e0e0e0;
 }
+
 .ion-row-last {
   border-bottom: none;
 }
+
 ion-col {
   word-break: break-all;
 }
+
 .container {
   padding: 15px;
   background: #f5f5f5;
 }
+
 .btn-wrapper {
   display: flex;
   width: 100%;
@@ -323,6 +273,7 @@ ion-col {
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
+
 .btn {
   flex-grow: 1;
 }
@@ -352,10 +303,12 @@ ion-col {
   border: solid 1px #62d0ce;
   caret-color: #000;
 }
+
 .input-wrapper {
   position: relative;
   width: 100%;
 }
+
 .input-text {
   z-index: 0;
   padding-left: 15px;
@@ -366,12 +319,13 @@ ion-col {
   white-space: nowrap;
   overflow: hidden;
 }
+
 .inputTextBlue {
   color: #0378b4;
   font-weight: 700;
 }
 
-input:not(:placeholder-shown) + ion-text {
+input:not(:placeholder-shown)+ion-text {
   display: none;
 }
 

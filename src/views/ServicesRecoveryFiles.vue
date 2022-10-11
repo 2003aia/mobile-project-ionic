@@ -44,14 +44,14 @@
               </p>
             </ion-text>
           </ion-item>
-          <ion-list v-for="el in data" :key="el.text">
+          <div v-for="el in data" :key="el.text">
             <ion-text>
               <p class="text">
                 {{ el.text }}
               </p>
             </ion-text>
             <InputFile name="0" />
-          </ion-list>
+          </div>
         </div>
         <div v-if="sent === true">
           <ion-text>
@@ -74,7 +74,7 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonItem, IonList } from "@ionic/vue";
+import { IonPage, IonText, IonItem,} from "@ionic/vue";
 import Back from "../components/Back.vue";
 import { caretDownSharp } from "ionicons/icons";
 import InputFile from "../components/InputFile.vue";
@@ -84,7 +84,6 @@ export default defineComponent({
   components: {
     IonPage,
     Layout,
-    IonList,
     IonText,
     InputFile,
     Back,

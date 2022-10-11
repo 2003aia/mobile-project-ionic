@@ -1,7 +1,14 @@
 <template>
   <ion-page>
     <ion-content class="background">
-      <Back />
+      <Back
+        :btnSrc="
+          () => {
+            this.$pinia.state.value.news.for = '';
+            this.$router.go(-1)
+          }
+        "
+      />
       <ion-spinner class="loading" v-show="loading === true" name="bubbles" />
 
       <div v-show="loading === false">
@@ -66,35 +73,34 @@ export default defineComponent({
     const router = useRouter();
     let detail = ref(null);
     let loading = ref(true);
+    const { newsDetail, idNews, forNews } = storeToRefs(useNewsStore());
+    const { fetchNewsDetail } = useNewsStore();
     function fetchNewsDetails() {
-      const { newsDetail } = storeToRefs(useNewsStore());
-      const { fetchNewsDetail } = useNewsStore();
       loading.value = true;
-      fetchNewsDetail(route.params.id)
+      fetchNewsDetail(idNews.value)
         .then(() => {
           detail.value = newsDetail.value.data;
         })
         .then(() => (loading.value = false));
     }
     function fetchNoticeDetails() {
-      const { noticeDetail } = storeToRefs(useNoticeStore());
+      const { noticeDetail, idNotice } = storeToRefs(useNoticeStore());
       const { fetchNoticeDetail } = useNoticeStore();
       loading.value = true;
-      fetchNoticeDetail(route.params.id)
+      fetchNoticeDetail(idNotice.value)
         .then(() => {
           detail.value = noticeDetail.value.data;
         })
         .then(() => (loading.value = false));
     }
     onIonViewDidEnter(() => {
-      if (route.params.for === "news") {
+      if (forNews.value === "news") {
         fetchNewsDetails();
       } else {
         fetchNoticeDetails();
       }
     });
 
-    console.log(route.params, "params");
     return {
       detail,
       router,

@@ -21,7 +21,7 @@
         </div>
         <div>
           <Input
-            v-mask="'+7 (###) ###-##-##'"
+            :mask="'+7 (###) ###-##-##'"
             name="Телефон"
             :value="phone"
             type="tel"
@@ -96,7 +96,6 @@ import {
   IonImg,
   onIonViewDidEnter,
 } from "@ionic/vue";
-import { mask } from "vue-the-mask";
 import { Storage } from "@ionic/storage";
 
 export default defineComponent({
@@ -111,7 +110,6 @@ export default defineComponent({
     Input,
     IonImg,
   },
-  directives: { mask },
 
   setup() {
     const router = useRouter();

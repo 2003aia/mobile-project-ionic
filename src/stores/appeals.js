@@ -15,6 +15,8 @@ export const useAppealsStore = defineStore({
         createMessageError: null,
         appealsCategoriesResponse: null,
         appealsCategoriesError: null,
+        newAppeal: false,
+        appealsItem: {}
     }),
     getters: {
         getPostsPerAuthor: (state) => {

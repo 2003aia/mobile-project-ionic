@@ -4,7 +4,7 @@
     <Layout outlineBtn="." filledBtn="." title="Вид услуг">
       <template v-slot:main-content>
         <ion-text class="title">Выберите варианты</ion-text>
-        <ion-list>
+        <div>
           <ion-item
             router-link="/tabs/record"
             @click="selectServiceType('Q01')"
@@ -25,7 +25,7 @@
           >
             <ion-text class="sub-title">Социальная газификация </ion-text>
           </ion-item>
-        </ion-list>
+        </div>
       </template>
     </Layout>
   </ion-page>
@@ -35,7 +35,7 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonList, IonItem } from "@ionic/vue";
+import { IonPage, IonText, IonItem } from "@ionic/vue";
 import Back from "../components/Back.vue";
 import { usePreEntryStore } from "../stores/preEntry";
 
@@ -43,7 +43,6 @@ export default defineComponent({
   name: "recordSelectPage",
   components: {
     IonPage,
-    IonList,
     Layout,
     IonItem,
     Back,

@@ -1,12 +1,7 @@
 <template>
   <ion-page>
-    <Back  />
-    <Layout
-      height="false"
-      outlineBtn="."
-      filledBtn="."
-      title="Контакты"
-    >
+    <Back />
+    <Layout height="false" outlineBtn="." filledBtn="." title="Контакты">
       <template v-slot:main-content>
         <ion-text>
           <p class="title ion-text-start">Связаться с нами</p>
@@ -18,7 +13,7 @@
           </p>
         </ion-text>
 
-        <ion-list v-for="el in data" :key="el.name">
+        <div v-for="el in data" :key="el.name">
           <ion-item>
             <div>
               <div class="header-item">
@@ -31,8 +26,8 @@
               <ion-text> {{ el.name }} </ion-text>
             </div>
           </ion-item>
-        </ion-list>
-        <ion-list v-for="el in emergency" :key="el.name">
+        </div>
+        <div v-for="el in emergency" :key="el.name">
           <ion-item>
             <div>
               <div class="header-item">
@@ -44,8 +39,9 @@
 
               <ion-text class="sub-emergency"> {{ el.name }} </ion-text>
             </div>
+
           </ion-item>
-        </ion-list>
+        </div>
       </template>
     </Layout>
   </ion-page>
@@ -56,7 +52,7 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonItem, IonList, IonIcon } from "@ionic/vue";
+import { IonPage, IonText, IonItem, IonIcon } from "@ionic/vue";
 import { call } from "ionicons/icons";
 import Back from "../components/Back.vue";
 
@@ -67,7 +63,6 @@ export default defineComponent({
     IonPage,
     Layout,
     IonText,
-    IonList,
     IonItem,
     Back,
   },
@@ -125,16 +120,21 @@ ion-icon {
   margin-bottom: 5px;
   margin-right: 15px;
 }
+
 .emergency {
   color: #dd2c00;
 }
+
 .sub-emergency {
   color: #ff8a65;
+
 }
+
 .header-item {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  /* margin-bottom: 5px; */
+  margin-top: 10px;
 }
 
 ion-item {

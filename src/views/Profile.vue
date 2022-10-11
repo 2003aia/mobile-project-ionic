@@ -21,25 +21,14 @@
         <ion-text>
           <p class="title ion-text-start">Мои данные</p>
         </ion-text>
-        <ion-list>
+        <div>
           <ion-item>
             <ion-text>
               <p v-if="profileData?.name" class="sub-title">{{ profileData?.name }}</p>
               <p v-else >Имя</p>
             </ion-text>
           </ion-item>
-          <!-- <ion-item>
-            <ion-text>
-              <p class="sub-title">{{ profileData?.data?.lastName }}</p>
-              <p>Фамилия</p>
-            </ion-text>
-          </ion-item> -->
-          <!-- <ion-item>
-            <ion-text>
-              <p class="sub-title">{{ data.secondname }}</p>
-              <p>Отчество</p>
-            </ion-text>
-          </ion-item> -->
+          
          
           <ion-item>
             <ion-text>
@@ -53,7 +42,7 @@
               <p v-else>Контактный телефон</p>
             </ion-text>
           </ion-item>
-        </ion-list>
+        </div>
       </template>
     </Layout>
   </ion-page>
@@ -69,7 +58,6 @@ import {
   IonPage,
   IonText,
   IonItem,
-  IonList,
   onIonViewDidEnter,
 } from "@ionic/vue";
 import { Storage } from "@ionic/storage";
@@ -96,7 +84,6 @@ export default defineComponent({
     IonPage,
     Back,
     Layout,
-    IonList,
     IonItem,
     IonText,
   },

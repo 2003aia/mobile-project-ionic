@@ -7,7 +7,7 @@
           <ion-content>
             <ion-toolbar> </ion-toolbar>
 
-            <ion-list v-for="el in sideMenu" :key="el">
+            <div v-for="el in sideMenu" :key="el">
               <ion-item
                 @click="
                   () => {
@@ -19,12 +19,12 @@
                 <ion-text class="sub-title">{{ el.name }}</ion-text>
                 <ion-badge slot="end">{{ el.number }}</ion-badge>
               </ion-item>
-            </ion-list>
+            </div>
           </ion-content>
         </ion-menu>
 
         <ion-tab-bar class="tabs" slot="bottom">
-          <ion-tab-button tab="menu" @click="openMenu">
+          <ion-tab-button @click="openMenu">
             <ion-img
               class="tabslogo"
               :src="
@@ -112,7 +112,6 @@ import {
   IonTabs,
   IonRouterOutlet,
   IonContent,
-  IonList,
   IonItem,
   IonMenu,
   IonImg,
@@ -154,7 +153,6 @@ export default defineComponent({
     IonTabs,
     IonContent,
     IonImg,
-    IonList,
     IonItem,
     IonMenu,
     IonPage,
@@ -258,9 +256,7 @@ ion-item {
   --padding-end: 15px;
   --padding-bottom: 10px;
 }
-ion-label {
-  line-height: 10px;
-}
+
 ion-icon {
   color: #0378b4;
   width: 20px;
@@ -318,7 +314,7 @@ ion-badge {
   --padding-end: 5px;
 }
 ion-label {
-  font-size: 10px;
+  font-size: 5px;
   font-weight: 600;
   margin-top: 3px;
   font-size: 13px;

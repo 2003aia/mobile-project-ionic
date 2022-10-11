@@ -383,9 +383,10 @@ export default defineComponent({
         };
         console.log(userObject, "test");
         if (this.$pinia.state.value?.services?.form) {
+          this.$pinia.state.value.services.servicesOneNext = true 
           this.$router.push({
             name: "servicesOneSelect",
-            params: { next: true },
+           /*  params: { next: true }, */
           });
           this.$pinia.state.value.services.form = userObject;
         }

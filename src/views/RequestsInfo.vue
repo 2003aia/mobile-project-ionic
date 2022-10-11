@@ -9,7 +9,7 @@
       title="Мои заявки"
     >
       <template v-slot:main-content>
-        <ion-list v-for="el in data" :key="el.date">
+        <div v-for="el in data" :key="el.date">
           <ion-text class="title">{{ el.title }}</ion-text>
 
           <ion-item>
@@ -61,7 +61,7 @@
               {{ el.contract }}
             </ion-text>
           </ion-item>
-        </ion-list>
+        </div>
       </template>
       <LayoutBox>
         <template v-slot:content> </template>
@@ -75,7 +75,7 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonItem, IonList } from "@ionic/vue";
+import { IonPage, IonText, IonItem, } from "@ionic/vue";
 import {
   pencilOutline,
   documentTextOutline,
@@ -88,7 +88,6 @@ export default defineComponent({
   name: "requestsInfo",
   components: {
     Back,
-    IonList,
     IonItem,
     IonPage,
     Layout,
@@ -109,17 +108,7 @@ export default defineComponent({
           contract: "-",
           dateBussiness: "-",
         },
-        /*      {
-          title: "Разовые услуги для абонентов АО «Сахатранснефтегаз»",
-          address: "-",
-          status: "В обработке",
-          number: "19.04.2022",
-          dateAdmission: "19.04.2022",
-          dateDue: "19.04.2022",
-          comment: "-",
-          contract: "-",
-          dateBussiness: "-",
-        }, */
+       
       ],
     };
   },

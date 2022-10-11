@@ -106,25 +106,20 @@ export default defineComponent({
     },
     paymentHandler() {
       this.sberPay(
-        this.$route.params.code,
+        this.$pinia.state.value.personalAccount.personalItemData.code,
         this.$data.phone,
         this.$data.email,
-        JSON.parse(this.$route.params.sberPay).accruals,
-        JSON.parse(this.$route.params.sberPay).sumTO,
-        JSON.parse(this.$route.params.sberPay).penalties,
-        JSON.parse(this.$route.params.sberPay).advances
+        this.$pinia.state.value.personalAccount.personalItemData.sberPay
+          .accruals,
+        this.$pinia.state.value.personalAccount.personalItemData.sberPay.sumTO,
+        this.$pinia.state.value.personalAccount.personalItemData.sberPay
+          .penalties,
+        this.$pinia.state.value.personalAccount.personalItemData.sberPay
+          .advances
       );
       this.$data.paySent = true;
     },
     sberPayHanler() {
-      /* this.sberPay(
-        this.$route.params.code,
-        this.$data.phone,
-        this.$data.email,
-        JSON.parse(this.$route.params.sberPay).accruals,
-        JSON.parse(this.$route.params.sberPay).sumTO,
-        JSON.parse(this.$route.params.sberPay).penalties
-      ); */
       window.open(
         this.$pinia.state.value?.personalAccount?.sberPayResponse?.link,
         "_system"

@@ -30,7 +30,7 @@
               </p>
             </ion-text>
           </ion-item>
-          <ion-list v-for="el in data" :key="el.text">
+          <div v-for="el in data" :key="el.text">
             <ion-text>
               <p class="text">
                 {{ el.text }}
@@ -57,7 +57,7 @@
               :changeHandler="(e) => el.fn(e, el)"
               :accept="'image/jpeg, application/pdf, .zip, image/png,'"
             />
-          </ion-list>
+          </div>
           <ion-text
             v-show="
               this.$pinia.state.value?.services?.servicesResponse?.error ===
@@ -96,7 +96,7 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonItem, IonList, IonIcon } from "@ionic/vue";
+import { IonPage, IonText, IonItem,  IonIcon } from "@ionic/vue";
 import Back from "../components/Back.vue";
 import { caretDownSharp, trashOutline } from "ionicons/icons";
 import InputFile from "../components/InputFile.vue";
@@ -108,7 +108,6 @@ export default defineComponent({
   name: "servicesTechAllianceFiles",
   components: {
     IonPage,
-    IonList,
     Layout,
     IonText,
     InputFile,

@@ -72,7 +72,7 @@
           "
         />
 
-        <ion-list>
+        <div>
           <ion-item router-link="/tabs/date">
             <ion-icon
               size="large"
@@ -107,7 +107,7 @@
               :icon="chevronForwardOutline"
             ></ion-icon>
           </ion-item>
-        </ion-list>
+        </div>
 
         <ion-text>
           <p>
@@ -167,7 +167,6 @@ import ButtonSelect from "../components/ButtonSelect.vue";
 import {
   IonPage,
   IonText,
-  IonList,
   IonItem,
   IonCheckbox,
   IonIcon,
@@ -186,7 +185,6 @@ export default defineComponent({
   components: {
     ButtonSelect,
     IonPage,
-    IonList,
     // Back,
     Layout,
     IonItem,

@@ -67,7 +67,7 @@ ion-spinner {
   );
 }
 .outline {
-  --background: #f5f5f5;
+  --background: #ffffff00;
   --border-width: 1px;
   --border-color: #0378b4;
   --border-style: solid;

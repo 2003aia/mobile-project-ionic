@@ -18,7 +18,7 @@
         <ion-text>
           <p class="title ion-text-start">Мои данные</p>
         </ion-text>
-        <ion-list>
+        <div>
           <ion-text><p class="sub-title">Имя</p> </ion-text>
           <Input
             @updated="(item) => (name = item)"
@@ -26,33 +26,22 @@
             :value="name"
             name="Укажите имя"
           />
-          <!-- <ion-text><p class="sub-title">Фамилия</p> </ion-text>
-          <Input
-            name="Укажите фамилию"
-            :value="surname"
-            :changeHandler="surnameChange"
-          /> -->
-          <!--  <ion-text><p class="sub-title">Отчество</p> </ion-text>
-          <Input name="Укажите отчество" /> -->
-
-          <!-- <ion-item> -->
+          
           <ion-text>
             <p class="sub-title">{{ data.email }}</p>
-            <!--  <p>Электронная почта</p> -->
           </ion-text>
           <Input
             name="Электронная почта"
             :value="email"
             :changeHandler="emailChange"
           />
-          <!--  </ion-item> -->
           <ion-item>
             <ion-text>
               <p class="sub-title">{{ login }}</p>
               <p>Контактный телефон</p>
             </ion-text>
           </ion-item>
-        </ion-list>
+        </div>
         <ion-text v-if="profileError?.response?.data?.error" class="error">
           {{ profileError?.response?.data?.error }}
         </ion-text>
@@ -71,7 +60,6 @@ import {
   IonPage,
   IonText,
   IonItem,
-  IonList,
 } from "@ionic/vue";
 import Input from "../components/Input.vue";
 import Back from "../components/Back.vue";
@@ -99,7 +87,6 @@ export default defineComponent({
     Input,
     Back,
     IonPage,
-    IonList,
     Layout,
     IonItem,
     IonText,

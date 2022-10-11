@@ -1,7 +1,7 @@
 <template>
   <div class="input-wrapper">
     <input
-      v-if="type === 'number' && min === 0"
+      v-if="type === 'number'"
       ref="text"
       :type="type"
       :min="min"
@@ -28,7 +28,7 @@
       :type="type"
       class="input"
       placeholder=" "
-      v-if="!mask && !type && !min"
+      v-if="!mask && type !== 'number' && !min"
     />
     <ion-text
       :class="{ inputTextBlue: textBlue === true }"

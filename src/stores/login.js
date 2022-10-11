@@ -159,7 +159,7 @@ export const useLoginStore = defineStore({
               await axios.post(`${apiUrl}/user/password/change/`, {
                 token: supportToken.token,
                 password: password
-              });
+              })
             }
             this.changePassResponse = response.data;
           });

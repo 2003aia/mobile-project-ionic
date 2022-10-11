@@ -5,17 +5,12 @@
       <div class="container">
         <div class="btn-wrapper">
           <Button class="btn" name="Оплата" />
-          <Button
-            class="btn"
-            :grey="true"
-            name="Показания"
-            @click="
-              () =>
-                router.push({
-                  name: 'personalAccountIndication',
-                })
-            "
-          />
+          <Button class="btn" :grey="true" name="Показания" @click="
+            () =>
+              router.push({
+                name: 'personalAccountIndication',
+              })
+          " />
         </div>
         <layout-box>
           <template v-slot:content>
@@ -41,9 +36,7 @@
             </ion-text>
             <ion-item>
               <ion-text>Задолженность:</ion-text>
-              <ion-text slot="end" class="text-end"
-                >{{ maskMoney(lcList?.debts?.accruals) }} руб.</ion-text
-              >
+              <ion-text slot="end" class="text-end">{{ maskMoney(lcList?.debts?.accruals) }}</ion-text>
             </ion-item>
             <!--   <ion-item>
               <ion-text> Аванс:</ion-text>
@@ -56,14 +49,8 @@
             <ion-text>
               <p class="title ion-text-start">Оплата</p>
             </ion-text>
-            <Input
-              :value="accruals"
-              :type="'number'"
-              :changeHandler="changeAccruals"
-              name="Введите сумму за сет. газ"
-              :textBlue="true"
-              :min="0"
-            />
+            <Input :value="accruals" :type="'number'" :changeHandler="changeAccruals" name="Введите сумму за сет. газ"
+              :textBlue="true" :min="0" />
           </template>
         </layout-box>
         <layout-box>
@@ -73,9 +60,7 @@
             </ion-text>
             <ion-item>
               <ion-text> Задолженность: </ion-text>
-              <ion-text slot="end" class="text-end"
-                >{{ maskMoney(lcList.debts?.sumTO) }} руб.</ion-text
-              >
+              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.sumTO) }}</ion-text>
             </ion-item>
             <!-- <ion-item>
               <ion-text> Аванс: </ion-text>
@@ -86,14 +71,8 @@
             <ion-text>
               <p class="title ion-text-start">Оплата</p>
             </ion-text>
-            <Input
-              :value="sumTO"
-              :changeHandler="changeSumTO"
-              name="Введите сумму за техобслуж."
-              :textBlue="true"
-              :type="'number'"
-              :min="0"
-            />
+            <Input :value="sumTO" :changeHandler="changeSumTO" name="Введите сумму за техобслуж." :textBlue="true"
+              :type="'number'" :min="0" />
           </template>
         </layout-box>
         <layout-box>
@@ -103,9 +82,7 @@
             </ion-text>
             <ion-item>
               <ion-text> Задолженность: </ion-text>
-              <ion-text slot="end" class="text-end"
-                >{{ maskMoney(lcList.debts?.penalties) }} руб.</ion-text
-              >
+              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.penalties) }}</ion-text>
             </ion-item>
             <!--  <ion-item>
               <ion-text> Аванс: </ion-text>
@@ -116,14 +93,8 @@
             <ion-text>
               <p class="title ion-text-start">Оплата</p>
             </ion-text>
-            <Input
-              name="Введите сумму"
-              :value="penalties"
-              :changeHandler="changePenalties"
-              :textBlue="true"
-              :type="'number'"
-              :min="0"
-            />
+            <Input name="Введите сумму" :value="penalties" :changeHandler="changePenalties" :textBlue="true"
+              :type="'number'" :min="0" />
           </template>
         </layout-box>
         <layout-box>
@@ -133,21 +104,13 @@
             </ion-text>
             <ion-item>
               <ion-text> Задолженность: </ion-text>
-              <ion-text slot="end" class="text-end"
-                >{{ maskMoney(lcList.debts?.advances) }} руб.</ion-text
-              >
+              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.advances) }}</ion-text>
             </ion-item>
-            <ion-text>
+            <!-- <ion-text>
               <p class="title ion-text-start">Оплата</p>
             </ion-text>
-            <Input
-              name="Введите сумму"
-              :value="advances"
-              :changeHandler="changeAdvances"
-              :textBlue="true"
-              :min="0"
-              :type="'number'"
-            />
+            <Input name="Введите сумму" :value="advances" :changeHandler="changeAdvances" :textBlue="true" :min="0"
+              :type="'number'" /> -->
           </template>
         </layout-box>
         <!-- <layout-box>
@@ -160,9 +123,9 @@
           </template>
         </layout-box> -->
 
-        <ion-text v-show="error"
-          ><p class="ion-text-start error">{{ error }}</p></ion-text
-        >
+        <ion-text v-show="error">
+          <p class="ion-text-start error">{{ error }}</p>
+        </ion-text>
         <Button name="Оплатить" @click="paymentHandler" />
       </div>
     </ion-content>
@@ -220,9 +183,18 @@ export default defineComponent({
         this.$data.penalties !== "" ||
         this.$data.sumTO
       ) {
+        this.$pinia.state.value.personalAccount.personalItemData = {
+          ...this.$pinia.state.value?.personalAccount?.personalItemData,
+          sberPay: {
+            accruals: this.$data.accruals,
+            penalties: this.$data.penalties,
+            sumTO: this.$data.sumTO,
+            advances: this.lcList.debts?.advances,
+          }
+        }
         this.$router.push({
           name: "personalAccountPay",
-          params: {
+          /* params: {
             ...this.lcList,
             sberPay: JSON.stringify({
               accruals: this.$data.accruals,
@@ -230,7 +202,7 @@ export default defineComponent({
               sumTO: this.$data.sumTO,
               advances: this.$data.advances,
             }),
-          },
+          }, */
         });
       } else {
         this.$data.error = "Заполните поля";
@@ -263,6 +235,7 @@ export default defineComponent({
   padding: 15px;
   background: #f5f5f5;
 }
+
 .btn-wrapper {
   display: flex;
   width: 100%;
@@ -278,6 +251,7 @@ export default defineComponent({
 
   flex-wrap: wrap;
 }
+
 .btn {
   flex-grow: 1;
 }
@@ -287,6 +261,7 @@ export default defineComponent({
   font-weight: 700;
   margin-left: 0;
 }
+
 .title {
   margin-top: 20px;
 }

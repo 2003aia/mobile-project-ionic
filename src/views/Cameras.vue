@@ -2,43 +2,35 @@
   <ion-page>
     <Back />
 
-    <Layout
-      :padding="true"
-      height="false"
-      outlineBtn="."
-      :filledBtn="'.'"
-      title="Мониторинг загруженности АГЗС"
-    >
+    <Layout :padding="true" height="false" outlineBtn="." :filledBtn="'.'" title="Мониторинг загруженности АГЗС">
       <template v-slot:main-content>
-        <!-- <ion-list v-for="el in cameras" :key="el"> -->
         <ion-card v-show="cameras?.length !== 0">
-          <ion-img
-            @click="openCam(cameras[0].url)"
-            :src="cameras[0]?.preview"
-          />
+          <div class="videoWrapper" v-show="cameras[0]?.status">
+            <iframe class="video" :src="cameras[0]?.url" frameborder="0" allow="autoplay; "></iframe>
+          </div>
+          <ion-img v-show="!cameras[0]?.status" :src="cameras[0]?.preview" />
+
           <ion-card-header>
-            <Button
-              @click="openMap(cameras[0].map)"
-              :name="'Посмотреть на карте'"
-            ></Button>
+            <Button @click="openMap(cameras[0]?.map)" :name="'Посмотреть на карте'"></Button>
             <ion-card-title>
               <ion-text class="sub-title">{{ cameras[0]?.name }}</ion-text>
             </ion-card-title>
           </ion-card-header>
         </ion-card>
-        <!-- </ion-list> -->
       </template>
       <template v-slot:content>
         <div class="list" v-for="el in cameras2" :key="el">
           <LayoutBox :padding="true">
             <template v-slot:content>
               <ion-card v-show="el?.length !== 0">
-                <ion-img @click="openCam(el.url)" :src="el?.preview" />
+                <div v-show="el.status" class="videoWrapper">
+                  <iframe class="video" width="1600" height="900" :src="el.url" frameborder="0"
+                    allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <ion-img v-show="!el.status" :src="el?.preview" />
                 <ion-card-header>
-                  <Button
-                    @click="openMap(el?.map)"
-                    :name="'Посмотреть на карте'"
-                  ></Button>
+                  <Button @click="openMap(el?.map)" :name="'Посмотреть на карте'"></Button>
                   <ion-card-title>
                     <ion-text class="sub-title">{{ el?.name }}</ion-text>
                   </ion-card-title>
@@ -97,6 +89,7 @@ export default defineComponent({
     openCam(el) {
       window.open(el, "_system");
     },
+
   },
   computed: {
     cameras() {
@@ -126,6 +119,24 @@ ion-card {
   margin: 0;
   /* background: red; */
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.videoWrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-top: 56.25%;
+
+}
+
+iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .list {

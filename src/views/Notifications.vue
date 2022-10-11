@@ -1,22 +1,17 @@
 <template>
   <ion-page>
     <Back />
-    <Layout
-      btnSrc="/registrPage"
-      height="false"
-      outlineBtn="."
-      filledBtn="."
-      title="Уведомления"
-    >
+    <Layout btnSrc="/registrPage" height="false" outlineBtn="." filledBtn="." title="Уведомления">
       <template v-slot:main-content>
-        <ion-list v-for="el in data" :key="el.title">
+        <div v-for="el in data" :key="el.title">
           <ion-item>
             <div>
-              <ion-text class="sub-title">
-                {{ el.title }}
+              <ion-text>
+                <p class="sub-title">
+                  {{ el.title }}
+                </p>
+                <p class="text">{{ el.sub_title }}</p>
               </ion-text>
-
-              <p class="text">{{ el.sub_title }}</p>
               <div class="footer-item">
                 <ion-text class="text">
                   {{ el.date }}
@@ -25,7 +20,7 @@
               </div>
             </div>
           </ion-item>
-        </ion-list>
+        </div>
       </template>
     </Layout>
   </ion-page>
@@ -36,7 +31,7 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonItem, IonList } from "@ionic/vue";
+import { IonPage, IonText, IonItem, } from "@ionic/vue";
 import Back from "../components/Back.vue";
 
 export default defineComponent({
@@ -46,7 +41,6 @@ export default defineComponent({
     Layout,
     Back,
     IonItem,
-    IonList,
     IonText,
   },
   data() {
@@ -90,13 +84,22 @@ export default defineComponent({
 .time {
   margin-left: 20px;
 }
+
 .text {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  margin-top: 0px;
 }
+
 ion-item {
   --padding-start: 0;
-  --inner-padding-end:0;
+  --inner-padding-end: 0;
 }
+
+.sub-title {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 .footer-item {
   display: flex;
   flex-wrap: wrap;

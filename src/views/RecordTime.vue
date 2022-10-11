@@ -5,7 +5,7 @@
       <template v-slot:main-content>
         <ion-text class="title">Выберите время</ion-text>
 
-        <ion-list v-if="entryAvailableTimes.length > 0">
+        <div v-if="entryAvailableTimes.length > 0">
           <ion-item
             v-for="time in entryAvailableTimes"
             :key="time"
@@ -14,14 +14,14 @@
           >
             <ion-text class="sub-title">{{ time }}</ion-text>
           </ion-item>
-        </ion-list>
-        <ion-list v-else>
+        </div>
+        <div v-else>
           <ion-item router-link="/tabs/record" @click="selectTime(null)">
             <ion-text class="sub-title"
               >Выберите вид услуг и дату записи</ion-text
             >
           </ion-item>
-        </ion-list>
+        </div>
       </template>
     </Layout>
   </ion-page>
@@ -31,7 +31,7 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonList, IonItem } from "@ionic/vue";
+import { IonPage, IonText, IonItem } from "@ionic/vue";
 import Back from "../components/Back.vue";
 import { storeToRefs } from "pinia";
 import { usePreEntryStore } from "../stores/preEntry";
@@ -40,7 +40,6 @@ export default defineComponent({
   name: "recordTime",
   components: {
     IonPage,
-    IonList,
     Layout,
     IonItem,
     Back,

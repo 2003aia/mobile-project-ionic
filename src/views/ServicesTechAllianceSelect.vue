@@ -5,7 +5,7 @@
       height="false"
       :filledBtn="'.'"
       :title="
-        route.params.connection === 'true'
+        this.$pinia.state.value.services.techAllianceConnection === true
           ? 'Подключение в случаях '
           : 'Вид работ'
       "
@@ -13,8 +13,12 @@
     >
       <template v-slot:main-content>
         <ion-text class="title">Выберите варианты</ion-text>
-        <div v-if="route.params.connection === 'true'">
-          <ion-list v-for="el in connections" v-bind:key="el.id">
+        <div
+          v-if="
+            this.$pinia.state.value.services.techAllianceConnection === true
+          "
+        >
+          <div v-for="el in connections" v-bind:key="el.id">
             <ion-item
               @click="
                 storageHandler(el.name)
@@ -25,10 +29,14 @@
             >
               <ion-text class="sub-title">{{ el.name }} </ion-text>
             </ion-item>
-          </ion-list>
+          </div>
         </div>
-        <div v-if="route.params.connection === 'false'">
-          <ion-list v-for="el in gas" v-bind:key="el.id">
+        <div
+          v-if="
+            this.$pinia.state.value.services.techAllianceConnection === false
+          "
+        >
+          <div v-for="el in gas" v-bind:key="el.id">
             <ion-item
               @click="
                 storageHandler(el.name)
@@ -39,7 +47,7 @@
             >
               <ion-text class="sub-title">{{ el.name }} </ion-text>
             </ion-item>
-          </ion-list>
+          </div>
         </div>
       </template>
     </Layout>
@@ -50,7 +58,7 @@
 import { defineComponent } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonList, IonItem } from "@ionic/vue";
+import { IonPage, IonText, IonItem } from "@ionic/vue";
 import Back from "../components/Back.vue";
 import { documentTextOutline, arrowDownOutline } from "ionicons/icons";
 // import {Storage} from '@ionic/storage'
@@ -59,7 +67,6 @@ export default defineComponent({
   name: "servicesTechAllianceSelect",
   components: {
     IonPage,
-    IonList,
     Layout,
     IonItem,
     Back,
@@ -101,7 +108,7 @@ export default defineComponent({
   methods: {
     async storageHandler(value) {
       if (this.$pinia.state.value?.services?.form) {
-        if (this.$route.params.connection === "true") {
+        if (this.$pinia.state.value.services.techAllianceConnection === true) {
           this.$pinia.state.value.services.select.GAS_SLUCHI = {
             NAME: "Подключение в случаях (выбрать один из следующих вариантов)",
             VALUE: value,
@@ -133,6 +140,9 @@ ion-icon {
   --ionicon-stroke-width: 40px;
   color: #0378b4;
   margin-right: 15px;
+}
+.sub-title {
+  margin-top: 10px;
 }
 
 .icon-arrow {

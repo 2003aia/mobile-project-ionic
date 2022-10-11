@@ -31,9 +31,11 @@
             :text="el?.preview"
             @click="
               () => {
+                this.$pinia.state.value.news.forNews = 'news'
+                this.$pinia.state.value.news.idNews = el.id
                 router.push({
                   name: 'newsPage',
-                  params: { id: el.id, for: 'news' },
+                 /*  params: { id: el.id, for: 'news' }, */
                 });
               }
             "

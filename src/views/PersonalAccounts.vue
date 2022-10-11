@@ -82,9 +82,9 @@
                     (e) => {
                       lcList[0].open = false;
                       lcList[0].event = e;
+                      personalItemDataHandler(lcList[0]);
                       router.push({
                         name: 'personalAccountPaymentHistory',
-                        params: { lc: lcList[0]?.code },
                       });
                     }
                   "
@@ -123,7 +123,7 @@
           </ion-popover>
         </ion-item>
 
-        <ion-list>
+        <div>
           <ion-item>
             <ion-text>{{ lcList[0]?.name }}</ion-text>
           </ion-item>
@@ -142,13 +142,13 @@
             }}</ion-text>
           </ion-item>
 
-          <ion-item>
+          <ion-item lines="none">
             <ion-text> Пени: </ion-text>
             <ion-text class="text-blue" slot="end">{{
               maskMoney(lcList[0]?.debts?.penalties)
             }}</ion-text>
           </ion-item>
-        </ion-list>
+        </div>
         <Button
           class="btn"
           name="Оплата"
@@ -179,11 +179,13 @@
 
         <Button
           @click="
-            () =>
+            () => {
+              personalItemDataHandler(lcList[0]);
+
               router.push({
                 name: 'personalAccountPaymentHistory',
-                params: { lc: lcList[0]?.code },
-              })
+              });
+            }
           "
           class="btn"
           :outline="true"
@@ -227,9 +229,10 @@
                             (e) => {
                               el.open = false;
                               el.event = e;
+                              personalItemDataHandler(el);
+
                               router.push({
                                 name: 'personalAccountPaymentHistory',
-                                params: { lc: el?.code },
                               });
                             }
                           "
@@ -269,7 +272,7 @@
                   </ion-popover>
                 </ion-item>
 
-                <ion-list>
+                <div>
                   <ion-item>
                     <ion-text>{{ el.name }}</ion-text>
                   </ion-item>
@@ -289,13 +292,13 @@
                       }}
                     </ion-text>
                   </ion-item>
-                  <ion-item>
+                  <ion-item lines="none">
                     <ion-text> Пени: </ion-text>
                     <ion-text class="text-blue" slot="end">{{
                       maskMoney(el.debts?.penalties)
                     }}</ion-text>
                   </ion-item>
-                </ion-list>
+                </div>
                 <Button
                   class="btn"
                   name="Оплата"
@@ -328,11 +331,13 @@
                   class="btn"
                   :outline="true"
                   @click="
-                    () =>
+                    () => {
+                      personalItemDataHandler(el);
+
                       router.push({
                         name: 'personalAccountPaymentHistory',
-                        params: { lc: el?.code },
-                      })
+                      });
+                    }
                   "
                   name="История платежей"
                 />
@@ -393,7 +398,6 @@ import {
   IonIcon,
   IonPopover,
   IonContent,
-  IonList,
   IonImg,
   IonSpinner,
 } from "@ionic/vue";
@@ -423,7 +427,6 @@ export default defineComponent({
     IonIcon,
     LayoutBox,
     Button,
-    IonList,
     IonImg,
     IonPopover,
     IonContent,

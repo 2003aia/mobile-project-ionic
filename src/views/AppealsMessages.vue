@@ -4,6 +4,7 @@
       @click="() => (checkStatus = false)"
       :btnSrc="
         () => {
+          this.$pinia.state.value.appeals.newAppeal = false;
           router.push('/appeals');
         }
       "
@@ -18,20 +19,24 @@
       <template v-slot:main-content>
         <ion-text class="title">
           {{
-            route.params.newAppeal
+            this.$pinia.state.value.appeals.newAppeal
               ? "Новое обращение"
-              : `Обращение №${route.params?.id ? route.params.id : ""}`
+              : `Обращение №${
+                  this.$pinia.state.value.appeals.appealsItem?.id
+                    ? this.$pinia.state.value.appeals.appealsItem.id
+                    : ""
+                }`
           }}
         </ion-text>
 
         <ion-text
-          ><p v-show="!route.params.newAppeal && category">
+          ><p v-show="!this.$pinia.state.value.appeals.newAppeal && category">
             {{ category }}
           </p></ion-text
         >
         <ion-accordion-group
           ref="accordionSupport"
-          v-show="route.params?.newAppeal"
+          v-show="this.$pinia.state.value.appeals.newAppeal"
         >
           <ion-accordion :toggle-icon="caretDownSharp" value="second">
             <ButtonSelect
@@ -45,10 +50,7 @@
             />
 
             <div slot="content">
-              <ion-list
-                v-for="el in appealsCategoriesResponse?.data"
-                :key="el?.id"
-              >
+              <div v-for="el in appealsCategoriesResponse?.data" :key="el?.id">
                 <ion-item
                   @click="
                     () => {
@@ -59,13 +61,15 @@
                 >
                   <ion-text class="sub-title">{{ el?.category }}</ion-text>
                 </ion-item>
-              </ion-list>
+              </div>
             </div>
           </ion-accordion>
         </ion-accordion-group>
         <div
           v-show="
-            (route.params.title && appealsInfoMessages && !loading) ||
+            (this.$pinia.state.value.appeals.appealsItem.title &&
+              appealsInfoMessages &&
+              !loading && !this.$pinia.state.value.appeals.newAppeal) ||
             supportCreate
           "
         >
@@ -126,7 +130,7 @@
           <ion-img
             @click="
               () => {
-                route.params?.newAppeal && !supportCreate
+                this.$pinia.state.value.appeals.newAppeal && !supportCreate
                   ? createAppealHandler()
                   : createMessageHandler();
               }
@@ -161,7 +165,6 @@ import {
   IonAccordion,
   IonAccordionGroup,
   IonImg,
-  IonList,
   IonChip,
   IonIcon,
   onIonViewDidEnter,
@@ -183,11 +186,9 @@ export default defineComponent({
     Back,
     IonItem,
     IonButton,
-
     ButtonSelect,
     IonAccordion,
     IonImg,
-    IonList,
     IonInput,
     IonChip,
     IonIcon,
@@ -224,6 +225,8 @@ export default defineComponent({
       appealsCategoriesResponse,
       // createAppealResponse,
       appealsInfoResponse,
+      appealsItem,
+
       createMessageResponse,
     } = storeToRefs(useAppealsStore());
     const {
@@ -245,7 +248,8 @@ export default defineComponent({
       getAppealsCategoreis().then(() => {
         appealsCategoriesResponse.value?.data.filter((value) => {
           loading.value = false;
-          if (value.id === parseInt(route.params.category_id))
+
+          if (value.id === parseInt(appealsItem.value?.category_id))
             category.value = value.category;
         });
       });
@@ -256,8 +260,8 @@ export default defineComponent({
       await store.create();
       const storeValue = await store.get("support");
       const token = storeValue.token;
-      if (route.params?.id) {
-        getAppealsInfo(token, route.params?.id).then(() => {
+      if (appealsItem.value?.id) {
+        getAppealsInfo(token, appealsItem.value?.id).then(() => {
           loading.value = false;
           appealsInfoMessages.value = appealsInfoResponse.value?.data.reverse();
         });
@@ -288,8 +292,8 @@ export default defineComponent({
         createMessage(
           token,
           message.value,
-          route.params.category_id,
-          route.params.id
+          appealsItem.value.category_id,
+          appealsItem.value.id
         ).then(() => {
           appealsInfoMessages.value.push({
             support_message: false,
@@ -305,7 +309,6 @@ export default defineComponent({
     };
 
     const filesChange = (e) => {
-      console.log(e, "files onchange");
       files.value = e.currentTarget.value;
     };
 
@@ -448,5 +451,9 @@ label {
 }
 .input-file[type="file"] {
   display: none;
+}
+
+ion-item{
+  --inner-padding-start: 15px;
 }
 </style>

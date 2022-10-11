@@ -120,6 +120,7 @@
           <Input
             name="Укажите номер телефона "
             :value="phone"
+            mask="+7 (###) ###-##-##"
             :changeHandler="changePhone"
           />
           <ion-text v-if="error">

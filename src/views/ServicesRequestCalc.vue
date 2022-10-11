@@ -41,6 +41,7 @@
           <Input
             :type="'number'"
             name="0"
+            :min="0"
             :value="max"
             :changeHandler="changeMax"
           />
@@ -70,6 +71,7 @@
           <Input
             :type="'number'"
             :name="'0'"
+            :min="0"
             :value="area"
             :changeHandler="changeArea"
           />
@@ -83,14 +85,13 @@
           </ion-text>
           <Input
             :type="'number'"
+            :min="0"
             :name="'0'"
             :value="height"
             :changeHandler="changeHeight"
           />
           <ion-text>
-            <p class="text">
-              У заявителя высота здания снаружи (без кровли)
-            </p>
+            <p class="text">У заявителя высота здания снаружи (без кровли)</p>
           </ion-text>
           <ion-text>
             <p class="sub-title">Наличие газовой плиты</p>
@@ -232,7 +233,7 @@ export default defineComponent({
           ? this.$data.counted
           : "";
       this.$data.open = false;
-      this.$data.error = ''
+      this.$data.error = "";
     },
     async storageHandler() {
       const store = new Storage();
