@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back :btnSrc="() => router.push('/personalAccounts')" />
+    <Back :btnSrc="() => router.push('/tabs/personalAccounts')" />
     <Layout
       v-if="paySent === false"
       :method="paymentHandler"
@@ -109,10 +109,10 @@ export default defineComponent({
         this.$pinia.state.value.personalAccount.personalItemData.code,
         this.$data.phone,
         this.$data.email,
-        this.$pinia.state.value.personalAccount.personalItemData.sberPay
+        +this.$pinia.state.value.personalAccount.personalItemData.sberPay
           .accruals,
-        this.$pinia.state.value.personalAccount.personalItemData.sberPay.sumTO,
-        this.$pinia.state.value.personalAccount.personalItemData.sberPay
+        +this.$pinia.state.value.personalAccount.personalItemData.sberPay.sumTO,
+        +this.$pinia.state.value.personalAccount.personalItemData.sberPay
           .penalties,
         this.$pinia.state.value.personalAccount.personalItemData.sberPay
           .advances

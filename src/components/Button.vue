@@ -2,6 +2,7 @@
   <ion-button
     class="button"
     fill="clear"
+    :disabled="disabled"
     :class="{
       backgroundGrey: grey === true,
       outline: outline === true,
@@ -30,6 +31,7 @@ export default defineComponent({
     grey: Boolean,
     outline: Boolean,
     loading: Boolean,
+    disabled: Boolean,
   },
   components: {
     IonButton,

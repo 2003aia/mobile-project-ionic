@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back />
+    <Back :btnSrc="()=>router.push('/tabs/personalAccounts')" />
     <ion-content :fullscreen="true" class="background">
       <div class="container">
         <div class="btn-wrapper">
@@ -27,12 +27,84 @@
             </ion-item>
           </template>
         </layout-box>
-        <div v-for="(el, index) in indicesList" :key="el">
+        <div v-show="!loadingGetIndices && lcList.counters?.length !== 0 " v-for="(el) in indicesList" :key="el">
           <layout-box>
             <template v-slot:content>
               <ion-text>
-                <p class="title ion-text-start">Счетчик {{ el?.name }}</p>
+                <p class="title ion-text-start">Номер счетчика {{el?.name}}</p>
               </ion-text>
+              <!-- <ion-text>
+                <p class="title ion-text-start">Новые показания</p>
+              </ion-text> -->
+
+              <Input @input="(e)=>{
+              el.value = e.target.value
+             
+              
+              }" name="Введите показания счетчика (куб.
+                  метр.)" type="number" :textBlue="true" />
+
+              <ion-text v-show="el.error">
+                <p class="ion-text-start error">
+                  {{ el.error }}
+                </p>
+              </ion-text>
+              <ion-text v-show="el.response ">
+                <p class="ion-text-center">
+                  {{ el.response}}
+                </p>
+              </ion-text>
+              <Button :loading="loading" :name="'Подтвердить'" @click="
+                () => {
+                  if( el?.indications[0].date.substring(0, 10) !== moment().format('DD.MM.yyyy') ) {
+                    if((el.value > el?.indications[0]?.indication)) {
+                      loading = true
+                    setIndices(el.id, el.value).then(()=>{
+                      // getIndices(el.id)
+                      loading = false
+                      // if(!this.$pinia.state.value?.personalAccount?.setIndicesResponse?.error) value = el?.value
+                      // this.$data.indicationList.push( ...this.$data.indicationList, ...{name: el?.name, id: el?.id, indications: [{date: moment().format('DD.MM.yyyy HH:MM:SS'), indication: el.value}]})
+                      el.response = this.$pinia.state.value?.personalAccount?.setIndicesResponse?.message
+                      el.error = ''
+                    })
+                  } else {
+                    el.response = ''
+                    el.error = 'Текущие показания меньше предыдущих'
+                  }
+                  } else {
+                    el.response = ''
+                    el.error = 'За этот день уже имеется начисление по счетчику'
+                  }
+                }
+              " />
+              <ion-grid>
+                <ion-row class="ion-row-last">
+
+                  <ion-text style="margin: 0 10px 0 0">
+                    Выберите период:
+                  </ion-text>
+                  <div style="display: flex;">
+                    <ion-datetime-button color="date" datetime="date"></ion-datetime-button>
+                    <ion-text style="margin: 0 5px;">-</ion-text>
+
+                    <ion-datetime-button color="date" datetime="date2"></ion-datetime-button>
+                  </div>
+
+                  <ion-modal mode="ios" :keep-contents-mounted="true">
+                    <ion-datetime @ionChange="(e)=>onBeginDateChange(e, el?.id)" color="date" presentation="date"
+                      mode="ios" id="date">
+                    </ion-datetime>
+
+                  </ion-modal>
+                  <ion-modal mode="ios" :keep-contents-mounted="true">
+
+                    <ion-datetime @ionChange="(e)=>onEndDateChange(e, el?.id)" color="date" presentation="date"
+                      mode="ios" id="date2">
+                    </ion-datetime>
+                  </ion-modal>
+                </ion-row>
+              </ion-grid>
+
               <ion-row>
                 <!-- <ion-col size="2" size-sm>№</ion-col> -->
                 <ion-col>Дата</ion-col>
@@ -40,14 +112,17 @@
               </ion-row>
 
               <div v-for="(indice) in el?.indications" :key="indice">
+                <!--  <ion-row v-show="el?.indications[0]?.date ===
+                indice?.date && value">
+
+                  <ion-col class="text-end">{{moment().format('DD.MM.yyyy')}}</ion-col>
+                  <ion-col class="text-end">{{value}}</ion-col>
+                </ion-row> -->
                 <ion-row :class="{
                   'ion-row-last':
                     el?.indications[el?.indications?.length - 1]?.date ===
                     indice?.date,
                 }">
-                  <!-- <ion-col class="sub-title" size="2" size-sm
-                    >{{ index + 1 }}.</ion-col
-                  > -->
 
                   <ion-col class="text-end">{{
                   indice?.date.substring(0, 10)
@@ -56,36 +131,20 @@
                 </ion-row>
 
               </div>
-              <ion-text>
-                <p class="title ion-text-start">Новые показания</p>
-              </ion-text>
 
-              <div class="input-wrapper">
-                <input ref="text2" type="text" class="input" v-model="el.value" placeholder=" " />
-                <ion-text class="input-text inputTextBlue" @click="onFocusText(index)">Введите показания счетчика
-                </ion-text>
-              </div>
-              {{ el.response }}
-              <ion-text v-show="el.response === 'Заполните поле'">
-                <p class="ion-text-start error">
-                  {{ el.response }}
-                </p>
-              </ion-text>
-              <ion-text v-show="el.response">
-                <p class="ion-text-center">
-                  {{ el.response }}
-                </p>
-              </ion-text>
-              <Button v-model="el.loading" :loading="el.loading !== true ? false : el.loading" :name="'Подтвердить'"
-                @click="
-                  () => {
-                    setIndicesHandler(el.id, el.value, el.loading, el.response);
-                  }
-                " />
             </template>
           </layout-box>
         </div>
-        <div v-show="indicesList?.length === 0">
+        <div v-show="loadingGetIndices">
+          <layout-box>
+            <template v-slot:content>
+              <ion-item lines="none">
+                <ion-spinner name="bubbles" />
+              </ion-item>
+            </template>
+          </layout-box>
+        </div>
+        <div v-show="lcList?.counters?.length === 0">
           <layout-box>
             <template v-slot:content>
               <ion-text>
@@ -142,8 +201,17 @@ import {
   IonText,
   IonItem,
   IonRow,
+  IonDatetimeButton,
   IonCol,
+  IonModal,
+  IonDatetime,
+  IonSpinner,
+  IonGrid,
 } from "@ionic/vue";
+import {
+  chevronForwardOutline,
+  calendarNumberOutline,
+} from "ionicons/icons";
 import Button from "../components/Button.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Back from "../components/Back.vue";
@@ -151,6 +219,7 @@ import { useRouter, useRoute } from "vue-router";
 import { mapActions } from "pinia";
 import { usePersonalAccountStore } from "../stores/personalAccount";
 import Input from "../components/Input.vue";
+import moment from 'moment'
 
 export default defineComponent({
   setup() {
@@ -159,6 +228,9 @@ export default defineComponent({
     return {
       router,
       route,
+      chevronForwardOutline,
+      calendarNumberOutline,
+      moment,
     };
   },
   data() {
@@ -167,30 +239,33 @@ export default defineComponent({
       counterId: "",
       error: "",
       loading: false,
+      loadingGetIndices: false,
       response: "",
+      beginDate: '',
+      endDate: '',
+      indicationList: [],
+      value: ''
     };
   },
   methods: {
     ...mapActions(usePersonalAccountStore, ["getIndices", "setIndices"]),
-    async setIndicesHandler(counterId, indice, loading, response) {
+    async setIndicesHandler(counterId, indice,) {
 
       if (
-        (indice !== undefined || indice?.length >= 0) &&
-        loading === undefined &&
-        response === undefined
+        indice?.length >= 0
       ) {
         this.$data.loading = true;
         const setIndices = new Promise((resolve) => {
           resolve(this.setIndices(counterId, indice));
         });
         setIndices.then(() => {
-          response =
+          this.$data.response =
             this.$pinia.state.value?.personalAccount?.setIndicesResponse
               ?.message;
-          loading = false;
+          this.$data.loading = false;
         });
       } else {
-        response = "Заполните поле";
+        this.$data.response = "Заполните поле";
         this.$data.error = "Заполните поле";
       }
     },
@@ -200,8 +275,23 @@ export default defineComponent({
     changeCounterId(e) {
       this.$data.counterId = e.target.value;
     },
-    onFocusText(index) {
-      this.$refs.text2[index].focus();
+    capitalizeFirstLetter(string) {
+      return string?.charAt(0)?.toUpperCase() + string?.slice(1);
+    },
+    onBeginDateChange(event, id) {
+      // this.$data.loadingGetIndices = true
+
+      this.getIndices(id, moment(event.detail.value).format('yyyyMMDD'), this.$data.endDate ? this.$data.endDate : moment().format('yyyyMMDD')).then(() => {
+        // this.$data.loadingGetIndices = false
+
+      })
+      this.$data.beginDate = moment(event.detail.value).format('yyyyMMDD')
+    },
+    onEndDateChange(event, id) {
+
+      this.getIndices(id, this.$data.beginDate ? this.$data.beginDate : moment().format('yyyyMMDD'), moment(event.detail.value).format('yyyyMMDD'))
+
+      this.$data.endDate = moment(event.detail.value).format('yyyyMMDD')
     },
   },
 
@@ -219,12 +309,31 @@ export default defineComponent({
         ?.message;
     },
   },
-  mounted() {
-    for (let index = 0; index < this.lcList?.counters?.length; index++) {
-      const element = this.lcList?.counters[index];
+  ionViewDidLeave() {
+    this.$data.indicationList = []
+  },
+  ionViewDidEnter() {
+    if (this.lcList?.counters?.length > 0 && this.lcList?.counters !== undefined) {
 
-      this.getIndices(element.counterId);
+      for (let index = 0; index < this.lcList?.counters?.length; index++) {
+        const element = this.lcList?.counters[index];
+        this.$data.loadingGetIndices = true
+        this.getIndices(element.counterId).then(() => {
+          let setIndicationList = new Promise((resolve) => {
+            if (this.indicesList[0]?.id) resolve(this.$data.indicationList.push({ ...this.indicesList[0] }))
+
+          })
+          setIndicationList.then(() => {
+
+          })
+
+          this.$data.loadingGetIndices = false
+        })
+      }
+    } else {
+      this.$router.push('/tabs/personalAccounts')
     }
+
   },
   names: "personalAccauntIndication",
   components: {
@@ -238,6 +347,11 @@ export default defineComponent({
     Input,
     IonRow,
     IonCol,
+    IonModal,
+    IonGrid,
+    IonDatetime,
+    IonSpinner,
+    IonDatetimeButton,
   },
 });
 </script>
@@ -261,6 +375,7 @@ ion-col {
   padding: 15px;
   background: #f5f5f5;
 }
+
 
 .btn-wrapper {
   display: flex;

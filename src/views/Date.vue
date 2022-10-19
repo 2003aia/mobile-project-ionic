@@ -1,34 +1,15 @@
 <template>
   <ion-page>
     <Back />
-    <Layout
-      height="false"
-      filledBtn="Готово"
-      outlineBtn="."
-      :btnSrc="returnTo"
-      :method="() => clickFilledBtn()"
-      :title="time === true ? 'Выберите время' : 'Выберите дату'"
-    >
+    <Layout height="false" filledBtn="Готово" outlineBtn="." :btnSrc="returnTo" :method="() => clickFilledBtn()"
+      :title="time === true ? 'Выберите время' : 'Выберите дату'">
       <template v-slot:main-content>
-        <ion-datetime
-          v-if="time === true"
-          color="date"
-          mode="ios"
-          presentation="time"
-          @ionChange="onDateChange"
-        ></ion-datetime>
+        <ion-datetime v-if="time === true" color="date" mode="ios" presentation="time" @ionChange="onDateChange">
+        </ion-datetime>
 
-        <ion-datetime
-          v-if="time === false"
-          color="date"
-          :is-date-enabled="isDateEnabled"
-          first-day-of-week="1"
-          presentation="date"
-          @ionChange="onDateChange"
-          mode="ios"
-          :min="today"
-          :max="maxDay"
-        ></ion-datetime>
+        <ion-datetime v-if="time === false" color="date" :is-date-enabled="isDateEnabled" first-day-of-week="1"
+          presentation="date" @ionChange="onDateChange" mode="ios" :min="today" :max="maxDay"></ion-datetime>
+
       </template>
     </Layout>
   </ion-page>

@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back />
+    <Back :btnSrc="()=>router.push('/tabs/personalAccounts')" />
     <ion-content :fullscreen="true" class="background">
       <div class="container">
         <div class="btn-wrapper">
@@ -31,20 +31,14 @@
           <template v-slot:content>
             <ion-text>
               <p class="title ion-text-start">
-                Сетевой газ (начисление по счету)
+                Газ (начисление по счету)
               </p>
             </ion-text>
             <ion-item>
               <ion-text>Задолженность:</ion-text>
-              <ion-text slot="end" class="text-end">{{ maskMoney(lcList?.debts?.accruals) }}</ion-text>
+              <ion-text slot="end" class="text-end">{{ maskMoney(lcList?.debts?.accruals?.toFixed(2)) }}</ion-text>
             </ion-item>
-            <!--   <ion-item>
-              <ion-text> Аванс:</ion-text>
 
-              <ion-text slot="end" class="text-end">
-                {{ lcList?.debts?.advances }} руб.
-              </ion-text>
-            </ion-item> -->
 
             <ion-text>
               <p class="title ion-text-start">Оплата</p>
@@ -60,14 +54,10 @@
             </ion-text>
             <ion-item>
               <ion-text> Задолженность: </ion-text>
-              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.sumTO) }}</ion-text>
+              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.sumTO ) }}
+              </ion-text>
             </ion-item>
-            <!-- <ion-item>
-              <ion-text> Аванс: </ion-text>
-              <ion-text slot="end" class="text-end"
-                >{{ lcList.debts?.advances }} руб.</ion-text
-              >
-            </ion-item> -->
+
             <ion-text>
               <p class="title ion-text-start">Оплата</p>
             </ion-text>
@@ -82,14 +72,10 @@
             </ion-text>
             <ion-item>
               <ion-text> Задолженность: </ion-text>
-              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.penalties) }}</ion-text>
+              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.penalties) }}
+              </ion-text>
             </ion-item>
-            <!--  <ion-item>
-              <ion-text> Аванс: </ion-text>
-              <ion-text slot="end" class="text-end"
-                >{{ lcList.debts?.advances }} руб.</ion-text
-              >
-            </ion-item> -->
+
             <ion-text>
               <p class="title ion-text-start">Оплата</p>
             </ion-text>
@@ -104,24 +90,13 @@
             </ion-text>
             <ion-item>
               <ion-text> Задолженность: </ion-text>
-              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.advances) }}</ion-text>
+              <ion-text slot="end" class="text-end green">{{ maskMoney( lcList.debts?.advances
+              ) }}</ion-text>
             </ion-item>
-            <!-- <ion-text>
-              <p class="title ion-text-start">Оплата</p>
-            </ion-text>
-            <Input name="Введите сумму" :value="advances" :changeHandler="changeAdvances" :textBlue="true" :min="0"
-              :type="'number'" /> -->
+
           </template>
         </layout-box>
-        <!-- <layout-box>
-          <template v-slot:content>
-            <ion-text>
-              <p class="title ion-text-start">Итого к оплате</p>
-            </ion-text>
 
-            <Input :value="accruals" :changeHandler="changeAccruals" name="123456" :textBlue="true" />
-          </template>
-        </layout-box> -->
 
         <ion-text v-show="error">
           <p class="ion-text-start error">{{ error }}</p>
@@ -209,11 +184,18 @@ export default defineComponent({
       }
     },
     maskMoney(value) {
-      const valueAsNumber = value;
-      return new Intl.NumberFormat("ru-RU", {
-        style: "currency",
-        currency: "RUB",
-      }).format(valueAsNumber / 100);
+      const valueAsNumber = value.toString().replace('.', '');
+      if (value?.toString().includes('.')) {
+        return new Intl.NumberFormat("ru-RU", {
+          style: "currency",
+          currency: "RUB",
+        }).format(valueAsNumber / 100);
+      } else {
+        return new Intl.NumberFormat("ru-RU", {
+          style: "currency",
+          currency: "RUB",
+        }).format(valueAsNumber);
+      }
     },
   },
   names: "personalAccauntPayment",
@@ -257,9 +239,13 @@ export default defineComponent({
 }
 
 .text-end {
-  color: #0378b4;
+  color: #dd2c00;
   font-weight: 700;
   margin-left: 0;
+}
+
+.green {
+  color: green;
 }
 
 .title {

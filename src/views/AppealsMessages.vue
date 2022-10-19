@@ -455,5 +455,6 @@ label {
 
 ion-item{
   --inner-padding-start: 15px;
+  --padding-bottom: 15px;
 }
 </style>

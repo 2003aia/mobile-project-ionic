@@ -33,6 +33,7 @@
                 <ion-badge>
                   {{ el.messages }}
                 </ion-badge>
+               
               </div>
               <ion-item>
                 <ion-text class="text time">{{ el.date_create }}</ion-text>

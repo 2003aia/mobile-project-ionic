@@ -12,7 +12,7 @@
         <ion-accordion-group ref="accordion">
           <ion-accordion value="first" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
-              <input type="text" v-model="country" class="input" placeholder="Введите населенный пункт по улусам" />
+              <input type="text" v-model="country" class="input" placeholder="Введите населенный пункт" />
             </div>
 
             <div slot="content">
@@ -25,7 +25,7 @@
                   <ion-text>{{ el.ulus }}</ion-text>
                 </ion-item>
               </div>
-              <ion-item v-show="ulusList?.length === 0">
+              <ion-item lines="none" v-show="ulusList?.length === 0">
                 <ion-text>не найдено</ion-text>
               </ion-item>
             </div>
@@ -42,7 +42,7 @@
                   <ion-text>{{ el.settlement }}</ion-text>
                 </ion-item>
               </div>
-              <ion-item v-show="settlementsList?.length === 0">
+              <ion-item lines="none" v-show="settlementsList?.length === 0">
                 <ion-text>не найдено</ion-text>
               </ion-item>
             </div>
@@ -62,7 +62,7 @@
                   <ion-text>{{ el.street }}</ion-text>
                 </ion-item>
               </div>
-              <ion-item v-show="streetsList?.length === 0">
+              <ion-item lines="none" v-show="streetsList?.length === 0">
                 <ion-text>не найдено</ion-text>
               </ion-item>
             </div>
@@ -81,7 +81,7 @@
                   <ion-text>{{ el?.house }}</ion-text>
                 </ion-item>
               </div>
-              <ion-item v-show="housesList?.length === 0">
+              <ion-item lines="none" v-show="housesList?.length === 0">
                 <ion-text>не найдено</ion-text>
               </ion-item>
             </div>
@@ -90,7 +90,8 @@
           <ion-accordion v-show="
             housesList?.length !== 0 &&
             housesList !== undefined &&
-            housesList[0]?.apartments
+            apartmentsList.length > 0
+            // housesList[0]?.apartments
           " value="fifth" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
               <input type="text" v-model="apartment" class="input" placeholder="Введите номер квартиры" />
@@ -108,26 +109,22 @@
             </div>
           </ion-accordion>
         </ion-accordion-group>
-
         <div v-show="licsList?.length !== 0">
           <div v-for="el in licsList" :key="el">
             <ion-text v-for="el2 in el?.lics" :key="el2?.code">
               <ion-item lines="none" class="check">
                 <ion-text class="lics" slot="start">
                   <p class="ion-text-start">Лицевой счет: {{ el2?.code }}</p>
-                  <p class="ion-text-start">
-                    Наименование лицевого счета: {{ el2?.name }}
-                  </p>
                 </ion-text>
                 <ion-checkbox v-model="el2.value" slot="end" />
               </ion-item>
             </ion-text>
           </div>
         </div>
+
         <div v-show="
           housesList?.length !== 0 &&
           housesList !== undefined &&
-          housesList[0]?.apartments &&
           licsApartmentsList?.length !== 0
         ">
           <div v-for="el in licsApartmentsList" :key="el">
@@ -135,9 +132,6 @@
               <ion-item class="check" lines="none">
                 <ion-text class="lics" slot="start">
                   <p class="ion-text-start">Лицевой счет: {{ el2?.code }}</p>
-                  <p class="ion-text-start">
-                    Наименование лицевого счета: {{ el2?.name }}
-                  </p>
                 </ion-text>
                 <ion-checkbox v-model="el2.value" slot="end" />
               </ion-item>
@@ -244,7 +238,7 @@ export default defineComponent({
         });
     },
     apartmentsList() {
-      return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data
+      return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data?.filter((el) => el.house.toLowerCase() === this.$data.house.toLowerCase())
         .flatMap((el) => el?.apartments?.flatMap((el) => el))
         .filter((el) => {
           return el?.apartment
@@ -253,7 +247,7 @@ export default defineComponent({
         });
     },
     licsApartmentsList() {
-      return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data
+      return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data.filter((el) => el.house.toLowerCase() === this.$data.house.toLowerCase())
         .flatMap((el) => el?.apartments?.flatMap((el) => el))
         .filter((el) => {
           return (
@@ -265,16 +259,15 @@ export default defineComponent({
       return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data
         .flatMap((el) => el)
         .filter((el) => {
-          return el.house.toLowerCase() === this.$data.house.toLowerCase();
+          return el.house.toLowerCase() === this.$data.house.toLowerCase()
         });
     },
   },
   mounted() {
-    const getSettlements = new Promise((resolve) => {
-      resolve(this.getSettlements());
-    });
+    this.$data.loading2 = true
+    this.getSettlements().then(() => (this.$data.loading2 = false));
 
-    getSettlements.then(() => (this.$data.loading2 = false));
+
   },
   methods: {
     ...mapActions(usePersonalAccountStore, [

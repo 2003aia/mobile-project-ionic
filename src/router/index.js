@@ -14,6 +14,7 @@ const routes = [
     path: "/",
     redirect: "/authPage",
   },
+ 
   {
     path: "/authPage",
     component: AuthPage,

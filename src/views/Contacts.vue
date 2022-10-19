@@ -6,17 +6,27 @@
         <ion-text>
           <p class="title ion-text-start">Связаться с нами</p>
           <p>
-            677027, Республика Саха (Якутия) г. Якутск, ул. Кирова, д. 18, блок
-            "В", Офис 501
+            Управление газораспределительных сетей АО «Сахатранснефтегаз»
+            PC (Я), 677005, г. Якутск, ул. П. Алексеева, д. 64
             <br />
-            Эл. почта: info@aostng.ru
+            Эл. почта: ugrs@aostng.ru
           </p>
         </ion-text>
 
         <div v-for="el in data" :key="el.name">
           <ion-item>
-            <div>
-              <div class="header-item">
+            <div v-show="Array.isArray(el.phone)">
+              <div class="header-item" v-for="el2 in el.phone" :key="el2">
+                <ion-icon :icon="call" />
+                <ion-text @click="openLink(el2.name)" class="title ion-text-start">
+                  {{ el2.name }}
+                </ion-text>
+              </div>
+
+              <ion-text> {{ el.name }} </ion-text>
+            </div>
+            <div v-show="!Array.isArray(el.phone)">
+              <div @click="openLink(el.phone)" class="header-item">
                 <ion-icon :icon="call" />
                 <ion-text class="title ion-text-start">
                   {{ el.phone }}
@@ -66,42 +76,43 @@ export default defineComponent({
     IonItem,
     Back,
   },
+  methods: {
+    openLink(phone) {
+      document.location.href = `tel:${phone}`
+    }
+  },
   data() {
     return {
       data: [
         {
-          phone: "8 (4112) 46-02-01",
-          name: "Приемная генерального директора",
+          phone: "8 (4112) 46-00-07",
+          name: "Приемная УГРС",
         },
         {
-          phone: "8 (4112) 46-02-02",
-          name: "Приемная главного инженера",
+          phone: [
+            {
+              name: '8 (4112) 46-00-30',
+            },
+            {
+              name: '8(4112) 46-00 - 41'
+            },
+            { name: '8(4112) 46-00 - 71' }
+          ],
+          name: "Абонентский отдел",
         },
         {
-          phone: "8 (4112) 46-02-16",
-          name: "Канцелярия",
+          phone: "8 (4112) 319-777",
+          name: "Служба Единое окно",
         },
         {
-          phone: "8 (4112) 46-02-18",
-          name: "Канцелярия",
-        },
-        {
-          phone: "8 (4112) 46-48-44",
-          name: "Факс",
-        },
-        {
-          phone: "8 (4112) 46-00-98",
-          name: "Техническая поддержка сайта",
-        },
-        {
-          phone: "8 (4112) 46-02-15",
-          name: "Пресс-служба",
+          phone: "8 (4112) 319-555",
+          name: "Служба по техническому обслуживанию газового оборудования",
         },
       ],
       emergency: [
         { phone: "04", name: "Телефон аварийных служб" },
         { phone: "104", name: "Для мобильных операторов" },
-        { phone: "104", name: "Служба единое окно" },
+        { phone: "8 (4112) 46-00-98", name: "Техническая поддержка" },
       ],
     };
   },

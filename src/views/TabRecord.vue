@@ -1,14 +1,8 @@
 <template>
   <ion-page>
     <!-- <Back name="" title="Е-запись" /> -->
-    <Layout
-      v-if="!currentlySuccess"
-      height="false"
-      outlineBtn="."
-      filledBtn="Оставить заявку"
-      title="Вид услуг"
-      :method="() => sendPreregRequest()"
-    >
+    <Layout v-if="!currentlySuccess" height="false" outlineBtn="." filledBtn="Оставить заявку" title="Вид услуг"
+      :method="() => sendPreregRequest()">
       <template v-slot:header-content>
         <ion-text>
           <p class="main-text">
@@ -46,66 +40,37 @@
           <p class="title ion-text-start">Данные заявителя</p>
         </ion-text>
 
-        <Input
-          v-mask="'+7 (###) ###-##-##'"
-          name="Номер телефона"
-          type="tel"
-          :value="entryPhone"
-          :changeHandler="(e) => preEntryStore.setPhone(e.target.value)"
-        />
+        <Input v-mask="'+7 (###) ###-##-##'" name="Номер телефона" type="tel" :value="entryPhone"
+          :changeHandler="(e) => preEntryStore.setPhone(e.target.value)" />
 
         <ion-text>
           <p class="sub-title">Вид услуг</p>
         </ion-text>
 
-        <ButtonSelect
-          :required="true"
-          :name="
-            entryServiceType.trim() !== ''
-              ? formatServiceCode(entryServiceType)
-              : 'Выберите вариант'
-          "
-          :btnSrc="
-            () => {
-              router.push('/tabs/recordSelect');
-            }
-          "
-        />
+        <ButtonSelect :required="true" :name="
+          entryServiceType.trim() !== ''
+            ? formatServiceCode(entryServiceType)
+            : 'Выберите вариант'
+        " :btnSrc="
+          () => {
+            router.push('/tabs/recordSelect');
+          }
+        " />
 
         <div>
           <ion-item router-link="/tabs/date">
-            <ion-icon
-              size="large"
-              slot="start"
-              class="icon-start"
-              :icon="calendarNumberOutline"
-            ></ion-icon>
+            <ion-icon size="large" slot="start" class="icon-start" :icon="calendarNumberOutline"></ion-icon>
             <ion-text class="sub-title">{{
-              entryDate ? entryDate : "Выберите дату записи"
+            entryDate ? entryDate : "Выберите дату записи"
             }}</ion-text>
-            <ion-icon
-              size="large"
-              slot="end"
-              class="icon-end"
-              :icon="chevronForwardOutline"
-            ></ion-icon>
+            <ion-icon size="large" slot="end" class="icon-end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
           <ion-item router-link="/tabs/time">
-            <ion-icon
-              size="large"
-              slot="start"
-              class="icon-start"
-              :icon="alarmOutline"
-            ></ion-icon>
+            <ion-icon size="large" slot="start" class="icon-start" :icon="alarmOutline"></ion-icon>
             <ion-text class="sub-title">{{
-              entryTime ? entryTime : "Выберите время записи"
+            entryTime ? entryTime : "Выберите время записи"
             }}</ion-text>
-            <ion-icon
-              class="icon-end"
-              size="large"
-              slot="end"
-              :icon="chevronForwardOutline"
-            ></ion-icon>
+            <ion-icon class="icon-end" size="large" slot="end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
         </div>
 
@@ -115,10 +80,7 @@
             Выходной: суббота, воскресенье
           </p>
         </ion-text>
-        <ion-item @click="() => router.push('/tabs/recordTerms')" class="check">
-          <ion-checkbox slot="start" v-model="agreement"></ion-checkbox>
-          <ion-text>Согласен (-на) на обработку персональных данных</ion-text>
-        </ion-item>
+
 
         <ion-text v-if="errorText !== ''">
           <p class="error">
@@ -128,13 +90,7 @@
       </template>
     </Layout>
 
-    <Layout
-      v-else
-      outlineBtn="."
-      filledBtn="Вернуться"
-      :method="() => reset()"
-      title="Предварительная запись"
-    >
+    <Layout v-else outlineBtn="." filledBtn="Вернуться" :method="() => reset()" title="Предварительная запись">
       <template v-slot:main-content>
         <ion-text>
           <p class="title ion-text-start">Прием документов</p>
@@ -142,13 +98,13 @@
         <ion-item>
           <ion-text> Дата приема: </ion-text>
           <ion-text slot="end" class="text-end text-success">{{
-            entryDate
+          entryDate
           }}</ion-text>
         </ion-item>
         <ion-item>
           <ion-text> Время приема: </ion-text>
           <ion-text slot="end" class="text-end text-success">{{
-            entryTime
+          entryTime
           }}</ion-text>
         </ion-item>
       </template>
@@ -160,7 +116,6 @@
 import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-// import Back from "../components/Back.vue";
 import { storeToRefs } from "pinia";
 import { usePreEntryStore } from "../stores/preEntry";
 import ButtonSelect from "../components/ButtonSelect.vue";
@@ -168,7 +123,7 @@ import {
   IonPage,
   IonText,
   IonItem,
-  IonCheckbox,
+  // IonCheckbox,
   IonIcon,
 } from "@ionic/vue";
 import Input from "../components/Input.vue";
@@ -191,7 +146,7 @@ export default defineComponent({
     Input,
     IonText,
     IonIcon,
-    IonCheckbox,
+    // IonCheckbox,
   },
   directives: { mask },
 
@@ -205,7 +160,6 @@ export default defineComponent({
 
     const errorText = ref("");
     const currentlySuccess = ref(false);
-    const agreement = ref(false);
 
     return {
       router,
@@ -221,7 +175,6 @@ export default defineComponent({
       errorText,
       sendFullInfo,
       currentlySuccess,
-      agreement,
       resetPreEntry,
     };
   },
@@ -243,11 +196,6 @@ export default defineComponent({
       return formattedText;
     },
     sendPreregRequest() {
-      if (!this.agreement) {
-        this.errorText =
-          "Необходимо подтвердить соглашение на обработку персональных данных";
-        return;
-      }
 
       let status = 0;
       if (this.entryPhone.length === 18) {
@@ -285,7 +233,6 @@ export default defineComponent({
     },
     reset() {
       this.resetPreEntry();
-      this.agreement = false;
       this.currentlySuccess = false;
     },
   },

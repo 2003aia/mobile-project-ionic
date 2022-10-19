@@ -261,7 +261,7 @@
                   <ButtonSelect
                     slot="header"
                     :name="
-                      el.equipment ? el.equipment : 'Виберите оборудование'
+                      el.equipment ? el.equipment : 'Выберите оборудование'
                     "
                   />
                   <div slot="content">

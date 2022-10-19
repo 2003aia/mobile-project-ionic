@@ -3,18 +3,8 @@
     <ion-content class="background">
       <div class="container">
         <div class="btn-wrapper">
-          <Button
-            class="btn"
-            name="Новости"
-            :grey="newsButton"
-            router-link="/tabs/main"
-          />
-          <Button
-            class="btn"
-            name="Объявления"
-            :grey="adsButton"
-            router-link="/tabs/ads"
-          />
+          <Button class="btn" name="Новости" :grey="newsButton" router-link="/tabs/main" />
+          <Button class="btn" name="Объявления" :grey="adsButton" router-link="/tabs/ads" />
         </div>
 
         <ion-text class="main-title">
@@ -22,14 +12,8 @@
         </ion-text>
         <ion-spinner name="bubbles" v-if="loading === true" />
         <div v-if="loading === false">
-          <NewsItem
-            v-for="el in list"
-            :key="el?.id"
-            :date="el?.date"
-            :main_title="el?.name"
-            :sub_title="el?.preview"
-            :text="el?.preview"
-            @click="
+          <NewsItem v-for="el in list" :key="el?.id" :date="el?.date" :main_title="el?.name" :sub_title="el?.preview"
+            :text="el?.preview" @click="
               () => {
                 this.$pinia.state.value.news.forNews = 'news'
                 this.$pinia.state.value.news.idNews = el.id
@@ -38,9 +22,7 @@
                  /*  params: { id: el.id, for: 'news' }, */
                 });
               }
-            "
-            :imgsrc="el?.image"
-          />
+            " :imgsrc="el?.image" />
 
           <ion-infinite-scroll threshold="100px" id="infinite-scroll">
             <ion-infinite-scroll-content loading-spinner="bubbles">

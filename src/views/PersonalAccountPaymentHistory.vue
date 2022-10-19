@@ -6,21 +6,53 @@
         <ion-text class="main-title">История платежей</ion-text>
       </template>
       <template v-slot:main-content>
-        <div v-if="paymentHistory?.length === 0">
-          <ion-text>У №{{ this.$pinia.state.value?.personalAccount?.personalItemData?.code }} лицевого счета нет
-            платежей</ion-text>
-        </div>
-        <div v-else>
-          <ion-row>
-            <ion-col>№</ion-col>
-            <ion-col>Дата</ion-col>
 
+
+        <div>
+          <ion-grid>
+            <ion-row class="ion-row-last">
+
+              <ion-text style="margin: 0 10px 0 0">
+                Выберите период:
+              </ion-text>
+              <div style="display: flex;">
+                <ion-datetime-button color="date" datetime="date"></ion-datetime-button>
+                <ion-text style="margin: 0 5px;">-</ion-text>
+
+                <ion-datetime-button color="date" datetime="date2"></ion-datetime-button>
+              </div>
+
+              <ion-modal mode="ios" :keep-contents-mounted="true">
+                <ion-datetime @ionChange="(e)=>onBeginDateChange(e)" color="date" presentation="date" mode="ios"
+                  id="date">
+                </ion-datetime>
+
+              </ion-modal>
+              <ion-modal mode="ios" :keep-contents-mounted="true">
+
+                <ion-datetime @ionChange="(e)=>onEndDateChange(e)" color="date" presentation="date" mode="ios"
+                  id="date2">
+                </ion-datetime>
+              </ion-modal>
+            </ion-row>
+
+          </ion-grid>
+          <ion-row>
+            <ion-col>Чеки</ion-col>
+            <ion-col>Дата</ion-col>
             <ion-col>Сумма</ion-col>
 
-            <!-- <ion-col>Автор</ion-col> -->
           </ion-row>
-
-          <div v-for="el in paymentHistory" :key="el">
+          <ion-item v-show="this.$pinia.state.value?.personalAccount?.paymentHistoryResponse
+          ?.data?.length === 0 && !loading">
+            <ion-text>У №{{ this.$pinia.state.value?.personalAccount?.personalItemData?.code }} лицевого счета нет
+              платежей</ion-text>
+            </ion-item>
+          <ion-item v-show="loading" lines="none">
+            <ion-spinner name="bubbles" />
+          </ion-item>
+          <div v-show="this.$pinia.state.value?.personalAccount?.paymentHistoryResponse
+          ?.data[0]?.payments?.length > 0 && !loading" v-for="el in paymentHistory" :key="el">
             <ion-row :class="{
               'ion-row-last':
                 paymentHistory[paymentHistory?.length - 1]?.number ===
@@ -39,7 +71,6 @@
 
         </div>
       </template>
-      <ion-spinner name="bubbles" />
     </Layout>
   </ion-page>
 </template>
@@ -54,6 +85,11 @@ import {
   IonSpinner,
   IonCol,
   IonRow,
+  IonModal,
+  IonDatetime,
+  IonDatetimeButton,
+  IonGrid,
+  IonItem,
 } from "@ionic/vue";
 import {
   pencilOutline,
@@ -64,7 +100,7 @@ import Back from "../components/Back.vue";
 // import LayoutBox from "../components/LayoutBox.vue";
 import { mapActions } from "pinia";
 import { usePersonalAccountStore } from "../stores/personalAccount";
-// import moment from "moment";
+import moment from "moment";
 
 export default defineComponent({
   name: "personalAccountPaymentHistory",
@@ -74,18 +110,45 @@ export default defineComponent({
     Layout,
     IonText,
     // LayoutBox,
+    IonModal,
+    IonDatetime,
+    IonDatetimeButton,
     IonSpinner,
     IonCol,
+    IonGrid,
+    IonItem,
     IonRow,
   },
   methods: {
     ...mapActions(usePersonalAccountStore, ["getPayments"]),
     maskMoney(value) {
-      const valueAsNumber = value;
-      return new Intl.NumberFormat("ru-RU", {
-        style: "currency",
-        currency: "RUB",
-      }).format(valueAsNumber / 100);
+      const valueAsNumber = value.toString().replace('.', '')
+      if (value?.toString().includes('.')) {
+        return new Intl.NumberFormat("ru-RU", {
+          style: "currency",
+          currency: "RUB",
+        }).format(valueAsNumber / 100);
+      } else {
+        return new Intl.NumberFormat("ru-RU", {
+          style: "currency",
+          currency: "RUB",
+        }).format(valueAsNumber);
+      }
+
+    },
+    onBeginDateChange(event) {
+      this.$data.loading = true
+      this.getPayments(this.$pinia.state.value?.personalAccount?.personalItemData?.code, moment(event.detail.value).format('yyyyMMDD'), this.$data.endDate ? this.$data.endDate : moment().format('yyyyMMDD')).then(() => {
+        this.$data.loading = false
+      })
+      this.$data.beginDate = moment(event.detail.value).format('yyyyMMDD')
+    },
+    onEndDateChange(event) {
+      this.$data.loading = true
+      this.getPayments(this.$pinia.state.value?.personalAccount?.personalItemData?.code, this.$data.beginDate ? this.$data.beginDate : moment().format('yyyyMMDD'), moment(event.detail.value).format('yyyyMMDD')).then(() => {
+        this.$data.loading = false
+      })
+      this.$data.endDate = moment(event.detail.value).format('yyyyMMDD')
     },
   },
   computed: {
@@ -101,12 +164,19 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.$data.loading = true
     this.getPayments(
       this.$pinia.state.value?.personalAccount?.personalItemData?.code
-    );
+    ).then(() => {
+      this.$data.loading = false
+    })
   },
   data() {
-    return {};
+    return {
+      loading: false,
+      beginDate: '',
+      endDate: '',
+    };
   },
   setup() {
     const router = useRouter();
@@ -145,6 +215,12 @@ ion-list {
 .text {
   margin-top: 15px;
   margin-bottom: 10px;
+}
+
+.period {
+  @media screen and (max-width:300px) {
+    display: none;
+  }
 }
 
 .sub-title {

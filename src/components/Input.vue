@@ -1,41 +1,14 @@
 <template>
   <div class="input-wrapper">
-    <input
-      v-if="type === 'number'"
-      ref="text"
-      :type="type"
-      :min="min"
-      oninput="validity.valid||(value='');"
-      :class="{ input: true }"
-      placeholder=" "
-      :value="value"
-      @change="changeHandler"
-    />
-    <input
-      ref="text"
-      :type="type"
-      class="input"
-      placeholder=" "
-      v-mask="mask"
-      :value="value"
-      @change="changeHandler"
-      v-if="mask"
-    />
-    <input
-      :value="value"
-      @change="changeHandler"
-      ref="text"
-      :type="type"
-      class="input"
-      placeholder=" "
-      v-if="!mask && type !== 'number' && !min"
-    />
-    <ion-text
-      :class="{ inputTextBlue: textBlue === true }"
-      class="input-text"
-      @click="onFocusText()"
-      >{{ name }}<ion-text v-if="required" class="dot">*</ion-text></ion-text
-    >
+    <input v-if="type === 'number'" ref="text" :type="type" :min="min" oninput="validity.valid||(value='');"
+      :class="{ input: true }" placeholder=" " :value="value" @change="changeHandler" />
+    <input ref="text" :type="type" class="input" placeholder=" " v-mask="mask" :value="value" @change="changeHandler"
+      v-if="mask" />
+    <input :value="value" @change="changeHandler" ref="text" :type="type" :class="{input: true, padding: padding}"
+      placeholder=" " v-if="!mask && type !== 'number' && !min" />
+    <ion-text :class="{ inputTextBlue: textBlue === true }" class="input-text" @click="onFocusText()">{{ name }}
+      <ion-text v-if="required" class="dot">*</ion-text>
+    </ion-text>
   </div>
 </template>
 <script>
@@ -48,7 +21,7 @@ export default defineComponent({
     IonText,
   },
   directives: { mask },
-  setup() {},
+  setup() { },
   methods: {
     onFocusText: function () {
       this.$refs.text.focus();
@@ -80,6 +53,7 @@ export default defineComponent({
     changeHandler: Function,
     min: Number,
     mask: String,
+    padding: Boolean,
   },
 });
 </script>
@@ -102,15 +76,27 @@ export default defineComponent({
   border: solid 1px #dd2c00;
 }
 
+.padding {
+  padding: 5px;
+  margin: 0;
+  --padding-start: 5px;
+  --padding-top: 4px;
+  --padding-bottom: 4px;
+
+
+}
+
 .input:focus {
   outline: none !important;
   border: solid 1px #62d0ce;
   caret-color: #000;
 }
+
 .input-wrapper {
   position: relative;
   width: 100%;
 }
+
 .input-text {
   z-index: 0;
   padding-left: 15px;
@@ -121,12 +107,13 @@ export default defineComponent({
   white-space: nowrap;
   overflow: hidden;
 }
+
 .inputTextBlue {
   color: #0378b4;
   font-weight: 700;
 }
 
-input:not(:placeholder-shown) + ion-text {
+input:not(:placeholder-shown)+ion-text {
   display: none;
 }
 

@@ -2,53 +2,25 @@
   <ion-page>
     <!-- btnSrc="/tabs/servicesGasContractCheckbox" -->
 
-    <Back
-      :btnSrc="
-        () => {
-          router.push('/tabs/services');
-          response = '';
-        }
-      "
-    />
-    <Layout
-      :loading="loading"
-      :method="callInspectorHandler"
-      height="false"
-      :filledBtn="licsList.length === 0 ? '.' : 'Отправить'"
-      outlineBtn="."
-      title="Вызов инспектора"
-    >
+    <Back :btnSrc="
+      () => {
+        router.push('/tabs/services');
+        response = '';
+      }
+    " />
+    <Layout :loading="loading" :method="callInspectorHandler" height="false"
+      :filledBtn="licsList.length === 0 ? '.' : 'Отправить'" outlineBtn="." title="Вызов инспектора">
       <template v-slot:main-content>
         <div v-if="licsList.length === 0">
           <ion-item router-link="/personalAccountNew">
-            <ion-Icon
-              class="icon-start"
-              size="large"
-              slot="start"
-              :icon="pencilOutline"
-            ></ion-Icon>
+            <ion-Icon class="icon-start" size="large" slot="start" :icon="pencilOutline"></ion-Icon>
             <ion-text class="sub-title">Добавить лицевой счет</ion-text>
-            <ion-icon
-              class="icon-end"
-              size="large"
-              slot="end"
-              :icon="chevronForwardOutline"
-            ></ion-icon>
+            <ion-icon class="icon-end" size="large" slot="end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
           <ion-item router-link="/personalAccountInfoSearch">
-            <ion-Icon
-              class="icon-start"
-              size="large"
-              slot="start"
-              :icon="documentTextOutline"
-            ></ion-Icon>
+            <ion-Icon class="icon-start" size="large" slot="start" :icon="documentTextOutline"></ion-Icon>
             <ion-text class="sub-title">Узнать лицевой счет</ion-text>
-            <ion-icon
-              size="large"
-              class="icon-end"
-              slot="end"
-              :icon="chevronForwardOutline"
-            ></ion-icon>
+            <ion-icon size="large" class="icon-end" slot="end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
         </div>
 
@@ -69,12 +41,7 @@
           <ion-accordion-group ref="accordionCallInspector">
             <ion-accordion value="first" :toggle-icon="caretDownSharp">
               <div slot="header">
-                <Input
-                  :value="lc"
-                  :changeHandler="changeLc"
-                  name="Укажите лицевой счет "
-                  :required="true"
-                />
+                <Input :value="lc" :changeHandler="changeLc" name="Укажите лицевой счет " :required="true" />
               </div>
               <div slot="content">
                 <!-- <ion-row>
@@ -96,20 +63,14 @@
                       {{ el?.name }}
                     </ion-col>
                   </ion-row> -->
-                  <ion-item
-                    @click="licsHandler(el)"
-                    :lines="
-                      licsList[licsList.length - 1]?.code === el?.code
-                        ? 'none'
-                        : ''
-                    "
-                  >
-                   
-                     <ion-text>
+                  <ion-item @click="licsHandler(el)" :lines="
+                    licsList[licsList.length - 1]?.code === el?.code
+                      ? 'none'
+                      : ''
+                  ">
+
+                    <ion-text>
                       <p class="ion-text-start">Лицевой счет: {{ el?.code }}</p>
-                      <p class="ion-text-start">
-                        Наименование лицевого счета: {{ el?.name }}
-                      </p>
                     </ion-text>
                   </ion-item>
                 </div>
@@ -117,12 +78,7 @@
             </ion-accordion>
           </ion-accordion-group>
 
-          <Input
-            name="Укажите номер телефона "
-            :value="phone"
-            mask="+7 (###) ###-##-##"
-            :changeHandler="changePhone"
-          />
+          <Input name="Выберите номер телефона " :value="phone" mask="+7 (###) ###-##-##" :changeHandler="changePhone" />
           <ion-text v-if="error">
             <p class="ion-text-start error">
               {{ error }}
@@ -245,14 +201,17 @@ export default defineComponent({
 ion-item {
   --inner-padding-start: 15px;
 }
+
 ion-row {
   padding-top: 5px;
   padding-bottom: 5px;
   border-bottom: solid 1px #e0e0e0;
 }
+
 .ion-row-last {
   border-bottom: none;
 }
+
 ion-col {
   word-break: break-all;
 }
@@ -276,10 +235,10 @@ ion-icon {
   color: #0378b4;
   margin-left: 0;
 }
+
 .icon-start {
   width: 32px;
   height: 32px;
   margin-right: 20px;
 }
-
 </style>

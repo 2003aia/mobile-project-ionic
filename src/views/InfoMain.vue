@@ -1,14 +1,12 @@
 <template>
   <ion-page>
     <ion-content class="background">
-      <Back
-        :btnSrc="
-          () => {
-            this.$pinia.state.value.news.for = '';
-            this.$router.go(-1)
-          }
-        "
-      />
+      <Back :btnSrc="
+        () => {
+          this.$pinia.state.value.news.for = '';
+          this.$router.go(-1)
+        }
+      " />
       <ion-spinner class="loading" v-show="loading === true" name="bubbles" />
 
       <div v-show="loading === false">
@@ -138,6 +136,7 @@ ion-img {
   height: 300px;
   width: 100%;
 }
+
 .img-wrapper {
   width: 100%;
   height: 100%;
@@ -147,6 +146,7 @@ ion-img {
   background: #0000004d;
   padding: 15px;
 }
+
 .container {
   padding: 15px;
   position: relative;

@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
+import router from "../router";
 // import { useLoginStore } from "./login";
 
 export const usePersonalAccountStore = defineStore({
@@ -48,7 +49,10 @@ export const usePersonalAccountStore = defineStore({
             `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetSettlements`,
             { token: tokenParsed }
           )
-          .then((response) => (this.getSettlementsResponse = response.data));
+          .then((response) => {
+            if (response.data.error) router.push('/authPage')
+            this.getSettlementsResponse = response.data
+          });
       } catch (error) {
         this.getSettlementsError = error;
       }
@@ -64,7 +68,11 @@ export const usePersonalAccountStore = defineStore({
             `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetStreets`,
             { token: tokenParsed, s_id: s_id }
           )
-          .then((response) => (this.getStreetsResponse = response.data));
+          .then((response) => {
+            if (response.data.error) router.push('/authPage')
+
+            this.getStreetsResponse = response.data
+          });
       } catch (error) {
         this.getStreetsError = error;
       }
@@ -80,7 +88,10 @@ export const usePersonalAccountStore = defineStore({
             `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetHouses`,
             { token: tokenParsed, ids: ids }
           )
-          .then((response) => (this.getHousesResponse = response.data));
+          .then((response) => {
+            if (response.data.error) router.push('/authPage')
+            this.getHousesResponse = response.data
+          });
       } catch (error) {
         this.getHousesError = error;
       }
@@ -97,7 +108,10 @@ export const usePersonalAccountStore = defineStore({
             `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetAccount`,
             { token: tokenParsed, LC: lc }
           )
-          .then((response) => (this.getAccountResponse = response.data));
+          .then((response) => {
+            if (response.data.error) router.push('/authPage')
+            this.getAccountResponse = response.data
+          });
       } catch (error) {
         this.getAccountError = error;
       }
@@ -111,18 +125,12 @@ export const usePersonalAccountStore = defineStore({
           )
           .then(async (response) => {
             this.addAccountResponse = response.data;
+            if (response.data.error) router.push('/authPage')
 
-            // const counterStorage = useLoginStore();
             const store = new Storage();
             await store.create();
             const token = await store.get("token");
             const tokenParsed = JSON.parse(token);
-            // console.log(response.data, tokenParsed, "test addaccount");
-            /* counterStorage
-                .authUser(tokenParsed.phone, tokenParsed.password)
-                .then(async () => {
-                  const store = new Storage();
-                  await store.create(); */
             await store.set(
               "token",
               JSON.stringify({
@@ -153,6 +161,8 @@ export const usePersonalAccountStore = defineStore({
                 return el.code !== lc;
               }
             );
+            if (response.data.error) router.push('/authPage')
+
             const userData = JSON.parse(token);
             const lics = this.getAccountResponse?.data.filter((el) => {
               return el?.code !== lc;
@@ -172,7 +182,7 @@ export const usePersonalAccountStore = defineStore({
         this.delAccountError = error;
       }
     },
-    async getPayments(lc /*  beginDate, endDate */) {
+    async getPayments(lc, beginDate, endDate) {
       try {
         const store = new Storage();
         await store.create();
@@ -183,17 +193,19 @@ export const usePersonalAccountStore = defineStore({
             `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetPayments`,
             {
               token: tokenParsed,
-              LC: lc /* beginDate: beginDate, endDate: endDate */,
+              LC: lc, beginPeriod: beginDate, endPeriod: endDate,
             }
           )
           .then(async (response) => {
+            if (response.data.error) router.push('/authPage')
+
             this.paymentHistoryResponse = response.data;
           });
       } catch (error) {
         this.paymentHistoryError = error;
       }
     },
-    async getIndices(counterId) {
+    async getIndices(counterId, beginDate, endDate) {
       try {
         const store = new Storage();
         await store.create();
@@ -202,10 +214,12 @@ export const usePersonalAccountStore = defineStore({
         await axios
           .post(
             `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetIndices`,
-            { token: tokenParsed, counterId: counterId }
+            { token: tokenParsed, counterId: counterId, beginPeriod: beginDate, endPeriod: endDate, }
           )
           .then((response) => {
-            this.getIndicesResponse = response.data;
+            if (response.data.error) router.push('/authPage')
+
+            this.getIndicesResponse = response.data
           });
       } catch (error) {
         this.getIndicesError = error;
@@ -225,6 +239,8 @@ export const usePersonalAccountStore = defineStore({
           .then((response) => {
             /* const counterStorage = usePersonalAccountStore()
             counterStorage.getIndices(counterId) */
+            if (response.data.error) router.push('/authPage')
+
             if (response.data.error === false) {
               this.getIndices(counterId);
               this.setIndicesResponse = response.data;
@@ -252,6 +268,8 @@ export const usePersonalAccountStore = defineStore({
             sumTO: sumTO,
           })
           .then((response) => {
+            if (response.data.error) router.push('/authPage')
+
             /* const counterStorage = usePersonalAccountStore()
             counterStorage.getIndices(counterId) */
             this.sberPayResponse = response.data;

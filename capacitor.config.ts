@@ -5,6 +5,12 @@ const config: CapacitorConfig = {
   appName: 'СТНГ',
   webDir: 'dist',
   bundledWebRuntime: false,
+  plugins: {
+    PushNotifications: {
+      presentationOptions: ["badge", "sound", "alert"],
+    },
+  },
+
 };
 
 export default config;

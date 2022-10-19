@@ -3,11 +3,7 @@
     <Back :btnSrc="() => router.push('/authPage')" />
     <ion-content :fullscreen="true" class="background">
       <div class="container">
-        <ion-img
-          class="logo"
-          :src="require('@/assets/img/logoSTNG.png')"
-          alt="logo"
-        ></ion-img>
+        <ion-img class="logo" :src="require('@/assets/img/logoSTNG.png')" alt="logo"></ion-img>
 
         <ion-text>
           <p class="title">Регистрация</p>
@@ -29,14 +25,8 @@
               заполнения.
             </p>
           </ion-text>
-          <Input
-            v-mask="'+7 (###) ###-##-##'"
-            type="tel"
-            name="Телефон"
-            :required="true"
-            :value="phone"
-            :changeHandler="changePhone"
-          />
+          <Input v-mask="'+7 (###) ###-##-##'" type="tel" name="Телефон" :required="true" :value="phone"
+            :changeHandler="changePhone" />
           <!-- <Input
             :value="email"
             :changeHandler="changeEmail"
@@ -52,30 +42,18 @@
           </ion-text>
 
           <ion-item class="check">
-            <ion-checkbox
-              @update:modelValue="check = $event"
-              :modelValue="check"
-              slot="start"
-            ></ion-checkbox>
+            <ion-checkbox @update:modelValue="check = $event" :modelValue="check" slot="start"></ion-checkbox>
             <ion-text>Согласен (-на) на обработку персональных данных</ion-text>
           </ion-item>
 
-          <ion-button
-            class="textURL ion-text-wrap"
-            fill="clear"
-            router-link="/termsPage"
-          >
+          <ion-button class="textURL ion-text-wrap" fill="clear" router-link="/termsPage">
             Пользовательское соглашение
           </ion-button>
-          <Button
-            :loading="loading"
-            name="Зарегистрироваться"
-            @click="
-              () => {
-                registrUserHandler();
-              }
-            "
-          />
+          <Button :disabled="!check && phone === ''" :loading="loading" name="Зарегистрироваться" @click="
+            () => {
+              registrUserHandler();
+            }
+          " />
         </div>
 
         <div v-else>
@@ -83,34 +61,21 @@
             Мы отправили проверочный код на номер {{ phone.value }}
           </p>
           <Input name="Введите код" :value="code" @change="changeCode" />
-          <Input
-            name="Введите новый пароль"
-            :value="password"
-            type="password"
-            @change="changePassword"
-          />
+          <Input name="Введите новый пароль" :value="password" type="password" @change="changePassword" />
 
-          <Input
-            type="password"
-            name="Повторите новый пароль"
-            :value="passwordConfirm"
-            @change="changePasswordConfirm"
-          />
+          <Input type="password" name="Повторите новый пароль" :value="passwordConfirm"
+            @change="changePasswordConfirm" />
 
           <ion-text v-if="errorText">
             <p class="ion-text-start error">
               {{ errorText }}
             </p>
           </ion-text>
-          <Button
-            name="Подтвердить"
-            :loading="loading2"
-            @click="
-              () => {
-                codeUserHandler();
-              }
-            "
-          />
+          <Button name="Подтвердить" :loading="loading2" @click="
+            () => {
+              codeUserHandler();
+            }
+          " />
         </div>
       </div>
     </ion-content>
@@ -266,7 +231,7 @@ export default defineComponent({
       // codeSent: false,
     };
   },
-  methods: function () {},
+  methods: function () { },
 });
 </script>
 

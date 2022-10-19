@@ -3,11 +3,7 @@
     <ion-content :fullscreen="true" class="background">
       <div class="container">
         <div class="header">
-          <ion-img
-            class="logo"
-            :src="require('@/assets/img/logoSTNG.png')"
-            alt="test"
-          ></ion-img>
+          <ion-img class="logo" :src="require('@/assets/img/logoSTNG.png')" alt="test"></ion-img>
 
           <ion-text>
             <p class="title">Авторизация</p>
@@ -20,19 +16,8 @@
           </ion-text>
         </div>
         <div>
-          <Input
-            :mask="'+7 (###) ###-##-##'"
-            name="Телефон"
-            :value="phone"
-            type="tel"
-            :changeHandler="phoneChange"
-          />
-          <Input
-            name="Пароль"
-            :value="password"
-            type="password"
-            :changeHandler="passwordChange"
-          />
+          <Input :mask="'+7 (###) ###-##-##'" name="Телефон" :value="phone" type="tel" :changeHandler="phoneChange" />
+          <Input name="Пароль" :value="password" type="password" :changeHandler="passwordChange" />
 
           <ion-text v-if="errorText">
             <p class="ion-text-start error">
@@ -42,38 +27,22 @@
 
           <Button :loading="loading" @click="authUserHandler" name="Войти" />
         </div>
-        <ion-button
-          class="textURL ion-text-wrap"
-          fill="clear"
-          router-link="/passRecoveryPage"
-          >Забыли пароль?</ion-button
-        >
+        <ion-button class="textURL ion-text-wrap" fill="clear" router-link="/passRecoveryPage">Забыли пароль?
+        </ion-button>
 
         <ion-text class="text ion-text-center">Или с помощью</ion-text>
         <div>
-          <a href="https://esia.gosuslugi.ru/login/">
-            <ion-img
-              class="logoURL"
-              :src="require('@/assets/img/logoGOS.png')"
-              alt="logoGOSUSLUGI"
-            ></ion-img>
-          </a>
+          <div @click="authUrl">
+            <ion-img class="logoURL" :src="require('@/assets/img/logoGOS.png')" alt="logoGOSUSLUGI"></ion-img>
+          </div>
 
           <a href="https://aostng.ru/login/">
-            <ion-img
-              class="logoURL"
-              :src="require('@/assets/img/logoSTNG.png')"
-              alt="test"
-            ></ion-img>
+            <ion-img class="logoURL" :src="require('@/assets/img/logoSTNG.png')" alt="test"></ion-img>
           </a>
         </div>
 
         <ion-text class="ion-text-center">Еще не зарегистрированы? </ion-text>
-        <ion-button
-          fill="clear"
-          class="textURL ion-text-wrap"
-          router-link="/registrPage"
-        >
+        <ion-button fill="clear" class="textURL ion-text-wrap" router-link="/registrPage">
           Пройдите регистрацию
         </ion-button>
       </div>
@@ -88,15 +57,28 @@ import Button from "../components/Button.vue";
 import Input from "../components/Input.vue";
 import { storeToRefs } from "pinia";
 import { useLoginStore } from "../stores/login";
+// import { usePersonalAccountStore } from '../stores/personalAccount'
 import {
   IonPage,
   IonButton,
   IonContent,
   IonText,
   IonImg,
+  // menuController,
   onIonViewDidEnter,
 } from "@ionic/vue";
 import { Storage } from "@ionic/storage";
+/* import esia from 'esia'
+
+const cert = '../utils/test.cer'
+const key = '../utils/header.key'
+const esiaConn = esia({
+  clientId: 111111,
+  redirectUri: 'https://my-site.com/esiacode/',
+  scope: 'openid id_doc',
+  certificate: cert,
+  key: key
+}) */
 
 export default defineComponent({
   name: "authPage",
@@ -110,10 +92,15 @@ export default defineComponent({
     Input,
     IonImg,
   },
-
+  methods: {
+    authUrl() {
+      // esiaConn.getAuth().url
+    }
+  },
   setup() {
     const router = useRouter();
-    const { authResponse, authError } = storeToRefs(useLoginStore());
+    const { authResponse, authError, updateLogin } = storeToRefs(useLoginStore());
+    // const { getAccount } = usePersonalAccountStore()
     const { authUser } = useLoginStore();
     let phone = ref("");
     let password = ref("");
@@ -126,14 +113,13 @@ export default defineComponent({
 
       } else {
         loading.value = true;
-       /*  if (myModel[0] !== 7) {
-          myModel = "7" + myModel;
-        } */
+        /*  if (myModel[0] !== 7) {
+           myModel = "7" + myModel;
+         } */
         console.log(phone.value, 'tests')
         authUser(myModel, password.value)
           .then(async () => {
             loading.value = false;
-             console.log('auth test',authResponse?.value)
             if (authResponse?.value?.error === false) {
               const store = new Storage();
               await store.create();
@@ -144,8 +130,8 @@ export default defineComponent({
                   phone: phone.value,
                   password: password.value,
                 })
-              );
-             
+              )
+              updateLogin.value = true
               router.push("/tabs/personalAccounts");
             } else {
               errorText.value = authResponse.value?.message;
@@ -199,15 +185,18 @@ export default defineComponent({
 .text {
   margin-bottom: 20px;
 }
+
 .container {
   background-color: rgb(255, 255, 255);
 }
+
 .logoURL {
   height: 26px;
   width: 120px;
   margin: auto;
   margin-bottom: 15px;
 }
+
 .logo {
   height: 80px;
   width: 240px;

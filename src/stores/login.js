@@ -16,6 +16,7 @@ export const useLoginStore = defineStore({
     passRecoveryError: null,
     changePassResponse: null,
     changePassError: null,
+    updateLogin: false,
   }),
   getters: {
     getPostsPerAuthor: (state) => {

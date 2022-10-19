@@ -975,6 +975,13 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@capacitor-community/fcm@^2.0.0":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@capacitor-community/fcm/-/fcm-2.0.2.tgz#8e35f452d4929ce0a7aba000a215f2e4779e2d0a"
+  integrity sha512-O/xxizQyPdD6AejJjmhZC+WBquy1UHrS0KvmnVf58Ji9TtQiaCb6iQhZMjTidNqOHJIj1YxeIFGAcXlt8nqgyw==
+  dependencies:
+    "@capacitor/core" "^3.0.1"
+
 "@capacitor/android@3.8.0":
   version "3.8.0"
   resolved "https://registry.npmjs.org/@capacitor/android/-/android-3.8.0.tgz"
@@ -1007,9 +1014,9 @@
     tslib "^2.1.0"
     xml2js "^0.4.23"
 
-"@capacitor/core@^3.6.0":
+"@capacitor/core@^3.0.1", "@capacitor/core@^3.6.0":
   version "3.8.0"
-  resolved "https://registry.npmjs.org/@capacitor/core/-/core-3.8.0.tgz"
+  resolved "https://registry.yarnpkg.com/@capacitor/core/-/core-3.8.0.tgz#45d2c4e7db07051a8a214b9b3c851f23dcc06abe"
   integrity sha512-Z7iHM+1CBbuIK+74bS4ZjpPUOdcKb7Gf7j8xK9WegcrUeHZQl4O6hAAn6nT60kDoeAyutsr3PP25542Ur0wLBg==
   dependencies:
     tslib "^2.1.0"
@@ -1023,6 +1030,11 @@
   version "1.2.3"
   resolved "https://registry.npmjs.org/@capacitor/keyboard/-/keyboard-1.2.3.tgz"
   integrity sha512-KTSzJkMa6CrmDIDhWfswNPqS7gvYlL25E1gqXbY7w/EhyBjJhEdF0bc6QUFufS+ZVMlcPafc0/E5P+pTfLnKiA==
+
+"@capacitor/push-notifications@1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@capacitor/push-notifications/-/push-notifications-1.0.9.tgz#8a8398cdbd17a06f1b3d003f60897bd6db7bd1fe"
+  integrity sha512-NaH+drTYjOGgFMHl/2Jn1/+2rlgomtwP2NfK20E0i7+QoRze1ArcSThJ4vSF0m7VkYBsH3MgbXkWfNSSPaYrtw==
 
 "@capacitor/status-bar@1.0.8":
   version "1.0.8"
