@@ -28,6 +28,7 @@ export const useServicesStore = defineStore({
     listServicesResponseError: null,
     camerasResponse: null,
     camerasError: null,
+    requestsInfo: null,
     
   }),
   getters: {

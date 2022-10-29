@@ -1,7 +1,11 @@
 <template>
   <ion-page>
     <ion-content :fullscreen="true" class="background">
+      <div class="pattern"></div>
+
       <div class="container">
+        <!-- <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img> -->
+
         <div class="header">
           <ion-img class="logo" :src="require('@/assets/img/logoSTNG.png')" alt="test"></ion-img>
 
@@ -16,8 +20,9 @@
           </ion-text>
         </div>
         <div>
-          <Input :mask="'+7 (###) ###-##-##'" name="Телефон" :value="phone" type="tel" :changeHandler="phoneChange" />
-          <Input name="Пароль" :value="password" type="password" :changeHandler="passwordChange" />
+          <Input :blue="true" :mask="'+7 (###) ###-##-##'" name="Телефон" :value="phone" type="tel"
+            :changeHandler="phoneChange" />
+          <Input :blue="true" name="Пароль" :value="password" type="password" :changeHandler="passwordChange" />
 
           <ion-text v-if="errorText">
             <p class="ion-text-start error">
@@ -25,7 +30,7 @@
             </p>
           </ion-text>
 
-          <Button :loading="loading" @click="authUserHandler" name="Войти" />
+          <Button :lightBlue="true" :loading="loading" @click="authUserHandler" name="Войти" />
         </div>
         <ion-button class="textURL ion-text-wrap" fill="clear" router-link="/passRecoveryPage">Забыли пароль?
         </ion-button>
@@ -37,11 +42,11 @@
           </div>
 
           <a href="https://aostng.ru/login/">
-            <ion-img class="logoURL" :src="require('@/assets/img/logoSTNG.png')" alt="test"></ion-img>
+            <ion-img class="logoURL" :src="require('@/assets/img/logoSTNG2.png')" alt="aostng"></ion-img>
           </a>
         </div>
 
-        <ion-text class="ion-text-center">Еще не зарегистрированы? </ion-text>
+        <ion-text style="color: #71C4F4;" class="ion-text-center">Еще не зарегистрированы? </ion-text>
         <ion-button fill="clear" class="textURL ion-text-wrap" router-link="/registrPage">
           Пройдите регистрацию
         </ion-button>
@@ -57,28 +62,18 @@ import Button from "../components/Button.vue";
 import Input from "../components/Input.vue";
 import { storeToRefs } from "pinia";
 import { useLoginStore } from "../stores/login";
-// import { usePersonalAccountStore } from '../stores/personalAccount'
 import {
   IonPage,
   IonButton,
   IonContent,
   IonText,
+  isPlatform,
   IonImg,
-  // menuController,
   onIonViewDidEnter,
 } from "@ionic/vue";
 import { Storage } from "@ionic/storage";
-/* import esia from 'esia'
+import { PushNotifications } from '@capacitor/push-notifications'
 
-const cert = '../utils/test.cer'
-const key = '../utils/header.key'
-const esiaConn = esia({
-  clientId: 111111,
-  redirectUri: 'https://my-site.com/esiacode/',
-  scope: 'openid id_doc',
-  certificate: cert,
-  key: key
-}) */
 
 export default defineComponent({
   name: "authPage",
@@ -94,30 +89,30 @@ export default defineComponent({
   },
   methods: {
     authUrl() {
-      // esiaConn.getAuth().url
     }
   },
   setup() {
     const router = useRouter();
     const { authResponse, authError, updateLogin } = storeToRefs(useLoginStore());
-    // const { getAccount } = usePersonalAccountStore()
     const { authUser } = useLoginStore();
     let phone = ref("");
     let password = ref("");
     let errorText = ref("");
     let loading = ref(false);
-    const authUserHandler = () => {
+    let fcmToken = ref('')
+    const authUserHandler = async () => {
       let myModel = phone.value.replace(/\D+/g, "");
       if (password.value === "" || phone.value === "") {
         errorText.value = "Заполните поля!";
 
       } else {
         loading.value = true;
-        /*  if (myModel[0] !== 7) {
-           myModel = "7" + myModel;
-         } */
-        console.log(phone.value, 'tests')
-        authUser(myModel, password.value)
+        if (isPlatform('android') && isPlatform('ios')) {
+          await PushNotifications.addListener('registration', token => {
+            fcmToken.value = token.value
+          });
+        }
+        authUser(myModel, password.value, fcmToken.value)
           .then(async () => {
             loading.value = false;
             if (authResponse?.value?.error === false) {
@@ -129,6 +124,7 @@ export default defineComponent({
                   ...authResponse?.value?.data,
                   phone: phone.value,
                   password: password.value,
+
                 })
               )
               updateLogin.value = true
@@ -179,22 +175,46 @@ export default defineComponent({
 
 <style scoped>
 .background {
-  --background: #fff;
+  --background: linear-gradient(164.84deg, #1B7DB6 8.63%, #0F3C79 89.24%);
+  position: relative;
+
 }
 
 .text {
   margin-bottom: 20px;
+  color: #71C4F4;
 }
 
 .container {
-  background-color: rgb(255, 255, 255);
+  background: rgba(255, 0, 0, 0);
+
 }
 
+
+.pattern {
+  background: rgba(255, 0, 0, 0);
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: url('../assets/img/pattern2.png') no-repeat;
+  /* background-attachment: fixed; */
+  background-position: center bottom;
+  background-size: 300px;
+  content: ' ';
+}
+
+
 .logoURL {
-  height: 26px;
-  width: 120px;
+  height: 44px;
+  width: 130px;
   margin: auto;
   margin-bottom: 15px;
+  position: relative;
+  z-index: 43000;
+}
+
+.title {
+  color: #fff;
 }
 
 .logo {
@@ -202,5 +222,9 @@ export default defineComponent({
   width: 240px;
   margin: auto;
   margin-bottom: 30px;
+}
+
+.textURL {
+  padding-bottom: 20px;
 }
 </style>

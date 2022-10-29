@@ -16,10 +16,10 @@
                 Выберите период:
               </ion-text>
               <div style="display: flex;">
-                <ion-datetime-button color="date" datetime="date"></ion-datetime-button>
+                <ion-datetime-button  mode="ios" color="date" datetime="date"></ion-datetime-button>
                 <ion-text style="margin: 0 5px;">-</ion-text>
 
-                <ion-datetime-button color="date" datetime="date2"></ion-datetime-button>
+                <ion-datetime-button  mode="ios" color="date" datetime="date2"></ion-datetime-button>
               </div>
 
               <ion-modal mode="ios" :keep-contents-mounted="true">

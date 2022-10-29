@@ -1,21 +1,14 @@
 <template>
   <ion-page>
+    <Back :noBack="true" :logo="true" />
     <ion-content class="background">
       <div class="container">
-        <ion-button
-          class="btn1"
-          fill="clear"
-          router-link="/tabs/servicesRequestGas"
-        >
+        <ion-button class="btn1" fill="clear" router-link="/tabs/servicesRequestGas">
           <ion-text>
             <p class="sub-title ion-text-wrap">Социальная газификация</p>
           </ion-text>
         </ion-button>
-        <ion-button
-          class="btn2"
-          fill="clear"
-          router-link="/tabs/servicesTechAlliance"
-        >
+        <ion-button class="btn2" fill="clear" router-link="/tabs/servicesTechAlliance">
           <ion-text>
             <p class="sub-title ion-text-wrap">
               Услуга технологического присоединения для физических лиц
@@ -27,33 +20,21 @@
             <p class="sub-title ion-text-wrap">Разовые услуги</p>
           </ion-text>
         </ion-button>
-        <ion-button
-          class="btn4"
-          fill="clear"
-          router-link="/tabs/servicesGasContract"
-        >
+        <ion-button class="btn4" fill="clear" router-link="/tabs/servicesGasContract">
           <ion-text>
             <p class="sub-title ion-text-wrap">
               Услуга заключения договора поставки газа для собственников квартир
             </p>
           </ion-text>
         </ion-button>
-        <ion-button
-          router-link="/tabs/servicesTracking"
-          class="btn5"
-          fill="clear"
-        >
+        <ion-button router-link="/tabs/servicesTracking" class="btn5" fill="clear">
           <ion-text>
             <p class="sub-title ion-text-wrap">
               Отслеживание статуса договора о подключении
             </p>
           </ion-text>
         </ion-button>
-        <ion-button
-          router-link="/tabs/servicesCallInspector"
-          class="btn6"
-          fill="clear"
-        >
+        <ion-button router-link="/tabs/servicesCallInspector" class="btn6" fill="clear">
           <ion-text>
             <p class="sub-title ion-text-wrap">Вызов инспектора</p>
           </ion-text>
@@ -66,6 +47,7 @@
 <script>
 import { defineComponent } from "vue";
 import { airplaneOutline } from "ionicons/icons";
+import Back from '../components/Back.vue'
 import { IonPage, IonContent, IonButton, IonText } from "@ionic/vue";
 
 export default defineComponent({
@@ -75,7 +57,7 @@ export default defineComponent({
       airplaneOutline,
     };
   },
-  components: { IonPage, IonContent, IonButton, IonText },
+  components: { IonPage, IonContent, IonButton, IonText, Back, },
 });
 </script>
 
@@ -90,26 +72,27 @@ export default defineComponent({
 }
 
 .btn1 {
-  background: linear-gradient(93.76deg, #6fcec3 0%, #49a599 98.64%);
+  background: linear-gradient(93.76deg, #1A80B9 0%, #176CA6 98.64%);
 }
 
 .btn2 {
-  background: linear-gradient(93.63deg, #62bfb1 0%, #3394a8 99.6%);
+  background: linear-gradient(93.63deg, #1875AF 0%, #15619C 99.6%);
 }
 
 .btn3 {
-  background: linear-gradient(93.68deg, #55b19f 0.34%, #1e84b6 100%);
+  background: linear-gradient(93.68deg, #176BA5 0.34%, #135792 100%);
 }
 
 .btn4 {
-  background: linear-gradient(93.89deg, #44a29c 0%, #146caa 100%);
+  background: linear-gradient(93.89deg, #15609B 0%, #114C89 100%);
 }
 
 .btn5 {
-  background: linear-gradient(93.89deg, #3092aa 0%, #10508e 100%);
+  background: linear-gradient(93.89deg, #135692 0%, #0F427F 100%);
 }
+
 .btn6 {
-  background: linear-gradient(93.89deg, #1a81b9 0%, #0c3371 100%);
+  background: linear-gradient(93.89deg, #114B88 0%, #0D3775 100%);
 }
 
 ion-button {
@@ -118,6 +101,7 @@ ion-button {
   height: 120px;
   margin-bottom: 20px;
 }
+
 ion-text p {
   color: #fff;
   text-transform: initial;

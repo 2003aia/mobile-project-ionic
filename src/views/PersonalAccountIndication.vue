@@ -1,8 +1,9 @@
 <template>
   <ion-page>
-    <Back :btnSrc="()=>router.push('/tabs/personalAccounts')" />
+    <Back :btnSrc="() => router.push('/tabs/personalAccounts')" />
     <ion-content :fullscreen="true" class="background">
-      <div class="container">
+      <div class="header-wrapper">
+        <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img>
         <div class="btn-wrapper">
           <Button class="btn" :grey="true" name="Оплата" @click="
             () =>
@@ -10,8 +11,11 @@
                 name: 'personalAccountPayment',
               })
           " />
-          <Button class="btn" name="Показания" />
+          <Button :lightBlue="true" class="btn" name="Показания" />
         </div>
+      </div>
+      <div class="container">
+
         <layout-box>
           <template v-slot:content>
             <ion-text>
@@ -27,19 +31,19 @@
             </ion-item>
           </template>
         </layout-box>
-        <div v-show="!loadingGetIndices && lcList.counters?.length !== 0 " v-for="(el) in indicesList" :key="el">
+        <div v-show="!loadingGetIndices && lcList.counters?.length !== 0" v-for="(el) in indicesList" :key="el">
           <layout-box>
             <template v-slot:content>
               <ion-text>
-                <p class="title ion-text-start">Номер счетчика {{el?.name}}</p>
+                <p class="title ion-text-start">Номер счетчика {{ el?.name }}</p>
               </ion-text>
               <!-- <ion-text>
                 <p class="title ion-text-start">Новые показания</p>
               </ion-text> -->
 
-              <Input @input="(e)=>{
-              el.value = e.target.value
-             
+              <Input @input="(e) => {
+                el.value = e.target.value
+              
               
               }" name="Введите показания счетчика (куб.
                   метр.)" type="number" :textBlue="true" />
@@ -49,28 +53,28 @@
                   {{ el.error }}
                 </p>
               </ion-text>
-              <ion-text v-show="el.response ">
+              <ion-text v-show="el.response">
                 <p class="ion-text-center">
-                  {{ el.response}}
+                  {{ el.response }}
                 </p>
               </ion-text>
               <Button :loading="loading" :name="'Подтвердить'" @click="
                 () => {
-                  if( el?.indications[0].date.substring(0, 10) !== moment().format('DD.MM.yyyy') ) {
-                    if((el.value > el?.indications[0]?.indication)) {
+                  if (el?.indications[0].date.substring(0, 10) !== moment().format('DD.MM.yyyy')) {
+                    if ((el.value > el?.indications[0]?.indication)) {
                       loading = true
-                    setIndices(el.id, el.value).then(()=>{
-                      // getIndices(el.id)
-                      loading = false
-                      // if(!this.$pinia.state.value?.personalAccount?.setIndicesResponse?.error) value = el?.value
-                      // this.$data.indicationList.push( ...this.$data.indicationList, ...{name: el?.name, id: el?.id, indications: [{date: moment().format('DD.MM.yyyy HH:MM:SS'), indication: el.value}]})
-                      el.response = this.$pinia.state.value?.personalAccount?.setIndicesResponse?.message
-                      el.error = ''
-                    })
-                  } else {
-                    el.response = ''
-                    el.error = 'Текущие показания меньше предыдущих'
-                  }
+                      setIndices(el.id, el.value).then(() => {
+                        // getIndices(el.id)
+                        loading = false
+                        // if(!this.$pinia.state.value?.personalAccount?.setIndicesResponse?.error) value = el?.value
+                        // this.$data.indicationList.push( ...this.$data.indicationList, ...{name: el?.name, id: el?.id, indications: [{date: moment().format('DD.MM.yyyy HH:MM:SS'), indication: el.value}]})
+                        el.response = this.$pinia.state.value?.personalAccount?.setIndicesResponse?.message
+                        el.error = ''
+                      })
+                    } else {
+                      el.response = ''
+                      el.error = 'Текущие показания меньше предыдущих'
+                    }
                   } else {
                     el.response = ''
                     el.error = 'За этот день уже имеется начисление по счетчику'
@@ -84,21 +88,21 @@
                     Выберите период:
                   </ion-text>
                   <div style="display: flex;">
-                    <ion-datetime-button color="date" datetime="date"></ion-datetime-button>
+                    <ion-datetime-button mode="ios" color="date" datetime="date"></ion-datetime-button>
                     <ion-text style="margin: 0 5px;">-</ion-text>
 
-                    <ion-datetime-button color="date" datetime="date2"></ion-datetime-button>
+                    <ion-datetime-button mode="ios" color="date" datetime="date2"></ion-datetime-button>
                   </div>
 
                   <ion-modal mode="ios" :keep-contents-mounted="true">
-                    <ion-datetime @ionChange="(e)=>onBeginDateChange(e, el?.id)" color="date" presentation="date"
+                    <ion-datetime @ionChange="(e) => onBeginDateChange(e, el?.id)" color="date" presentation="date"
                       mode="ios" id="date">
                     </ion-datetime>
 
                   </ion-modal>
                   <ion-modal mode="ios" :keep-contents-mounted="true">
 
-                    <ion-datetime @ionChange="(e)=>onEndDateChange(e, el?.id)" color="date" presentation="date"
+                    <ion-datetime @ionChange="(e) => onEndDateChange(e, el?.id)" color="date" presentation="date"
                       mode="ios" id="date2">
                     </ion-datetime>
                   </ion-modal>
@@ -106,18 +110,12 @@
               </ion-grid>
 
               <ion-row>
-                <!-- <ion-col size="2" size-sm>№</ion-col> -->
                 <ion-col>Дата</ion-col>
                 <ion-col>Показания</ion-col>
               </ion-row>
 
               <div v-for="(indice) in el?.indications" :key="indice">
-                <!--  <ion-row v-show="el?.indications[0]?.date ===
-                indice?.date && value">
 
-                  <ion-col class="text-end">{{moment().format('DD.MM.yyyy')}}</ion-col>
-                  <ion-col class="text-end">{{value}}</ion-col>
-                </ion-row> -->
                 <ion-row :class="{
                   'ion-row-last':
                     el?.indications[el?.indications?.length - 1]?.date ===
@@ -125,7 +123,7 @@
                 }">
 
                   <ion-col class="text-end">{{
-                  indice?.date.substring(0, 10)
+                      indice?.date.substring(0, 10)
                   }}</ion-col>
                   <ion-col class="text-end">{{ indice?.indication }}</ion-col>
                 </ion-row>
@@ -165,18 +163,18 @@
                 </p>
               </ion-text>
               <Button :loading="loading" :name="'Подтвердить'" @click="
-                () => {
-                  if (counterId?.length !== 0) {
-                    setIndicesHandler(
-                      counterId,
-                      indication,
-                      loading,
-                      response
-                    );
-                  } else {
-                    error = 'Заполните все поля';
-                  }
-                }
+  () => {
+    if (counterId?.length !== 0) {
+      setIndicesHandler(
+        counterId,
+        indication,
+        loading,
+        response
+      );
+    } else {
+      error = 'Заполните все поля';
+    }
+  }
               " />
             </template>
           </layout-box>
@@ -206,6 +204,7 @@ import {
   IonModal,
   IonDatetime,
   IonSpinner,
+  IonImg,
   IonGrid,
 } from "@ionic/vue";
 import {
@@ -348,6 +347,7 @@ export default defineComponent({
     IonRow,
     IonCol,
     IonModal,
+    IonImg,
     IonGrid,
     IonDatetime,
     IonSpinner,
@@ -371,22 +371,52 @@ ion-col {
   word-break: break-all;
 }
 
-.container {
-  padding: 15px;
-  background: #f5f5f5;
+
+.background {
+  position: relative;
 }
 
+.container {
+  padding: 0 15px 15px;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #ffffff00;
+  top: -70px;
+}
+
+.header-wrapper {
+  position: relative;
+  padding: 15px;
+  height: 160px;
+  background: linear-gradient(156.39deg, #1B80B9 7.75%, #0E3977 100.99%);
+}
+
+.pattern {
+  position: absolute;
+  height: fit-content;
+  width: 350px;
+  bottom: 0;
+  padding: 0 15px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .btn-wrapper {
   display: flex;
   width: 100%;
   justify-content: space-between;
-  background: #eaeaea;
+  background: #268FCC;
   border-radius: 25px;
   padding-right: 2px;
   padding-left: 2px;
   margin-bottom: 20px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 23400;
 }
 
 .btn {

@@ -2,17 +2,16 @@
   <ion-page>
     <Back />
     <ion-content :fullscreen="true" class="background">
+      <div class="pattern"></div>
+      <!-- <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img> -->
+
       <div class="container">
         <div class="header">
-          <ion-img
-            class="logo"
-            :src="require('@/assets/img/logoSTNG.png')"
-            alt="logo"
-          ></ion-img>
+          <ion-img class="logo" :src="require('@/assets/img/logoSTNG.png')" alt="logo"></ion-img>
 
-          <p class="title">Восстановление пароля</p>
+          <p style="color: #fff;" class="title">Восстановление пароля</p>
 
-          <p class="text ion-text-center">
+          <p style="color: #fff;" class="text ion-text-center">
             Если вы забыли пароль, введите номер телефона или E-Mail.
             Контрольная строка для смены пароля, а также ваши регистрационные
             данные, будут высланы вам по E-Mail. На номер телефона вам прийдет
@@ -20,12 +19,7 @@
           </p>
         </div>
         <div>
-          <Input
-            name="Телефон"
-            v-mask="'+7 (###) ###-##-##'"
-            :value="login"
-            @change="loginChange"
-          />
+          <Input :blue="true" name="Телефон" v-mask="'+7 (###) ###-##-##'" :value="login" @change="loginChange" />
           <ion-text v-if="errorText">
             <p class="ion-text-start error">
               {{ errorText }}
@@ -33,18 +27,14 @@
           </ion-text>
           <ion-text v-if="passRecoveryResponse?.message">
             <p class="ion-text-start">
-              {{passRecoveryResponse?.message}}
+              {{ passRecoveryResponse?.message }}
             </p>
           </ion-text>
-          <Button
-            @click="
-              () => {
-                passRecoveryHandler();
-              }
-            "
-            :loading="loading"
-            name="Восстановить пароль"
-          />
+          <Button :lightBlue="true" @click="
+            () => {
+              passRecoveryHandler();
+            }
+          " :loading="loading" name="Восстановить пароль" />
         </div>
       </div>
     </ion-content>
@@ -95,18 +85,7 @@ export default defineComponent({
           .then(() => {
             loading.value = false;
             if (passRecoveryResponse?.value?.error === false) {
-              /* const code = passRecoveryResponse.value?.data.msg.substr(91);
 
-              router.push({
-                name: "newPassPage",
-                params: {
-                  recovery: true,
-                  code: code,
-                  phone: login.value,
-                  edit: true,
-                },
-              }); */
-              // router.push("/authPage");
               console.log(
                 passRecoveryResponse.value,
                 passRecoveryError.value,
@@ -137,15 +116,29 @@ export default defineComponent({
 
 <style scoped>
 .background {
-  --background: #fff;
+  --background: linear-gradient(164.84deg, #1B7DB6 8.63%, #0F3C79 89.24%);
+  position: relative;
 }
 
 .text {
   margin-bottom: 20px;
 }
 
+.pattern {
+  background: rgba(255, 0, 0, 0);
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: url('../assets/img/pattern2.png') no-repeat;
+  /* background-attachment: fixed; */
+  background-position: center bottom;
+  background-size: 350px;
+  content: ' ';
+}
+
 .container {
-  background: #fff;
+  background: rgba(255, 255, 255, 0);
+
 }
 
 .logo {

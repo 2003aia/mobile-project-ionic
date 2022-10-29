@@ -1,11 +1,17 @@
 <template>
   <ion-page>
+    <Back :noBack="true" :logo="true" />
     <ion-content class="background">
-      <div class="container">
+      <div class="header-wrapper">
+        <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img>
         <div class="btn-wrapper">
-          <Button class="btn" name="Новости" :grey="newsButton" router-link="/tabs/main" />
+          <Button class="btn" :lightBlue="true" name="Новости" :grey="newsButton" router-link="/tabs/main" />
           <Button class="btn" name="Объявления" :grey="adsButton" router-link="/tabs/ads" />
         </div>
+      </div>
+
+      <div class="container">
+
 
         <ion-text class="main-title">
           <p class="main-title">Новости</p>
@@ -43,8 +49,10 @@ import {
   IonSpinner,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
+  IonImg,
 } from "@ionic/vue";
 import Button from "../components/Button.vue";
+import Back from "../components/Back.vue";
 import NewsItem from "../components/NewsItem.vue";
 import { useRouter } from "vue-router";
 import { mapActions } from "pinia";
@@ -99,6 +107,8 @@ export default defineComponent({
     Button,
     NewsItem,
     IonText,
+    IonImg,
+    Back,
     IonSpinner,
     IonInfiniteScroll,
     IonInfiniteScrollContent,
@@ -107,12 +117,24 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.background {
+  --background: #eaeaea;
+
+}
+
+.header-wrapper {
+  position: relative;
+  padding: 15px;
+  height: 200px;
+  background: linear-gradient(156.39deg, #1B80B9 7.75%, #0E3977 100.99%);
+}
+
 .btn-wrapper {
   display: flex;
   width: inherit;
   flex-grow: 1;
   justify-content: space-between;
-  background: #eaeaea;
+  background: #268FCC;
   border-radius: 25px;
   flex-wrap: wrap;
   padding-right: 2px;
@@ -121,26 +143,36 @@ export default defineComponent({
   top: 5px;
 }
 
+.pattern {
+  position: absolute;
+  height: fit-content;
+  width: 350px;
+  bottom: 0;
+  padding: 0 15px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .btn {
   flex-grow: 1;
 }
 
 .container {
-  padding: 15px;
+  padding: 0 15px 15px;
   display: flex;
   position: relative;
   flex-direction: column;
   justify-content: center;
-  background-color: #f5f5f5;
+  background-color: #ffffff00;
+  top: -140px;
 }
 
-ion-button {
-  --background: l#EAEAEA;
-
-  --border-radius: 25px;
-  height: 50px;
-  display: flex;
-  flex-direction: column;
+@media screen and (max-width: 280px) {
+  .container {
+    top: -80px;
+  }
 }
 
 .name {
@@ -151,7 +183,7 @@ ion-button {
   font-weight: 400;
 }
 
-ion-text p {
-  color: black;
+.main-title {
+  margin-bottom: 5px;
 }
 </style>

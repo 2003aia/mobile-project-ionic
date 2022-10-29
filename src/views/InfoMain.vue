@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content class="background">
-      <Back :btnSrc="
+      <Back :logo="true" :btnSrc="
         () => {
           this.$pinia.state.value.news.for = '';
           this.$router.go(-1)

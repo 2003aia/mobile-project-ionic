@@ -15,18 +15,18 @@
 
         <div v-for="el in data" :key="el.name">
           <ion-item>
-            <div v-show="Array.isArray(el.phone)">
+            <div @click="openLink(el2.name)" v-show="Array.isArray(el.phone)">
               <div class="header-item" v-for="el2 in el.phone" :key="el2">
                 <ion-icon :icon="call" />
-                <ion-text @click="openLink(el2.name)" class="title ion-text-start">
+                <ion-text class="title ion-text-start">
                   {{ el2.name }}
                 </ion-text>
               </div>
 
               <ion-text> {{ el.name }} </ion-text>
             </div>
-            <div v-show="!Array.isArray(el.phone)">
-              <div @click="openLink(el.phone)" class="header-item">
+            <div @click="openLink(el.phone)" v-show="!Array.isArray(el.phone)">
+              <div class="header-item">
                 <ion-icon :icon="call" />
                 <ion-text class="title ion-text-start">
                   {{ el.phone }}
@@ -38,7 +38,7 @@
           </ion-item>
         </div>
         <div v-for="el in emergency" :key="el.name">
-          <ion-item>
+          <ion-item @click="openLink(el.phone)" button>
             <div>
               <div class="header-item">
                 <ion-icon class="emergency" :icon="call" />

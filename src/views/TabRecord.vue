@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <!-- <Back name="" title="Е-запись" /> -->
+    <Back :noBack="true" :logo="true" />
     <Layout v-if="!currentlySuccess" height="false" outlineBtn="." filledBtn="Оставить заявку" title="Вид услуг"
       :method="() => sendPreregRequest()">
       <template v-slot:header-content>
@@ -52,23 +52,23 @@
             ? formatServiceCode(entryServiceType)
             : 'Выберите вариант'
         " :btnSrc="
-          () => {
-            router.push('/tabs/recordSelect');
-          }
-        " />
+  () => {
+    router.push('/tabs/recordSelect');
+  }
+" />
 
         <div>
           <ion-item router-link="/tabs/date">
             <ion-icon size="large" slot="start" class="icon-start" :icon="calendarNumberOutline"></ion-icon>
             <ion-text class="sub-title">{{
-            entryDate ? entryDate : "Выберите дату записи"
+                entryDate ? entryDate : "Выберите дату записи"
             }}</ion-text>
             <ion-icon size="large" slot="end" class="icon-end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
           <ion-item router-link="/tabs/time">
             <ion-icon size="large" slot="start" class="icon-start" :icon="alarmOutline"></ion-icon>
             <ion-text class="sub-title">{{
-            entryTime ? entryTime : "Выберите время записи"
+                entryTime ? entryTime : "Выберите время записи"
             }}</ion-text>
             <ion-icon class="icon-end" size="large" slot="end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
@@ -98,13 +98,13 @@
         <ion-item>
           <ion-text> Дата приема: </ion-text>
           <ion-text slot="end" class="text-end text-success">{{
-          entryDate
+              entryDate
           }}</ion-text>
         </ion-item>
         <ion-item>
           <ion-text> Время приема: </ion-text>
           <ion-text slot="end" class="text-end text-success">{{
-          entryTime
+              entryTime
           }}</ion-text>
         </ion-item>
       </template>
@@ -119,6 +119,8 @@ import Layout from "../components/Layout.vue";
 import { storeToRefs } from "pinia";
 import { usePreEntryStore } from "../stores/preEntry";
 import ButtonSelect from "../components/ButtonSelect.vue";
+import Back from "../components/Back.vue";
+
 import {
   IonPage,
   IonText,
@@ -140,7 +142,7 @@ export default defineComponent({
   components: {
     ButtonSelect,
     IonPage,
-    // Back,
+    Back,
     Layout,
     IonItem,
     Input,

@@ -1,10 +1,11 @@
 <template>
   <ion-page>
-    <Back :btnSrc="()=>router.push('/tabs/personalAccounts')" />
+    <Back :btnSrc="() => router.push('/tabs/personalAccounts')" />
     <ion-content :fullscreen="true" class="background">
-      <div class="container">
+      <div class="header-wrapper">
+        <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img>
         <div class="btn-wrapper">
-          <Button class="btn" name="Оплата" />
+          <Button class="btn" :lightBlue="true" name="Оплата" />
           <Button class="btn" :grey="true" name="Показания" @click="
             () =>
               router.push({
@@ -12,6 +13,9 @@
               })
           " />
         </div>
+      </div>
+      <div class="container">
+
         <layout-box>
           <template v-slot:content>
             <ion-text>
@@ -54,7 +58,7 @@
             </ion-text>
             <ion-item>
               <ion-text> Задолженность: </ion-text>
-              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.sumTO ) }}
+              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.sumTO) }}
               </ion-text>
             </ion-item>
 
@@ -90,8 +94,9 @@
             </ion-text>
             <ion-item>
               <ion-text> Задолженность: </ion-text>
-              <ion-text slot="end" class="text-end green">{{ maskMoney( lcList.debts?.advances
-              ) }}</ion-text>
+              <ion-text slot="end" class="text-end green">{{ maskMoney(lcList.debts?.advances
+                )
+              }}</ion-text>
             </ion-item>
 
           </template>
@@ -109,7 +114,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import { IonContent, IonPage, IonText, IonItem } from "@ionic/vue";
+import { IonContent, IonPage, IonText, IonItem, IonImg, } from "@ionic/vue";
 import Button from "../components/Button.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Input from "../components/Input.vue";
@@ -208,21 +213,32 @@ export default defineComponent({
     Button,
     IonText,
     IonItem,
+    IonImg,
   },
 });
 </script>
 
 <style scoped>
+.background {
+  position: relative;
+}
+
 .container {
-  padding: 15px;
-  background: #f5f5f5;
+  padding: 0 15px 15px;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #ffffff00;
+  top: -70px;
 }
 
 .btn-wrapper {
   display: flex;
   width: 100%;
   justify-content: space-between;
-  background: #eaeaea;
+  background: #268FCC;
+
   border-radius: 25px;
   padding-right: 2px;
   padding-left: 2px;
@@ -246,6 +262,25 @@ export default defineComponent({
 
 .green {
   color: green;
+}
+
+.header-wrapper {
+  position: relative;
+  padding: 15px;
+  height: 160px;
+  background: linear-gradient(156.39deg, #1B80B9 7.75%, #0E3977 100.99%);
+}
+
+.pattern {
+  position: absolute;
+  height: fit-content;
+  width: 350px;
+  bottom: 0;
+  padding: 0 15px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .title {

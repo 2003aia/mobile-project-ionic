@@ -40,7 +40,7 @@ export const useLoginStore = defineStore({
         this.registrError = error;
       }
     },
-    async registrUser2(sms, password) {
+    async registrUser2(sms, password, fcmToken) {
       const store = new Storage();
       await store.create();
       const token = await store.get("token");
@@ -55,6 +55,11 @@ export const useLoginStore = defineStore({
             this.registrResponse2 = response.data;
 
             if (response.data.error === false) {
+              await axios
+                .post(
+                  `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`,
+                  { token: tokenParsed, fcmToken: fcmToken }
+                )
               await axios
                 .post(`${apiUrl}/user/create`, {
                   login: JSON.parse(token).phone,
@@ -97,7 +102,7 @@ export const useLoginStore = defineStore({
         this.passRecoveryError = error;
       }
     },
-    async authUser(phone, password) {
+    async authUser(phone, password, fcmToken) {
       const store = new Storage();
       await store.create();
 
@@ -113,6 +118,12 @@ export const useLoginStore = defineStore({
           .then(async (response) => {
             this.authResponse = response.data;
             if (response.data.error === false) {
+              console.log(fcmToken, 'fcm token auth')
+              await axios
+                .post(
+                  `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`,
+                  { token: response.data?.data?.token, fcmToken: fcmToken }
+                )
               await axios
                 .post(`${apiUrl}/user/auth`, {
                   login: phone,

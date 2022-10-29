@@ -3,20 +3,19 @@
     <Back />
     <Layout btnSrc="/registrPage" height="false" outlineBtn="." filledBtn="." title="Уведомления">
       <template v-slot:main-content>
-        <div v-for="el in data" :key="el.title">
-          <ion-item>
+        <div v-for="el in pushList" :key="el">
+          <ion-item @click="openLink(el.link)">
             <div>
               <ion-text>
                 <p class="sub-title">
                   {{ el.title }}
                 </p>
-                <p class="text">{{ el.sub_title }}</p>
+                <p class="text">{{ el.body }}</p>
               </ion-text>
               <div class="footer-item">
                 <ion-text class="text">
-                  {{ el.date }}
+                  {{ moment(el.date).format('yyyy.MM.DD HH:MM:SS') }}
                 </ion-text>
-                <ion-text class="time ion-text-start">{{ el.time }}</ion-text>
               </div>
             </div>
           </ion-item>
@@ -33,6 +32,11 @@ import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import { IonPage, IonText, IonItem, } from "@ionic/vue";
 import Back from "../components/Back.vue";
+import { mapActions } from "pinia";
+import { useProfileStore } from '../stores/profile'
+import moment from 'moment'
+import { Storage } from "@ionic/storage";
+
 
 export default defineComponent({
   name: "notificationsPage",
@@ -43,39 +47,32 @@ export default defineComponent({
     IonItem,
     IonText,
   },
+  methods: {
+    ...mapActions(useProfileStore, ["getPush"]),
+    openLink(link) {
+      document.location.href = link
+    }
+  },
+  computed: {
+    pushList() {
+      return this.$pinia.state.value?.profile?.pushResponse?.data ? this.$pinia.state.value?.profile?.pushResponse?.data : []
+    }
+  },
+  mounted() {
+    this.getPush().then(async () => {
+      const store = new Storage()
+      await store.create()
+      await store.set('notifications', JSON.stringify(this.pushList))
+    })
+  },
   data() {
     return {
-      data: [
-        {
-          title: "Якутия. Еженедельный дайджест новостей газификации",
-          sub_title: "Новости",
-          date: "19.04.2022",
-          time: "12:05",
-        },
-        {
-          title: "Разовые услуги для абонентов АО «Сахатранснефтегаз»",
-          sub_title: "Мои заявки",
-          date: "19.04.2022",
-          time: "12:05",
-        },
-        {
-          title: "Разовые услуги для абонентов АО «Сахатранснефтегаз»",
-          sub_title: "Мои заявки",
-          date: "19.04.2022",
-          time: "12:05",
-        },
-        {
-          title: "№12345",
-          sub_title: "Обращения",
-          date: "19.04.2022",
-          time: "12:05",
-        },
-      ],
+
     };
   },
   setup() {
     const router = useRouter();
-    return { router };
+    return { router, moment };
   },
 });
 </script>

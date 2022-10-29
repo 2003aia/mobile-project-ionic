@@ -1,14 +1,18 @@
 <template>
   <div class="input-wrapper">
     <input v-if="type === 'number'" ref="text" :type="type" :min="min" oninput="validity.valid||(value='');"
-      :class="{ input: true }" placeholder=" " :value="value" @change="changeHandler" />
-    <input ref="text" :type="type" class="input" placeholder=" " v-mask="mask" :value="value" @change="changeHandler"
-      v-if="mask" />
-    <input :value="value" @change="changeHandler" ref="text" :type="type" :class="{input: true, padding: padding}"
-      placeholder=" " v-if="!mask && type !== 'number' && !min" />
-    <ion-text :class="{ inputTextBlue: textBlue === true }" class="input-text" @click="onFocusText()">{{ name }}
+      :class="{ input: true, blue: blue }" placeholder=" " :value="value" @change="changeHandler" />
+    <input ref="text" :class="{ blue: blue }" :type="type" class="input" placeholder=" " v-mask="mask" :value="value"
+      @change="changeHandler" v-if="mask" />
+    <input :value="value" @change="changeHandler" ref="text" :type="type"
+      :class="{ input: true, padding: padding, blue: blue }" placeholder=" " v-if="!mask && type !== 'number' && !min" />
+    <ion-text :class="{ inputTextBlue: textBlue === true, blueText: blue }" class="input-text"
+      @click="onFocusText()">{{
+          name
+      }}
       <ion-text v-if="required" class="dot">*</ion-text>
     </ion-text>
+
   </div>
 </template>
 <script>
@@ -54,6 +58,7 @@ export default defineComponent({
     min: Number,
     mask: String,
     padding: Boolean,
+    blue: Boolean,
   },
 });
 </script>
@@ -90,6 +95,21 @@ export default defineComponent({
   outline: none !important;
   border: solid 1px #62d0ce;
   caret-color: #000;
+}
+
+.blue {
+  background: #268FCC;
+  border: solid 1px #268FCC;
+  color: #fff;
+
+}
+
+.blueText {
+  color: #8BD4FF;
+}
+
+.blue::placeholder {
+  color: #8BD4FF
 }
 
 .input-wrapper {

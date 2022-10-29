@@ -1,67 +1,46 @@
 <template>
   <ion-page>
     <Back />
-    <Layout
-      :btnSrc="'/personalAccountPayment'"
-      height="false"
-      outlineBtn="."
-      filledBtn="."
-      title="Мои заявки"
-    >
+    <Layout :btnSrc="'/personalAccountPayment'" height="false" outlineBtn="." filledBtn="." title="Мои заявки">
       <template v-slot:main-content>
-        <div v-for="el in data" :key="el.date">
-          <ion-text class="title">{{ el.title }}</ion-text>
+        <!-- <div v-for="el in data" :key="el.date"> -->
+        <ion-item lines="none">
+          <ion-text>
+            <p class="title ion-text-start">
+              {{ el.service }}
+            </p>
+          </ion-text>
+        </ion-item>
 
+        <div>
           <ion-item>
-            <ion-text>№ Заявки</ion-text>
-            <ion-text class="sub-title" slot="end">
+            <ion-text> №: </ion-text>
+            <ion-text class='sub-title' slot="end">
               {{ el.number }}
             </ion-text>
           </ion-item>
           <ion-item>
-            <ion-text>Адрес</ion-text>
-            <ion-text class="sub-title" slot="end">
-              {{ el.address }}
+            <ion-text> Дата: </ion-text>
+            <ion-text class='sub-title' slot="end">
+              {{ el.date.substring(0, 10) }}
             </ion-text>
           </ion-item>
 
           <ion-item>
-            <ion-text>Статус заявки</ion-text>
-            <ion-text class="sub-title" slot="end">
+            <ion-text> Статус: </ion-text>
+            <ion-text class='sub-title' slot="end">
               {{ el.status }}
             </ion-text>
           </ion-item>
-          <ion-item>
-            <ion-text>Дата приема</ion-text>
-            <ion-text class="sub-title" slot="end">
-              {{ el.dateAdmission }}
-            </ion-text>
-          </ion-item>
-          <ion-item>
-            <ion-text>Дата исполнения</ion-text>
-            <ion-text class="sub-title" slot="end">
-              {{ el.dateDue }}
-            </ion-text>
-          </ion-item>
-          <ion-item>
-            <ion-text>Дата дела</ion-text>
-            <ion-text class="sub-title" slot="end">
-              {{ el.dateBussiness }}
-            </ion-text>
-          </ion-item>
-          <ion-item>
-            <ion-text>Комментарий</ion-text>
-            <ion-text class="sub-title" slot="end">
-              {{ el.comment }}
-            </ion-text>
-          </ion-item>
-          <ion-item>
-            <ion-text>Договор</ion-text>
-            <ion-text class="sub-title" slot="end">
-              {{ el.contract }}
+          <ion-item lines="none">
+            <ion-text> Адрес: </ion-text>
+            <ion-text slot="end" class='sub-title'>
+              {{ el.address }}
+
             </ion-text>
           </ion-item>
         </div>
+        <!-- </div> -->
       </template>
       <LayoutBox>
         <template v-slot:content> </template>
@@ -96,21 +75,13 @@ export default defineComponent({
   },
   data() {
     return {
-      data: [
-        {
-          title: "Разовые услуги для абонентов АО «Сахатранснефтегаз»",
-          address: "-",
-          status: "В обработке",
-          number: "19.04.2022",
-          dateAdmission: "19.04.2022",
-          dateDue: "19.04.2022",
-          comment: "-",
-          contract: "-",
-          dateBussiness: "-",
-        },
-       
-      ],
-    };
+
+    }
+  },
+  computed: {
+    el() {
+      return this.$pinia.state.value.services.requestsInfo
+    }
   },
   setup() {
     const router = useRouter();

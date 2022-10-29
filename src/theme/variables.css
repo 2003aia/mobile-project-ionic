@@ -302,26 +302,30 @@ http://ionicframework.com/docs/theming/ */
 .textURL {
   margin-top: 15px;
   text-align: center;
-  color: #0378b4;
+  color: #7AE6E4;
   font-weight: 600;
 }
 
 .check ion-checkbox {
   margin-bottom: 5px;
-  --background: #fff;
+  --background: rgba(255, 255, 255, 0);
   margin-top: 5px;
   --border-radius: 50%;
   --size: 26px;
   --checkmark-width: 2px;
   --background-checked: #62d0ce;
   --border-color-checked: #62d0ce;
-  --border-color: #e0e0e0;
+  --border-color: #71C4F4;
   margin-right: 15px;
 }
 
 .check ion-text {
   text-align: start;
   margin-bottom: 0;
+}
+ion-text{
+  z-index: 20000;
+  position: relative;
 }
 
 .check2 {
@@ -366,6 +370,12 @@ ion-accordion-group {
 ion-datetime {
   background-color: #fff;
   color: black !important;
+  box-shadow: rgba(var(--ion-item-background), 0.3) 0px 10px 15px -3px;
+}
+
+ion-datetime-button {
+  --color: #000;
+  --background-color: #e0e0e0;
 }
 
 ion-item {
@@ -395,7 +405,7 @@ ion-spinner {
 
 ion-badge {
   --background: #62d0ce;
-  color: rgb(255, 255, 255);
+  color: #0378b4;
   border-radius: 20px;
   margin-top: 10px;
   margin-bottom: 0;
@@ -408,12 +418,13 @@ ion-list {
 
 .ion-color-date {
   --ion-color-base: #62d0ce;
-  --ion-color-base-rgb: #62d0ce;
+  --ion-color-base-rgb: rgb(98, 208, 206);
   --ion-color-contrast: #ffffff;
-  --ion-color-contrast-rgb: #ffffff;
+  --ion-color-contrast-rgb: rgb(255, 255, 255);
   --ion-color-shade: #fff;
-  --ion-color-tint: #fdfdfd;
+  --ion-color-tint: #62d0ce;
 }
+
 
 
 ion-modal {

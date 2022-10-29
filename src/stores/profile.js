@@ -1,12 +1,14 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { Storage } from "@ionic/storage";
 
 
 export const useProfileStore = defineStore({
     id: 'profile',
     state: () => ({
-        profileResponse: null,
-        profileError: null,
+        pushResponse: null,
+        pushResponseRead: null,
+        pushError: null,
         editProfileError: null,
         editProfileResponse: null,
     }),
@@ -16,12 +18,28 @@ export const useProfileStore = defineStore({
         }
     },
     actions: {
-        async getProfile(token) {
+        async getPush() {
+            const store = new Storage();
+            await store.create();
+            const token = await store.get("token");
+            const tokenParsed = JSON.parse(token).token;
             try {
-                await axios.post(`https://api.aostng.ru/api/v2/user/profile/get/`, { token: token })
-                    .then((response) => this.profileResponse = response.data)
+                await axios.get(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/getPUSH?token=${tokenParsed}`)
+                    .then(async (response) => {
+                        this.pushResponse = response.data
+
+                        /* const notif = await store.get('notifications')
+                        let yFilter = response.data?.data?.map(itemY => { return itemY.date });
+                        console.log('testestestrererrrrrrrrrr', yFilter, JSON.parse(notif))
+
+                        let filtered = JSON.parse(notif).filter((e) => {
+                            e?.date?.includes(yFilter)
+                        })
+                        console.log(filtered, 'test')
+                         */
+                    })
             } catch (error) {
-                this.profileError = error
+                this.pushError = error
             }
         },
         async editProfile(token, name, email) {

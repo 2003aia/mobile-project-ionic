@@ -1,22 +1,15 @@
 <template>
   <ion-page>
-    <Back :btnSrc="()=>router.push('/tabs/')"/>
-    <Layout
-      height="false"
-      :method="
-        () => {
-          router.push('/profileEdit');
-        }
-      "
-      :method2="
-        () => {
-          router.push('/newPassPage');
-        }
-      "
-      :filledBtn="'Редактировать'"
-      title="Личный кабинет"
-      :outlineBtn="'Изменить пароль'"
-    >
+    <Back :title="'Личный кабинет'" :btnSrc="() => router.push('/tabs/')" />
+    <Layout height="false" :method="
+      () => {
+        router.push('/profileEdit');
+      }
+    " :method2="
+  () => {
+    router.push('/newPassPage');
+  }
+" :filledBtn="'Редактировать'" title="Личный кабинет" :outlineBtn="'Изменить пароль'">
       <template v-slot:main-content>
         <ion-text>
           <p class="title ion-text-start">Мои данные</p>
@@ -25,11 +18,11 @@
           <ion-item>
             <ion-text>
               <p v-if="profileData?.name" class="sub-title">{{ profileData?.name }}</p>
-              <p v-else >Имя</p>
+              <p v-else>Имя</p>
             </ion-text>
           </ion-item>
-          
-         
+
+
           <ion-item>
             <ion-text>
               <p class="sub-title" v-if="profileData?.email">{{ profileData?.email }}</p>

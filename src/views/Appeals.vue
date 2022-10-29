@@ -7,6 +7,7 @@
           if (checkStatus === false) router.push('/tabs/main');
         }
       "
+      title="Обращения"
     />
     <Layout
       height="false"

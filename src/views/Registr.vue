@@ -2,32 +2,39 @@
   <ion-page>
     <Back :btnSrc="() => router.push('/authPage')" />
     <ion-content :fullscreen="true" class="background">
+      <div class="pattern"></div>
+
       <div class="container">
-        <ion-img class="logo" :src="require('@/assets/img/logoSTNG.png')" alt="logo"></ion-img>
-
-        <ion-text>
-          <p class="title">Регистрация</p>
-        </ion-text>
-
-        <div v-if="codeSent == false">
-          <ion-text>
-            <p class="text ion-text-center">
-              Регистрация нового пользователя
-              <br />
-              Для регистрации используйте номер вашего мобильного телефона.
-              Номер телефона вводится без "8"
-            </p>
-          </ion-text>
+        <!-- <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img> -->
+        <div class="content">
+          <ion-img class="logo" :src="require('@/assets/img/logoSTNG.png')" alt="logo"></ion-img>
 
           <ion-text>
-            <p class="text ion-text-start">
-              <ion-text class="dot"> * </ion-text>- обязательное поле для
-              заполнения.
+            <p class="title ion-text-center">
+              Регистрация
             </p>
+
           </ion-text>
-          <Input v-mask="'+7 (###) ###-##-##'" type="tel" name="Телефон" :required="true" :value="phone"
-            :changeHandler="changePhone" />
-          <!-- <Input
+
+          <div v-if="codeSent == false">
+            <ion-text>
+              <p style="color: #fff;" class="text ion-text-center">
+                Регистрация нового пользователя
+                <br />
+                Для регистрации используйте номер вашего мобильного телефона.
+                Номер телефона вводится без "8"
+              </p>
+            </ion-text>
+
+            <ion-text>
+              <p class="text ion-text-start">
+                <ion-text class="dot"> * </ion-text>- обязательное поле для
+                заполнения.
+              </p>
+            </ion-text>
+            <Input :blue="true" v-mask="'+7 (###) ###-##-##'" type="tel" name="Телефон" :required="true" :value="phone"
+              :changeHandler="changePhone" />
+            <!-- <Input
             :value="email"
             :changeHandler="changeEmail"
             type="email"
@@ -35,47 +42,51 @@
             v-model="email"
           /> -->
 
-          <ion-text v-if="errorText">
-            <p class="ion-text-start error">
-              {{ errorText }}
+            <ion-text v-if="errorText">
+              <p class="ion-text-start error">
+                {{ errorText }}
+              </p>
+            </ion-text>
+
+            <ion-item class="check">
+              <ion-checkbox @update:modelValue="check = $event" :modelValue="check" slot="start"></ion-checkbox>
+              <ion-text>Согласен (-на) на обработку персональных данных</ion-text>
+            </ion-item>
+
+            <ion-button class="textURL ion-text-wrap" fill="clear" router-link="/termsPage">
+              Пользовательское соглашение
+            </ion-button>
+            <Button :lightBlue="true" :disabled="!check && phone === ''" :loading="loading" name="Зарегистрироваться"
+              @click="
+                () => {
+                  registrUserHandler();
+                }
+              " />
+          </div>
+
+          <div v-else>
+            <p style="color: #fff;" class="text ion-text-center">
+              Мы отправили проверочный код на номер {{ phone.value }}
             </p>
-          </ion-text>
+            <Input :blue="true" name="Введите код" :value="code" @change="changeCode" />
+            <Input :blue="true" name="Введите новый пароль" :value="password" type="password"
+              @change="changePassword" />
 
-          <ion-item class="check">
-            <ion-checkbox @update:modelValue="check = $event" :modelValue="check" slot="start"></ion-checkbox>
-            <ion-text>Согласен (-на) на обработку персональных данных</ion-text>
-          </ion-item>
+            <Input :blue="true" type="password" name="Повторите новый пароль" :value="passwordConfirm"
+              @change="changePasswordConfirm" />
 
-          <ion-button class="textURL ion-text-wrap" fill="clear" router-link="/termsPage">
-            Пользовательское соглашение
-          </ion-button>
-          <Button :disabled="!check && phone === ''" :loading="loading" name="Зарегистрироваться" @click="
-            () => {
-              registrUserHandler();
-            }
-          " />
-        </div>
+            <ion-text v-if="errorText">
+              <p class="ion-text-start error">
+                {{ errorText }}
+              </p>
+            </ion-text>
+            <Button :lightBlue="true" name="Подтвердить" :loading="loading2" @click="
+  () => {
+    codeUserHandler();
+  }
+            " />
+          </div>
 
-        <div v-else>
-          <p class="text ion-text-center">
-            Мы отправили проверочный код на номер {{ phone.value }}
-          </p>
-          <Input name="Введите код" :value="code" @change="changeCode" />
-          <Input name="Введите новый пароль" :value="password" type="password" @change="changePassword" />
-
-          <Input type="password" name="Повторите новый пароль" :value="passwordConfirm"
-            @change="changePasswordConfirm" />
-
-          <ion-text v-if="errorText">
-            <p class="ion-text-start error">
-              {{ errorText }}
-            </p>
-          </ion-text>
-          <Button name="Подтвердить" :loading="loading2" @click="
-            () => {
-              codeUserHandler();
-            }
-          " />
         </div>
       </div>
     </ion-content>
@@ -102,6 +113,8 @@ import { mask } from "vue-the-mask";
 import { storeToRefs } from "pinia";
 import { useLoginStore } from "../stores/login";
 import { Storage } from "@ionic/storage";
+import { PushNotifications } from '@capacitor/push-notifications'
+
 
 export default defineComponent({
   name: "registrPage",
@@ -134,6 +147,7 @@ export default defineComponent({
     let passwordConfirm = ref("");
     let loading = ref(false);
     let loading2 = ref(false);
+    let fcmToken = ref('')
     // let codeResponse = ref("");
 
     const registrUserHandler = async () => {
@@ -169,15 +183,13 @@ export default defineComponent({
       }
     };
     const codeUserHandler = async () => {
-      /* if (codeResponse.value === code.value) {
-        const myModel = phone.value.replace(/\D+/g, "");
-        router.push({ name: "newPassPage", params: { phone: myModel } });
-      } else {
-        errorText.value = "Введен неправильный код";
-      } */
+
       if (password.value === passwordConfirm.value) {
         loading2.value = true;
-        registrUser2(code.value, password.value).then(() => {
+        await PushNotifications.addListener('registration', token => {
+          fcmToken.value = token.value
+        });
+        registrUser2(code.value, password.value, fcmToken.value).then(() => {
           loading.value = false;
           if (registrResponse2.value.error === false) {
             router.push("/tabs");
@@ -237,19 +249,47 @@ export default defineComponent({
 
 <style scoped>
 .background {
-  --background: #fff;
+  --background: linear-gradient(164.84deg, #1B7DB6 8.63%, #0F3C79 89.24%);
+  position: relative;
 }
 
-.container {
-  background: #fff;
+.title {
+  color: #fff;
 }
 
 .text {
   margin-bottom: 20px;
+  color: #71C4F4;
 }
 
-.dot {
-  color: #62d0ce;
+.container {
+  background-color: #0f3b7900;
+}
+
+.content {
+  margin-top: 40px;
+}
+
+.pattern {
+  background: rgba(255, 0, 0, 0);
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background: url('../assets/img/pattern2.png') no-repeat;
+  /* background-attachment: fixed; */
+  background-position: center bottom;
+  background-size: 350px;
+  content: ' ';
+}
+
+ion-item {
+  --background: #1b7db600;
+  --border-color: #71C4F4;
+}
+
+ion-item ion-text {
+  color: #7AE6E4;
+
 }
 
 .logo {
@@ -257,5 +297,7 @@ export default defineComponent({
   width: 240px;
   margin: auto;
   margin-bottom: 30px;
+  position: relative;
+  z-index: 23000;
 }
 </style>

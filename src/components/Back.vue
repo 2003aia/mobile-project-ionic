@@ -1,27 +1,31 @@
 <template>
   <ion-header>
     <ion-toolbar>
-      <ion-item
-        v-on:click="btnSrc"
-        @click="
-          () => {
+      <ion-item v-on:click="btnSrc" @click="
+        () => {
+          if (!noBack) {
+      
             if (btnSrc) return;
             router.go(-1);
           }
-        "
-        lines="none"
-      >
-        <ion-icon class="arrow" :icon="arrowBackOutline" />
-        <ion-title
-          ><p class="textURL textURL-margin ion-text-start">Назад</p>
-        </ion-title></ion-item
-      >
+      
+        }
+      " lines="none">
+        <ion-icon v-show="!noBack" class="arrow" :icon="arrowBackOutline" />
+        <ion-title v-show="title">
+          <p :class="{ textURL: true, 'textURL-margin': true, 'ion-text-start': !title, 'ion-text-center': title }">{{
+              title && title
+          }}</p>
+        </ion-title>
+        <ion-img v-show="!title" :src="require('../assets/img/logoSTNG.png')" />
+
+      </ion-item>
     </ion-toolbar>
   </ion-header>
 </template>
 
 <script>
-import { IonToolbar, IonItem, IonTitle, IonHeader, IonIcon } from "@ionic/vue";
+import { IonToolbar, IonItem, IonTitle, IonHeader, IonIcon, IonImg, } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { arrowBackOutline } from "ionicons/icons";
@@ -32,11 +36,14 @@ export default defineComponent({
     name: String,
     btnSrc: Function,
     title: String,
+    logo: Boolean,
+    noBack: Boolean,
   },
   components: {
     IonToolbar,
     IonTitle,
     IonHeader,
+    IonImg,
     IonItem,
     IonIcon,
   },
@@ -51,24 +58,30 @@ export default defineComponent({
 </script>
 
 <style scoped>
+ion-img {
+  height: 44px;
+  width: 130px;
+  margin: auto;
+}
+
 ion-toolbar {
-  --background: #ffffff;
+  --background: #1F3766;
 }
 
 ion-item {
-  --background: #ffffff;
+  --background: #1F3766;
   --padding-start: 15px;
   --padding-bottom: 0px;
 }
 
 .textURL-margin {
   margin: 0;
-  color: #0378b4;
+  color: #ffffff;
 }
 
 .arrow {
   width: 32px;
   height: 32px;
-  color: #0378b4;
+  color: #ffffff;
 }
 </style>

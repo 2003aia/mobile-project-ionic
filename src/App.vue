@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { IonApp, IonRouterOutlet } from "@ionic/vue";
+import { IonApp, IonRouterOutlet, isPlatform } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
@@ -24,7 +24,7 @@ export default defineComponent({
   mounted() {
     const addListeners = async () => {
       FCM.subscribeTo({ topic: "all" })
-        .then((r) => console.log(`subscribed to topic`, r))
+        .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
         .catch((err) => console.log(err));
 
       await PushNotifications.addListener('registration', token => {
@@ -62,9 +62,12 @@ export default defineComponent({
       const notificationList = await PushNotifications.getDeliveredNotifications();
       console.log('delivered notifications', JSON.stringify(notificationList));
     }
-    addListeners()
-    registerNotifications()
-    getDeliveredNotifications()
+    if (isPlatform('ios') && isPlatform('android')) {
+      addListeners()
+      registerNotifications()
+      getDeliveredNotifications()
+    }
+
 
     const storageHandler = async () => {
       const store = new Storage();

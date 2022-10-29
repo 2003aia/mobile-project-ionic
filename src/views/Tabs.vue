@@ -1,21 +1,34 @@
 <template>
   <ion-page>
     <ion-menu side="start" menu-id="menu" content-id="main">
-      <ion-content>
-        <ion-toolbar> </ion-toolbar>
+      <ion-content class="menu-background">
+        <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img>
 
-        <div v-for="el in sideMenu" :key="el">
-          <ion-item @click="
-            () => {
-              router.push(el.path);
-              el?.method()
-            }
-          ">
-            <ion-icon slot="start" :icon="el.icon"></ion-icon>
-            <ion-text class="sub-title">{{ el.name }}</ion-text>
-            <ion-badge slot="end">{{ el.number }}</ion-badge>
-          </ion-item>
+        <ion-toolbar class="menu-logo-wrapper">
+          <div class="menu-logo-wrapper">
+
+            <ion-img class="menu-logo" :src="require('../assets/img/logoSTNG.png')">
+            </ion-img>
+            <ion-icon @click="closeMenu" class="closeIcon" :icon="closeOutline" />
+          </div>
+
+        </ion-toolbar>
+        <div style="margin-top:20px">
+
+          <div v-for="el in sideMenu" :key="el">
+            <ion-item @click="
+              () => {
+                router.push(el.path);
+                el?.method()
+              }
+            " lines="none">
+              <ion-icon slot="start" :icon="el.icon"></ion-icon>
+              <ion-text class="sub-title">{{ el.name }}</ion-text>
+              <ion-badge slot="end">{{ el.number }}</ion-badge>
+            </ion-item>
+          </div>
         </div>
+
       </ion-content>
     </ion-menu>
     <ion-content>
@@ -112,7 +125,10 @@ import {
   menuOutline,
   pencilOutline,
   videocamOutline,
+  closeOutline,
 } from "ionicons/icons";
+import { mapActions } from "pinia";
+import { useProfileStore } from '../stores/profile'
 
 export default defineComponent({
   name: "tabsPages",
@@ -123,6 +139,7 @@ export default defineComponent({
     IonTabButton,
     IonIcon,
     IonBadge,
+
     IonToolbar,
     IonText,
     IonTabs,
@@ -147,6 +164,8 @@ export default defineComponent({
       documentTextOutline,
       menuOutline,
       videocamOutline,
+      closeOutline,
+
     };
   },
   data() {
@@ -157,38 +176,58 @@ export default defineComponent({
           name: "Личный кабинет",
           path: "/tabs/profile",
           icon: personOutline,
+          method: async function () {
+
+          }
         },
         {
           name: "Мои обращения",
           path: "/appeals",
           icon: paperPlaneOutline,
+          method: async function () {
+
+          }
         },
         {
           name: "Мои заявки",
           path: "/requests",
           icon: pencilOutline,
+          method: async function () {
+
+          }
         },
         {
           name: "Мониторинг АГЗС",
           path: "/cameras",
           icon: videocamOutline,
-        },
+          method: async function () {
 
+          }
+        },
         {
           name: "Уведомления",
           path: "/notifications",
           icon: notificationsOutline,
-        },
+          number: this.$pinia.state.value?.profile?.pushResponseRead?.length,
+          method: async function () {
 
+          }
+        },
         {
           name: "Лицевые счета",
           path: "/personalAccounts",
           icon: documentTextOutline,
+          method: async function () {
+
+          }
         },
         {
           name: "Контакты",
           path: "/contacts",
           icon: callOutline,
+          method: async function () {
+
+          }
         },
         {
           name: "Выйти",
@@ -204,25 +243,77 @@ export default defineComponent({
       ],
     };
   },
+  computed: {
+    pushList() {
+      return this.$pinia.state.value?.profile?.pushResponse?.data ? this.$pinia.state.value?.profile?.pushResponse?.data : []
+    },
+  },
+  mounted() {
+    this.getPush().then(()=>{
+      console.log(this.$pinia.state.value?.profile?.pushResponseRead, 'testests')
+    })
+  },
   methods: {
+    ...mapActions(useProfileStore, ["getPush"]),
+
     afterTabChange: function (v) {
       menuController.close("menu");
-
       this.selected = v.tab;
     },
     openMenu() {
-
       menuController.open("menu");
-
+    },
+    closeMenu() {
+      menuController.close("menu");
     },
   },
 });
 </script>
 
 <style scoped>
+.menu-logo-wrapper {
+  --background: #0D3775;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* margin-bottom: 20px; */
+}
+
 .menu-logo {
   width: 135px;
   height: 45px;
+  margin-left: 15px;
+}
+
+.menu-background {
+  --background: linear-gradient(164.84deg, #1B7DB6 8.63%, #0F3C79 89.24%);
+
+  position: relative;
+
+}
+
+.pattern {
+  position: absolute;
+  height: fit-content;
+  width: 290px;
+  bottom: 0;
+  padding: 0 15px 0 0px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sub-title {
+  color: #fff;
+}
+
+.closeIcon {
+  width: 32px;
+  height: 32px;
+  color: #fff;
+  margin-right: 15px;
+  --ionicon-stroke-width: 20px;
 }
 
 .tabs {
@@ -230,6 +321,7 @@ export default defineComponent({
   border-top: 0;
   /* background: #EAEAEA; */
   background: #fff;
+
   padding-top: 2px;
   padding-bottom: 2px;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
@@ -243,16 +335,16 @@ ion-item {
   --padding-start: 15px;
   --padding-end: 15px;
   --padding-bottom: 10px;
+  --background: rgba(255, 0, 0, 0);
 }
 
 ion-icon {
-  color: #0378b4;
+  color: #7AE6E4;
   width: 20px;
   height: 20px;
   font-weight: bold;
   margin-right: 25px;
   --ionicon-stroke-width: 50px;
-  /* color: #62d0ce; */
 }
 
 ion-tab-button {
@@ -295,8 +387,8 @@ ion-tab-button {
 
 ion-badge {
   border-radius: 50%;
-  color: #fff;
-  background: #62d0ce;
+  color: #0D3775;
+  font-weight: 600;
   --padding-bottom: 2px;
   --padding-top: 2px;
 
@@ -314,7 +406,7 @@ ion-label {
 }
 
 .active {
-  color: #62d0ce;
+  color: #0378B4;
 }
 
 ion-toolbar {
@@ -322,7 +414,8 @@ ion-toolbar {
 }
 
 ion-tabs {
-  background: #f5f5f5;
+  background: #f5f5f500;
+
 }
 
 ion-list {

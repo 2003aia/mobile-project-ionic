@@ -3,45 +3,32 @@
     <Back />
     <Layout :btnSrc="'/tabs/services'" height="false" outlineBtn="." filledBtn="Создать заявку" title="Мои заявки">
       <template v-slot:main-content>
-        <div class="wrapper">
-          <ion-row>
-            <ion-col> № </ion-col>
-            <ion-col> Дата </ion-col>
-            <ion-col> Сервис </ion-col>
-            <ion-col> Статус </ion-col>
-            <ion-col> Адрес </ion-col>
-          </ion-row>
-          <ion-list v-for="el in listServices" :key="el">
-            <ion-row :class="{
-              'ion-row-last':
-                listServices[listServices?.length - 1]?.number === el?.number,
-            }">
-              <ion-col>
-                <ion-text class="sub-title">{{ el.number }}</ion-text>
-              </ion-col>
-              <ion-col>
-                <ion-text class="sub-title">
-                  {{ el.date }}
-                </ion-text>
-              </ion-col>
-              <ion-col>
-                <ion-text class="sub-title">
-                  {{ el.service }}
-                </ion-text>
-              </ion-col>
-              <ion-col>
-                <ion-text class="sub-title">
-                  {{ el.status }}
-                </ion-text>
-              </ion-col>
-              <ion-col>
-                <ion-text class="sub-title">
-                  {{ el.address }}
-                </ion-text>
-              </ion-col>
-            </ion-row>
-          </ion-list>
+        <ion-item v-show="loading" lines="none">
+          <ion-spinner name="bubbles">
+          </ion-spinner>
+        </ion-item>
+
+
+        <div v-show="!loading" v-for="el in listServices" :key="el" class="wrapper">
+          <div @click="infoHandler(el)">
+
+            <ion-item lines="none">
+              <ion-text class="sub-title ion-text-start">
+                {{ el.service }}
+              </ion-text>
+            </ion-item>
+
+
+            <ion-item>
+              <ion-text class="text-blue">
+                {{ el.date.substring(0, 10) }}
+              </ion-text>
+            </ion-item>
+          </div>
+
+
         </div>
+
       </template>
     </Layout>
   </ion-page>
@@ -54,9 +41,8 @@ import Layout from "../components/Layout.vue";
 import {
   IonPage,
   IonText,
-  IonRow,
-  IonCol,
-  IonList,
+  IonItem,
+  IonSpinner,
 } from "@ionic/vue";
 import {
   pencilOutline,
@@ -71,13 +57,12 @@ export default defineComponent({
   name: "myRequestsPage",
   components: {
     Back,
-    IonRow,
-    IonCol,
+    IonItem,
+
     IonPage,
     Layout,
     IonText,
-    IonList,
-
+    IonSpinner,
   },
   computed: {
     listServices() {
@@ -86,12 +71,19 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(useServicesStore, ["getListServices"]),
+    infoHandler(el) {
+      this.$pinia.state.value.services.requestsInfo = el
+      this.$router.push('/requestsInfo')
+    }
   },
   mounted() {
-    this.getListServices();
+    this.$data.loading = true
+    this.getListServices().then(() => this.$data.loading = false)
   },
   data() {
-    return {};
+    return {
+      loading: false,
+    };
   },
   setup() {
     const router = useRouter();
@@ -112,23 +104,12 @@ export default defineComponent({
   overflow: hidden;
   overflow: auto; */
 }
+.sub-title{
+  margin-top: 10px;
+}
 
 .text {
   margin-top: 15px;
   margin-bottom: 10px;
-}
-
-ion-row {
-  padding-top: 5px;
-  padding-bottom: 5px;
-  border-bottom: solid 1px #e0e0e0;
-}
-
-ion-col {
-  word-break: break-all;
-}
-
-.ion-row-last {
-  border-bottom: none;
 }
 </style>

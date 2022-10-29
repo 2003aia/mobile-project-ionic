@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back v-show="!tabs" />
+    <Back :logo="true" :noBack="tabs ? true : false" />
     <Layout btnSrc="/registrPage" height="false" outlineBtn="." filledBtn="." title="Лицевой счёт">
       <template v-slot:main-content>
         <div v-show="lcList?.length === 0 && !loading">
@@ -83,26 +83,26 @@
               <ion-text> Задолженность: </ion-text>
               <ion-text slot="end" class="text-blue">
                 {{
-                maskMoney(
-                parseFloat(lcList[0]?.debts?.accruals?.toFixed()) +
-                parseFloat(lcList[0]?.debts?.penalties?.toFixed()) +
-                parseFloat(lcList[0]?.debts?.sumTO?.toFixed())
-                )
+                    maskMoney(
+                      parseFloat(lcList[0]?.debts?.accruals?.toFixed()) +
+                      parseFloat(lcList[0]?.debts?.penalties?.toFixed()) +
+                      parseFloat(lcList[0]?.debts?.sumTO?.toFixed())
+                    )
                 }}
-                
+
               </ion-text>
             </ion-item>
 
             <ion-item>
               <ion-text> Пени: </ion-text>
               <ion-text class="text-blue" slot="end">{{
-              maskMoney(lcList[0]?.debts?.penalties)
+                  maskMoney(lcList[0]?.debts?.penalties)
               }}</ion-text>
             </ion-item>
             <ion-item lines="none">
               <ion-text> Аванс: </ion-text>
               <ion-text class="text-blue" slot="end">{{
-              maskMoney(lcList[0]?.debts?.advances)
+                  maskMoney(lcList[0]?.debts?.advances)
               }}</ion-text>
             </ion-item>
           </div>
@@ -207,11 +207,11 @@
                     <ion-text slot="end" class="text-blue">
 
                       {{
-                      maskMoney(
-                      parseFloat(el?.debts?.accruals?.toFixed()) +
-                      parseFloat(el?.debts?.penalties?.toFixed()) +
-                      parseFloat(el?.debts?.sumTO?.toFixed())
-                      )
+                          maskMoney(
+                            parseFloat(el?.debts?.accruals?.toFixed()) +
+                            parseFloat(el?.debts?.penalties?.toFixed()) +
+                            parseFloat(el?.debts?.sumTO?.toFixed())
+                          )
                       }}
 
 
@@ -220,13 +220,13 @@
                   <ion-item>
                     <ion-text> Пени: </ion-text>
                     <ion-text class="text-blue" slot="end">{{
-                    maskMoney(el.debts?.penalties)
+                        maskMoney(el.debts?.penalties)
                     }}</ion-text>
                   </ion-item>
                   <ion-item lines="none">
                     <ion-text> Аванс: </ion-text>
                     <ion-text class="text-blue" slot="end">{{
-                    maskMoney(el.debts?.advances)
+                        maskMoney(el.debts?.advances)
                     }}</ion-text>
                   </ion-item>
                 </div>
