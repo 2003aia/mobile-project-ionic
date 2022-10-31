@@ -29,7 +29,8 @@
                 });
               }
             " :imgsrc="el?.image" />
-          <ion-infinite-scroll threshold="100px" id="infinite-scroll">
+          <ion-infinite-scroll :disabled="isDisabled" @ionInfinite="fetchMoreNotice($event)" threshold="100px"
+            id="infinite-scroll">
             <ion-infinite-scroll-content loading-spinner="bubbles">
             </ion-infinite-scroll-content>
           </ion-infinite-scroll>
@@ -69,11 +70,17 @@ export default defineComponent({
       list: [],
       loading: false,
       page: 0,
+      isDisabled: false,
     };
   },
 
   mounted() {
-    this.fetchMoreNotice();
+    this.$data.loading = true;
+
+    this.fetchMoreNotice().then(() => {
+      this.$data.loading = false;
+
+    })
   },
   computed: {
     notice() {
@@ -91,16 +98,19 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(useNoticeStore, ["fetchNotice"]),
-    fetchMoreNotice(e) {
+    async fetchMoreNotice(e) {
       this.$data.page = this.$data.page + 1;
-      this.$data.loading = true;
+
       this.fetchNotice(this.$data.page).then(() => {
-        this.$data.loading = false;
-        for (let index = 0; index < this.notice?.length; index++) {
-          const element = this.notice[index];
-          this.$data.list.push(element);
+        if (this.notice?.length < 10 && e?.target) {
+          e.target.disabled = true
+        } else {
+          for (let index = 0; index < this.notice?.length; index++) {
+            const element = this.notice[index];
+            this.$data.list.push(element);
+          }
+          e?.target?.complete()
         }
-        e?.target?.complete();
       });
     },
     adsHandler: function () {
@@ -173,11 +183,13 @@ export default defineComponent({
   background-color: #ffffff00;
   top: -150px;
 }
+
 @media screen and (max-width: 280px) {
   .container {
     top: -100px;
   }
 }
+
 ion-button {
   --background: l#EAEAEA;
 

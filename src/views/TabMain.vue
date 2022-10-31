@@ -25,12 +25,12 @@
                 this.$pinia.state.value.news.idNews = el.id
                 router.push({
                   name: 'newsPage',
-                 /*  params: { id: el.id, for: 'news' }, */
+                  /*  params: { id: el.id, for: 'news' }, */
                 });
               }
             " :imgsrc="el?.image" />
 
-          <ion-infinite-scroll threshold="100px" id="infinite-scroll">
+          <ion-infinite-scroll @ionInfinite="fetchMoreNews($event)" threshold="100px" id="infinite-scroll">
             <ion-infinite-scroll-content loading-spinner="bubbles">
             </ion-infinite-scroll-content>
           </ion-infinite-scroll>
@@ -72,16 +72,21 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(useNewsStore, ["fetchNews"]),
-    fetchMoreNews(e) {
+    async fetchMoreNews(e) {
       this.$data.page = this.$data.page + 1;
-      this.$data.loading = true;
       this.fetchNews(this.$data.page).then(() => {
-        this.$data.loading = false;
-        for (let index = 0; index < this.news?.length; index++) {
-          const element = this.news[index];
-          this.$data.list.push(element);
+        if (this.news?.length < 10) {
+          e.target.disabled = true;
+        } else {
+          for (let index = 0; index < this.news?.length; index++) {
+            const element = this.news[index];
+            this.$data.list.push(element);
+            console.log('testnews')
+          }
+          e?.target?.complete();
         }
-        e?.target?.complete();
+
+
       });
     },
   },
@@ -91,7 +96,11 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.fetchMoreNews();
+    this.$data.loading = true;
+
+    this.fetchMoreNews().then(() => {
+      this.$data.loading = false
+    })
   },
   setup() {
     const router = useRouter();

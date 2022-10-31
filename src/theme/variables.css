@@ -368,14 +368,16 @@ ion-accordion-group {
 }
 
 ion-datetime {
-  background-color: #fff;
-  color: black !important;
+  --background: #fff;
+  --background-rgb: rgb(255, 255, 255);
+  --title-color: #000;
+  /* color: black !important; */
   box-shadow: rgba(var(--ion-item-background), 0.3) 0px 10px 15px -3px;
 }
 
 ion-datetime-button {
-  --color: #000;
-  --background-color: #e0e0e0;
+  --color: rgb(0, 0, 0);
+  --background: #e0e0e0;
 }
 
 ion-item {
@@ -419,8 +421,8 @@ ion-list {
 .ion-color-date {
   --ion-color-base: #62d0ce;
   --ion-color-base-rgb: rgb(98, 208, 206);
-  --ion-color-contrast: #ffffff;
-  --ion-color-contrast-rgb: rgb(255, 255, 255);
+  --ion-color-contrast: #343434;
+  --ion-color-contrast-rgb: rgb(81, 76, 76);
   --ion-color-shade: #fff;
   --ion-color-tint: #62d0ce;
 }

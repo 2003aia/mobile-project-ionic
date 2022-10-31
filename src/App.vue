@@ -10,6 +10,7 @@ import { defineComponent } from "vue";
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
 import { FCM } from "@capacitor-community/fcm"
+import { StatusBar } from '@capacitor/status-bar';
 
 export default defineComponent({
   name: "App",
@@ -62,10 +63,14 @@ export default defineComponent({
       const notificationList = await PushNotifications.getDeliveredNotifications();
       console.log('delivered notifications', JSON.stringify(notificationList));
     }
+    const setStatusBarStyle = async () => {
+      await StatusBar.setBackgroundColor({ color: '#1F3766' });
+    };
     if (isPlatform('ios') && isPlatform('android')) {
       addListeners()
       registerNotifications()
       getDeliveredNotifications()
+      setStatusBarStyle()
     }
 
 

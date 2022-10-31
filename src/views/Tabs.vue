@@ -249,9 +249,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.getPush().then(()=>{
-      console.log(this.$pinia.state.value?.profile?.pushResponseRead, 'testests')
-    })
+    
   },
   methods: {
     ...mapActions(useProfileStore, ["getPush"]),
