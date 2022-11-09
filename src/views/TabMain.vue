@@ -81,7 +81,6 @@ export default defineComponent({
           for (let index = 0; index < this.news?.length; index++) {
             const element = this.news[index];
             this.$data.list.push(element);
-            console.log('testnews')
           }
           e?.target?.complete();
         }

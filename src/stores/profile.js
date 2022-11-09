@@ -43,12 +43,17 @@ export const useProfileStore = defineStore({
             }
         },
         async editProfile(token, name, email) {
+
             try {
                 await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
                     token: token,
                     name: name,
                     email: email,
-                }).then((response) => this.editProfileResponse = response.data)
+                }).then((response) => {
+
+                    this.editProfileResponse = response.data
+
+                })
             } catch (error) {
                 this.editProfileError = error
             }

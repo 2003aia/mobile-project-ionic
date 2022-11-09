@@ -78,7 +78,7 @@
             </ion-accordion>
           </ion-accordion-group>
 
-          <Input name="Выберите номер телефона " :value="phone" mask="+7 (###) ###-##-##" :changeHandler="changePhone" />
+          <Input name="Введите номер телефона " :value="phone" mask="+7 (###) ###-##-##" :changeHandler="changePhone" />
           <ion-text v-if="error">
             <p class="ion-text-start error">
               {{ error }}

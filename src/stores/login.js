@@ -166,13 +166,13 @@ export const useLoginStore = defineStore({
             name: JSON.parse(profileData).name,
           })
           .then(async (response) => {
-            if (response.data.error === false) {
+            // if (response.data.error === false) {
               console.log("changepass");
               await axios.post(`${apiUrl}/user/password/change/`, {
                 token: supportToken.token,
                 password: password
               })
-            }
+            // }
             this.changePassResponse = response.data;
           });
       } catch (error) {

@@ -60,30 +60,65 @@ export const useAppealsStore = defineStore({
                 this.appealsCategoriesError = error
             }
         },
-        async createMessage(token, message, category, ticketId,) {
+        async createMessage(token, message, category, ticketId, files) {
             const store = new Storage();
             await store.create();
             try {
-                this.createMessageResponse = await axios.post(`https://api.aostng.ru/api/v2/support/message/`, {
+                const formData = new FormData
+                for (let index = 0; index < files.length; index++) {
+                    const element = files[index];
+                    formData.append('files[]', element)
+                }
+                formData.append('token', token)
+                formData.append('message', message)
+                formData.append('category', category)
+                formData.append('ticketId', ticketId)
+
+                const res = await fetch(`https://api.aostng.ru/api/v2/support/message/`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    body: formData,
+                }).then(async () => {
+                    this.createMessageResponse = await res.json()
+
+                })
+
+                /* this.createMessageResponse = await axios.post(`https://api.aostng.ru/api/v2/support/message/`, {
                     token: token, message: message, category: category, ticketId: ticketId
                 })
                     .then((response) => response.data).catch((e) => {
                         this.createMessageError = e
-                    })
+                    }) */
             } catch (error) {
                 this.createMessageError = error
             }
         },
-        async createAppeal(token, message, category) {
+        async createAppeal(token, message, category, files) {
             const store = new Storage();
             await store.create();
+            const formData = new FormData
+            for (let index = 0; index < files.length; index++) {
+                const element = files[index];
+                formData.append('files[]', element)
+            }
+            formData.append('token', token)
+            formData.append('message', message)
+            formData.append('category', category)
             try {
-                this.createAppealResponse = await axios.post(`https://api.aostng.ru/api/v2/support/create/`, {
-                    token: token, message: message, category: category
+                const res = await fetch(`https://api.aostng.ru/api/v2/support/create/`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    body: formData,
+                }).then(async () => {
+                    this.createAppealResponse = await res.json()
+
+                })
+                /* this.createAppealResponse = await axios.post(`https://api.aostng.ru/api/v2/support/create/`, {
+                    token: token, message: message, category: category, files: files[0]
                 })
                     .then((response) => response.data).catch((e) => {
                         this.createAppealError = e
-                    })
+                    }) */
             } catch (error) {
                 this.createAppealError = error
             }

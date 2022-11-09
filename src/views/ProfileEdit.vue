@@ -6,7 +6,7 @@
       :method="editProfileHandler"
       :method2="
         () => {
-          router.push('/profileSend');
+          router.push('/newPassPage');
         }
       "
       :loading="loading"

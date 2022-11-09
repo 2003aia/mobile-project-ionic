@@ -1,40 +1,27 @@
 <template>
   <ion-page>
-    <Back
-      @click="() => (checkStatus = false)"
-      :btnSrc="
-        () => {
-          if (checkStatus === false) router.push('/tabs/main');
-        }
-      "
-      title="Обращения"
-    />
-    <Layout
-      height="false"
-      outlineBtn="."
-      :method="() => (checkStatus = false)"
-      :filledBtn="'.'"
-      :title="'Обращение'"
-    >
+    <Back @click="() => (checkStatus = false)" :btnSrc="
+      () => {
+        if (checkStatus === false) router.push('/tabs/main');
+      }
+    " title="Обращения" />
+    <Layout height="false" outlineBtn="." :method="() => (checkStatus = false)" :filledBtn="'.'" :title="'Обращение'">
       <template v-slot:main-content>
         <div v-show="appealsListResponse?.data.length !== 0 || appealsListResponse?.data !== undefined">
           <div v-for="el in appealsListResponse?.data" :key="el.title">
-            <div
-              class="item"
-              @click="
-                () => {
-                  this.$pinia.state.value.appeals.appealsItem = el;
-
-                  router.push({ name: 'appealsMessages' });
-                }
-              "
-            >
+            <div class="item" @click="
+              () => {
+                this.$pinia.state.value.appeals.appealsItem = el;
+            
+                router.push({ name: 'appealsMessages' });
+              }
+            ">
               <div class="item-header">
                 <ion-text class="title ion-text-start">№{{ el.id }}</ion-text>
                 <ion-badge>
                   {{ el.messages }}
                 </ion-badge>
-               
+
               </div>
               <ion-item>
                 <ion-text class="text time">{{ el.date_create }}</ion-text>
@@ -45,31 +32,20 @@
         <!--  <ion-item lines="none" v-show="loading">
           <ion-spinner name="bubbles"></ion-spinner>
         </ion-item> -->
-        <div
-          @click="
-            () => {
-              this.$pinia.state.value.appeals.newAppeal = true;
-              router.push({
-                name: 'appealsMessages',
-              });
-            }
-          "
-          v-show="appealsListResponse?.data === undefined || appealsListResponse?.data.length == 0"
-        >
+        <div @click="
+          () => {
+            this.$pinia.state.value.appeals.newAppeal = true;
+            router.push({
+              name: 'appealsMessages',
+            });
+          }
+        " v-show="appealsListResponse?.data === undefined || appealsListResponse?.data.length == 0">
           <ion-text class="sub-title ion-text-start"> Обращение </ion-text>
           <ion-item>
-            <ion-img
-              slot="start"
-              class="icon-start"
-              :src="require('@/assets/img/send.png')"
-            ></ion-img>
+            <ion-img slot="start" class="icon-start" :src="require('@/assets/img/send.png')"></ion-img>
             <!-- <ion-icon class="icon-start" slot="start" :icon="paperPlaneOutline"></ion-icon> -->
             <ion-text class="sub-title">Создать новое обращение</ion-text>
-            <ion-icon
-              class="icon-end"
-              slot="end"
-              :icon="chevronForwardOutline"
-            ></ion-icon>
+            <ion-icon class="icon-end" slot="end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
         </div>
       </template>
@@ -78,33 +54,23 @@
       <!-- <div v-else class="loading">
 
 		</div> -->
-      <template v-slot:content v-if="appealsListResponse?.data !== undefined || ![]">
+      <template v-slot:content v-if="appealsListResponse?.data?.length > 0">
         <LayoutBox>
           <template v-slot:content>
-            <div
-              @click="
-                () => {
-                  this.$pinia.state.value.appeals.newAppeal = true;
-                  router.push({
-                    name: 'appealsMessages',
-                  });
-                }
-              "
-            >
+            <div @click="
+              () => {
+                this.$pinia.state.value.appeals.newAppeal = true;
+                router.push({
+                  name: 'appealsMessages',
+                });
+              }
+            ">
               <ion-text class="sub-title ion-text-start"> Обращение </ion-text>
               <ion-item>
-                <ion-img
-                  slot="start"
-                  class="icon-start"
-                  :src="require('@/assets/img/send.png')"
-                ></ion-img>
+                <ion-img slot="start" class="icon-start" :src="require('@/assets/img/send.png')"></ion-img>
                 <!-- <ion-icon class="icon-start" slot="start" :icon="paperPlaneOutline"></ion-icon> -->
                 <ion-text class="sub-title">Создать новое обращение</ion-text>
-                <ion-icon
-                  class="icon-end"
-                  slot="end"
-                  :icon="chevronForwardOutline"
-                ></ion-icon>
+                <ion-icon class="icon-end" slot="end" :icon="chevronForwardOutline"></ion-icon>
               </ion-item>
             </div>
           </template>
@@ -208,6 +174,7 @@ export default defineComponent({
 ion-item {
   --padding-bottom: 0;
 }
+
 .footer-item {
   display: flex;
   width: 100%;
@@ -217,6 +184,7 @@ ion-item {
 .item {
   width: 100%;
 }
+
 .item-header {
   display: flex;
   justify-content: space-between;
@@ -227,24 +195,30 @@ ion-item {
   height: 32px;
   margin-right: 15px;
 }
+
 .icon-end {
   width: 24px;
   height: 24px;
   margin-left: 0px;
   color: #0378b4;
 }
+
 .text {
   margin-left: 0;
 }
+
 .time {
   margin-right: 20px;
 }
+
 .item-header .title {
   margin-bottom: 0;
 }
-.title{
+
+.title {
   margin-top: 10px;
 }
+
 .loading {
   display: flex;
   justify-content: center;

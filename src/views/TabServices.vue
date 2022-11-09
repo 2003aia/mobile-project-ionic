@@ -27,13 +27,13 @@
             </p>
           </ion-text>
         </ion-button>
-        <ion-button router-link="/tabs/servicesTracking" class="btn5" fill="clear">
+        <!-- <ion-button router-link="/tabs/servicesTracking" class="btn5" fill="clear">
           <ion-text>
             <p class="sub-title ion-text-wrap">
               Отслеживание статуса договора о подключении
             </p>
           </ion-text>
-        </ion-button>
+        </ion-button> -->
         <ion-button router-link="/tabs/servicesCallInspector" class="btn6" fill="clear">
           <ion-text>
             <p class="sub-title ion-text-wrap">Вызов инспектора</p>
