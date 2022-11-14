@@ -193,5 +193,7 @@ export default defineComponent({
 
 .main-title {
   margin-bottom: 5px;
+  z-index: 20;
+  position: relative;
 }
 </style>

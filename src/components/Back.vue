@@ -18,6 +18,7 @@
           }}</p>
         </ion-title>
         <ion-img v-show="!title" :src="require('../assets/img/logoSTNG.png')" />
+        <ion-icon v-show="!noBack" class="arrow" :icon="arrowBackOutline" style="opacity: 0;" />
 
       </ion-item>
     </ion-toolbar>
@@ -67,6 +68,7 @@ ion-img {
 ion-toolbar {
   --background: #1F3766;
 }
+
 
 ion-item {
   --background: #1F3766;

@@ -10,6 +10,7 @@ export const usePreEntryStore = defineStore({
     entryDate: null,
     entryAvailableTimes: [],
     entryTime: null,
+    entryNumber: null,
   }),
   getters: {
     getEntryInfo: (state) => {
@@ -99,7 +100,9 @@ export const usePreEntryStore = defineStore({
         bodyFormData.append("time", time);
         bodyFormData.append("ionicDevice", device);
 
-        await axios.post(`https://aostng.ru/prereg2.php`, bodyFormData, config);
+        await axios.post(`https://aostng.ru/prereg2.php`, bodyFormData, config).then((response)=>{
+          this.entryNumber = response.data.split('Номер вашей брони - </span>')[1]
+        })
         return true;
       } catch (error) {
         return false;

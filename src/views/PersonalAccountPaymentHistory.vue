@@ -122,17 +122,26 @@ export default defineComponent({
   methods: {
     ...mapActions(usePersonalAccountStore, ["getPayments"]),
     maskMoney(value) {
-      const valueAsNumber = value.toString().replace('.', '')
-      if (value?.toString().includes('.')) {
+      const valueAsNumber = value?.toString().replace('.', '')
+      const valueAsNumber2 = parseFloat(value?.toFixed(2).toString().replace('.', ''))
+      if (value?.toString().split('.')[1]?.length < 2) {
         return new Intl.NumberFormat("ru-RU", {
           style: "currency",
           currency: "RUB",
-        }).format(valueAsNumber / 100);
+        }).format(valueAsNumber2 / 100);
       } else {
-        return new Intl.NumberFormat("ru-RU", {
-          style: "currency",
-          currency: "RUB",
-        }).format(valueAsNumber);
+        if (value?.toString().includes('.')) {
+          return new Intl.NumberFormat("ru-RU", {
+            style: "currency",
+            currency: "RUB",
+          }).format(valueAsNumber / 100);
+        }
+        if (!value?.toString().includes('.')) {
+          return new Intl.NumberFormat("ru-RU", {
+            style: "currency",
+            currency: "RUB",
+          }).format(valueAsNumber);
+        }
       }
 
     },

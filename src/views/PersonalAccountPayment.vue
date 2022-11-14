@@ -6,7 +6,7 @@
         <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img>
         <div class="btn-wrapper">
           <Button class="btn" :lightBlue="true" name="Оплата" />
-          <Button class="btn" :grey="true" name="Показания" @click="
+          <Button class="btn" v-show="lcList?.counters.length > 0" :grey="true" name="Показания" @click="
             () =>
               router.push({
                 name: 'personalAccountIndication',
@@ -35,12 +35,12 @@
           <template v-slot:content>
             <ion-text>
               <p class="title ion-text-start">
-                Газ (начисление по счету)
+                Газ
               </p>
             </ion-text>
             <ion-item>
               <ion-text>Задолженность:</ion-text>
-              <ion-text slot="end" class="text-end">{{ maskMoney(lcList?.debts?.accruals?.toFixed(2)) }}</ion-text>
+              <ion-text slot="end" class="text-end">{{ maskMoney(lcList?.debts?.accruals) }}</ion-text>
             </ion-item>
 
 
@@ -93,7 +93,7 @@
               <p class="title ion-text-start">Аванс</p>
             </ion-text>
             <ion-item>
-              <ion-text> Задолженность: </ion-text>
+              <ion-text> Сумма: </ion-text>
               <ion-text slot="end" class="text-end green">{{ maskMoney(lcList.debts?.advances
                 )
               }}</ion-text>
@@ -189,17 +189,26 @@ export default defineComponent({
       }
     },
     maskMoney(value) {
-      const valueAsNumber = value.toString().replace('.', '');
-      if (value?.toString().includes('.')) {
+      const valueAsNumber = value?.toString().replace('.', '')
+      const valueAsNumber2 = parseFloat(value?.toFixed(2).toString().replace('.', ''))
+      if (value?.toString().split('.')[1]?.length < 2) {
         return new Intl.NumberFormat("ru-RU", {
           style: "currency",
           currency: "RUB",
-        }).format(valueAsNumber / 100);
+        }).format(valueAsNumber2 / 100);
       } else {
-        return new Intl.NumberFormat("ru-RU", {
-          style: "currency",
-          currency: "RUB",
-        }).format(valueAsNumber);
+        if (value?.toString().includes('.')) {
+          return new Intl.NumberFormat("ru-RU", {
+            style: "currency",
+            currency: "RUB",
+          }).format(valueAsNumber / 100);
+        }
+        if (!value?.toString().includes('.')) {
+          return new Intl.NumberFormat("ru-RU", {
+            style: "currency",
+            currency: "RUB",
+          }).format(valueAsNumber);
+        }
       }
     },
   },

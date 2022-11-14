@@ -53,7 +53,7 @@ export const useLoginStore = defineStore({
           )
           .then(async (response) => {
             this.registrResponse2 = response.data;
-
+ 
             if (response.data.error === false) {
               await axios
                 .post(

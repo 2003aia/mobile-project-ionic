@@ -78,7 +78,10 @@ export default defineComponent({
   },
   mounted() {
     this.$data.loading = true
-    this.getListServices().then(() => this.$data.loading = false)
+    this.getListServices().then(() => { 
+      this.$data.loading = false
+      // console.log(this.listServices, 'test')
+     })
   },
   data() {
     return {
@@ -104,7 +107,8 @@ export default defineComponent({
   overflow: hidden;
   overflow: auto; */
 }
-.sub-title{
+
+.sub-title {
   margin-top: 10px;
 }
 

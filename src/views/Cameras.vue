@@ -6,7 +6,8 @@
       <template v-slot:main-content>
         <ion-card v-show="cameras?.length !== 0">
           <div class="videoWrapper" v-show="cameras[0]?.status">
-            <iframe class="video" :src="cameras[0]?.url" frameborder="0" allow="autoplay; "></iframe>
+            <iframe class="video" :src="cameras[0]?.url" frameborder="0"
+              allow="autoplay; fullscreen; picture-in-picture" allowfullscreenшщ></iframe>
           </div>
           <ion-img v-show="!cameras[0]?.status" :src="cameras[0]?.preview" />
 
@@ -24,7 +25,7 @@
             <template v-slot:content>
               <ion-card v-show="el?.length !== 0">
                 <div v-show="el.status" class="videoWrapper">
-                  <iframe class="video" width="1600" height="900" :src="el.url" frameborder="0"
+                  <iframe class="video" height="100%" width="100%" :src="el.url" frameborder="0"
                     allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
                 </div>
 
@@ -123,20 +124,27 @@ ion-card {
 
 .videoWrapper {
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden;
   width: 100%;
-  padding-top: 56.25%;
+  padding-top: 56.25%; */
+
 
 }
 
 iframe {
-  position: absolute;
+  /* position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
   width: 100%;
-  height: 100%;
+  height: 100%; */
+  transform: scale(.425);
+  transform-origin: left;
+  width: calc(100% / .425);
+  height: 435px;
+  margin-top: -130px;
+  margin-bottom: -130px;
 }
 
 .list {

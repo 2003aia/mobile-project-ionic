@@ -107,6 +107,12 @@
               entryTime
           }}</ion-text>
         </ion-item>
+        <ion-item>
+          <ion-text> Номер брони: </ion-text>
+          <ion-text slot="end" class="text-end text-success">{{
+              entryNumber?.substr(0, 5)
+          }}</ion-text>
+        </ion-item>
       </template>
     </Layout>
   </ion-page>
@@ -155,7 +161,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const preEntryStore = usePreEntryStore();
-    const { entryPhone, entryServiceType, entryDate, entryTime } =
+    const { entryPhone, entryServiceType, entryDate, entryTime, entryNumber } =
       storeToRefs(preEntryStore);
 
     const { sendFullInfo, resetPreEntry } = usePreEntryStore();
@@ -178,6 +184,7 @@ export default defineComponent({
       sendFullInfo,
       currentlySuccess,
       resetPreEntry,
+      entryNumber,
     };
   },
   methods: {

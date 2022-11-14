@@ -337,7 +337,9 @@ export default defineComponent({
         addAccount.then(() => {
           this.$data.error = "";
           this.getAccount().then(() => {
-            this.$router.push("/tabs/personalAccounts");
+            this.$router.push("/personalAccountPayment");
+            const itemData = this.$pinia.state.value?.personalAccount?.getAccountResponse?.data.filter((el)=>el.code === licsCodes[0])
+            this.$pinia.state.value.personalAccount.personalItemData = itemData[0]
           });
           this.$data.loading = false;
           this.$data.response =
@@ -378,9 +380,14 @@ ion-checkbox {
   margin: 0;
 }
 
+.listText{
+  color: #000;
+}
+
 p {
   margin-bottom: 20px;
   word-break: break-all;
+  
 }
 
 ion-item {
@@ -432,8 +439,8 @@ ion-list {
   font-weight: 700;
 }
 
-input:not(:placeholder-shown)+ion-text {
-  display: none;
+input:not(:placeholder-shown) {
+  color: #000;
 }
 
 .dot {

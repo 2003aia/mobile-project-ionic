@@ -106,6 +106,7 @@ import {
   IonItem,
   IonButton,
   IonImg,
+  isPlatform,
   IonCheckbox,
   IonText,
 } from "@ionic/vue";
@@ -171,10 +172,14 @@ export default defineComponent({
               codeSent.value = true;
               // codeResponse.value = registrResponse.value?.data.msg.substr(35);
             } else {
+              loading.value = false;
+
               errorText.value = registrResponse?.value?.message;
             }
           })
           .catch((e) => {
+            loading.value = false;
+
             console.log(e, "error");
             errorText.value = e;
           });
@@ -186,18 +191,24 @@ export default defineComponent({
 
       if (password.value === passwordConfirm.value) {
         loading2.value = true;
-        await PushNotifications.addListener('registration', token => {
-          fcmToken.value = token.value
-        });
+        if (isPlatform('android') && isPlatform('ios')) {
+          await PushNotifications.addListener('registration', token => {
+            fcmToken.value = token.value
+          });
+        }
+
         registrUser2(code.value, password.value, fcmToken.value).then(() => {
-          loading.value = false;
+          loading2.value = false;
           if (registrResponse2.value.error === false) {
             router.push("/tabs");
           } else {
+            loading2.value = false;
+
             errorText.value = registrResponse.value.message;
           }
         });
       } else {
+
         errorText.value = "Пароли не совпадают";
       }
     };
@@ -223,6 +234,8 @@ export default defineComponent({
       loading2,
       changePassword,
       changePasswordConfirm,
+      password,
+      passwordConfirm,
       registrError,
       registrUserHandler,
       router,
