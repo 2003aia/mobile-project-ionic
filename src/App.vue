@@ -78,6 +78,15 @@ export default defineComponent({
       const store = new Storage();
       await store.create();
       const token = await store.get("token");
+
+      const getQueries = this.$route.query;
+      if(getQueries["process_esia"]==="Y"){
+        let {process_esia, ...rest} = getQueries;
+        
+        console.log(process_esia);
+        console.log('data from 1c', rest)
+      }
+
       if (JSON.parse(token)?.token) {
         this.$router.push("/tabs/personalAccounts");
       } else {
