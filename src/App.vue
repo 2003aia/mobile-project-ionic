@@ -74,19 +74,49 @@ export default defineComponent({
       setStatusBarStyle()
     }
 
+    const processEsia = async () => {
+      const getQueries = this.$route.query;
+      if(getQueries["process_esia"] === "Y"){
+        const store = new Storage();
+        await store.create();
 
+        const answer = JSON.parse(getQueries.json).data;
+
+        const userObject = {
+          name: answer.name,
+          phone: "",
+          email: answer.email,
+          password: "",
+          token: answer.token,
+          lics: answer.lics?.map((el) => el?.code),
+          esiaUser: true,
+        };
+        await store.set("token", JSON.stringify(userObject));
+        this.$router.push("/tabs/personalAccounts");
+
+        return true;
+      }
+      return false;
+    }
+    
     const storageHandler = async () => {
       const store = new Storage();
       await store.create();
       const token = await store.get("token");
+
       if (JSON.parse(token)?.token) {
         this.$router.push("/tabs/personalAccounts");
       } else {
         this.$router.push("/authPage")
       }
     };
-    storageHandler();
-
+    
+    processEsia()
+      .then((isEsiaUser) => {
+        if(!isEsiaUser){
+          storageHandler()
+        }
+      });
 
   },
   methods: {

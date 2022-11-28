@@ -37,7 +37,7 @@
 
         <ion-text class="text ion-text-center">Или с помощью</ion-text>
         <div>
-          <div @click="authUrl">
+          <div @click="authUrlEsia">
             <ion-img class="logoURL" :src="require('@/assets/img/logoGOS.png')" alt="logoGOSUSLUGI"></ion-img>
           </div>
 
@@ -73,6 +73,7 @@ import {
 } from "@ionic/vue";
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
+import { Browser } from '@capacitor/browser';
 
 
 export default defineComponent({
@@ -89,6 +90,10 @@ export default defineComponent({
   },
   methods: {
     authUrl() {
+    },
+    async authUrlEsia() {
+      const backUrl = `https://app.aostng.ru/getesialink.php?backOrigin=${window.location.origin}/`;
+      await Browser.open({ url: backUrl, windowName:"_self" });
     }
   },
   setup() {

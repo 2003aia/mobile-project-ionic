@@ -10,7 +10,11 @@ const config: CapacitorConfig = {
       presentationOptions: ["badge", "sound", "alert"],
     },
   },
-
+  server: {
+    allowNavigation: [
+      "app.aostng.ru"
+    ]
+  }
 };
 
 export default config;
