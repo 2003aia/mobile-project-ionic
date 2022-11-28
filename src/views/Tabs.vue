@@ -18,8 +18,8 @@
           <div v-for="el in sideMenu" :key="el">
             <ion-item @click="
               () => {
-                router.push(el.path);
                 el?.method()
+                router.push(el.path);
               }
             " lines="none">
               <ion-icon slot="start" :icon="el.icon"></ion-icon>
@@ -129,6 +129,7 @@ import {
 } from "ionicons/icons";
 import { mapActions } from "pinia";
 import { useProfileStore } from '../stores/profile'
+import { Browser } from '@capacitor/browser';
 
 export default defineComponent({
   name: "tabsPages",
@@ -237,7 +238,13 @@ export default defineComponent({
             const store = new Storage()
             await store.create()
             const token = await store.get('token')
-            await store.set('token', JSON.stringify({ phone: JSON.parse(token).phone, }))
+            const tokenData = JSON.parse(token);
+            await store.set('token', JSON.stringify({ phone: tokenData.phone, }))
+
+            if(tokenData.esiaUser){
+              const backUrl = `https://app.aostng.ru/exitesia.php?backOrigin=${window.location.origin}/`;
+              await Browser.open({ url: backUrl, windowName:"_self" });
+            }
           }
         },
       ],
