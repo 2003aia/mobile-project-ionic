@@ -192,105 +192,101 @@ const routes = [
         path: "profile",
         component: () => import("@/views/Profile.vue"),
       },
+      
+      {
+        name: "profileEdit",
+    
+        path: "profileEdit",
+        component: () => import("@/views/ProfileEdit.vue"),
+      },
+      {
+        name: "profileSend",
+        path: "profileSend",
+        component: () => import("@/views/ProfileSend.vue"),
+      },
+      {
+        name: "contacts",
+        path: "contacts",
+        component: () => import("@/views/Contacts.vue"),
+      },
+      {
+        name: "notificatons",
+        path: "notifications",
+        component: () => import("@/views/Notifications.vue"),
+      },
+      {
+        name: "appeals",
+        path: "appeals",
+        component: () => import("@/views/Appeals.vue"),
+      },
+      {
+        name: "appealsMessages",
+        path: "appealsMessages",
+        component: () => import("@/views/AppealsMessages.vue"),
+      },
+      {
+        name: "personalAccounts",
+        path: "personalAccounts",
+        component: () => import("@/views/PersonalAccounts.vue"),
+      },
+      {
+        name: "personalAccountNew",
+        path: "personalAccountNew",
+        component: () => import("@/views/PersonalAccountNew.vue"),
+      },
+      {
+        name: "personalAccountInfoSearch",
+        path: "personalAccountInfoSearch",
+        component: () => import("@/views/PersonalAccountInfoSearch.vue"),
+      },
+      {
+        name: "personalAccountInfo",
+        path: "personalAccountInfo",
+        component: () => import("@/views/PersonalAccountInfo.vue"),
+      },
+      {
+        name: "personalAccountPayment",
+        path: "personalAccountPayment",
+        component: () => import("@/views/PersonalAccountPayment.vue"),
+      },
+      {
+        name: "personalAccountPaymentHistory",
+        path: "personalAccountPaymentHistory",
+        component: () => import("@/views/PersonalAccountPaymentHistory.vue"),
+      },
+      {
+        name: "personalAccountIndication",
+        path: "personalAccountIndication",
+        component: () => import("@/views/PersonalAccountIndication.vue"),
+      },
+      {
+        name: "personalAccountPay",
+        path: "personalAccountPay",
+        component: () => import("@/views/PersonalAccountPay.vue"),
+      },
+      {
+        name: "requests",
+        path: "requests",
+        component: () => import("@/views/Requests.vue"),
+      },
+      {
+        name: "requestsInfo",
+        path: "requestsInfo",
+        component: () => import("@/views/RequestsInfo.vue"),
+      },
+      {
+        name: "cameras",
+        path: "cameras",
+        component: () => import("@/views/Cameras.vue"),
+      },
+      {
+        name: "selectPage",
+        path: "selectPage",
+        component: () => import("@/views/Select.vue"),
+      },
     ],
   },
-  {
-    path: "/profile",
-    name: "profile",
-
-    component: () => import("@/views/Profile.vue"),
-  },
-  {
-    name: "profileEdit",
-
-    path: "/profileEdit",
-    component: () => import("@/views/ProfileEdit.vue"),
-  },
-  {
-    name: "profileSend",
-    path: "/profileSend",
-    component: () => import("@/views/ProfileSend.vue"),
-  },
-  {
-    name: "contacts",
-    path: "/contacts",
-    component: () => import("@/views/Contacts.vue"),
-  },
-  {
-    name: "notificatons",
-    path: "/notifications",
-    component: () => import("@/views/Notifications.vue"),
-  },
-  {
-    name: "appeals",
-    path: "/appeals",
-    component: () => import("@/views/Appeals.vue"),
-  },
-  {
-    name: "appealsMessages",
-    path: "/appealsMessages",
-    component: () => import("@/views/AppealsMessages.vue"),
-  },
-  {
-    name: "personalAccounts",
-    path: "/personalAccounts",
-    component: () => import("@/views/PersonalAccounts.vue"),
-  },
-  {
-    name: "personalAccountNew",
-    path: "/personalAccountNew",
-    component: () => import("@/views/PersonalAccountNew.vue"),
-  },
-  {
-    name: "personalAccountInfoSearch",
-    path: "/personalAccountInfoSearch",
-    component: () => import("@/views/PersonalAccountInfoSearch.vue"),
-  },
-  {
-    name: "personalAccountInfo",
-    path: "/personalAccountInfo",
-    component: () => import("@/views/PersonalAccountInfo.vue"),
-  },
-  {
-    name: "personalAccountPayment",
-    path: "/personalAccountPayment",
-    component: () => import("@/views/PersonalAccountPayment.vue"),
-  },
-  {
-    name: "personalAccountPaymentHistory",
-    path: "/personalAccountPaymentHistory",
-    component: () => import("@/views/PersonalAccountPaymentHistory.vue"),
-  },
-  {
-    name: "personalAccountIndication",
-    path: "/personalAccountIndication",
-    component: () => import("@/views/PersonalAccountIndication.vue"),
-  },
-  {
-    name: "personalAccountPay",
-    path: "/personalAccountPay",
-    component: () => import("@/views/PersonalAccountPay.vue"),
-  },
-  {
-    name: "requests",
-    path: "/requests",
-    component: () => import("@/views/Requests.vue"),
-  },
-  {
-    name: "requestsInfo",
-    path: "/requestsInfo",
-    component: () => import("@/views/RequestsInfo.vue"),
-  },
-  {
-    name: "cameras",
-    path: "/cameras",
-    component: () => import("@/views/Cameras.vue"),
-  },
-  {
-    name: "selectPage",
-    path: "/selectPage",
-    component: () => import("@/views/Select.vue"),
-  },
+  
 ];
 
 const router = createRouter({

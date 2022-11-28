@@ -1,24 +1,31 @@
 <template>
   <ion-header>
     <ion-toolbar>
-      <ion-item v-on:click="btnSrc" @click="
-        () => {
-          if (!noBack) {
-      
-            if (btnSrc) return;
-            router.go(-1);
+      <ion-item lines="none">
+        <ion-button v-on:click="btnSrc" @click="
+          () => {
+            if (!noBack) {
+        
+              if (btnSrc) return;
+              router.go(-1);
+            }
+        
           }
-      
-        }
-      " lines="none">
-        <ion-icon v-show="!noBack" class="arrow" :icon="arrowBackOutline" />
+        " v-show="!noBack" fill="clear">
+          <ion-icon class="arrow" :icon="arrowBackOutline" />
+        </ion-button>
+
         <ion-title v-show="title">
           <p :class="{ textURL: true, 'textURL-margin': true, 'ion-text-start': !title, 'ion-text-center': title }">{{
               title && title
           }}</p>
         </ion-title>
         <ion-img v-show="!title" :src="require('../assets/img/logoSTNG.png')" />
-        <ion-icon v-show="!noBack" class="arrow" :icon="arrowBackOutline" style="opacity: 0;" />
+        <!-- <ion-icon v-show="!noBack" class="arrow" :icon="arrowBackOutline" style="opacity: 0;" /> -->
+        <ion-button @click="closeMenu" fill="clear">
+          <ion-icon class="menu" :icon="menuOutline"></ion-icon>
+
+        </ion-button>
 
       </ion-item>
     </ion-toolbar>
@@ -26,10 +33,15 @@
 </template>
 
 <script>
-import { IonToolbar, IonItem, IonTitle, IonHeader, IonIcon, IonImg, } from "@ionic/vue";
+import {
+  IonToolbar, IonItem,
+  menuController,
+  IonButton,
+  IonTitle, IonHeader, IonIcon, IonImg,
+} from "@ionic/vue";
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import { arrowBackOutline } from "ionicons/icons";
+import { arrowBackOutline, menuOutline } from "ionicons/icons";
 
 export default defineComponent({
   name: "backComponent",
@@ -42,6 +54,7 @@ export default defineComponent({
   },
   components: {
     IonToolbar,
+    IonButton,
     IonTitle,
     IonHeader,
     IonImg,
@@ -53,8 +66,14 @@ export default defineComponent({
     return {
       router,
       arrowBackOutline,
+      menuOutline,
     };
   },
+  methods: {
+    closeMenu() {
+      menuController.open("menu");
+    },
+  }
 });
 </script>
 
@@ -63,6 +82,7 @@ ion-img {
   height: 44px;
   width: 130px;
   margin: auto;
+
 }
 
 ion-toolbar {
@@ -72,7 +92,7 @@ ion-toolbar {
 
 ion-item {
   --background: #1F3766;
-  --padding-start: 15px;
+  --padding-start: 10px;
   --padding-bottom: 0px;
 }
 
@@ -85,5 +105,22 @@ ion-item {
   width: 32px;
   height: 32px;
   color: #ffffff;
+}
+
+.menu {
+  margin: 0;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  color: #ffffff;
+}
+
+ion-button {
+  margin: 0;
+  margin-right: 10px;
+  padding: 0;
+  --padding-end: 0;
+  --padding-start: 0;
+
 }
 </style>

@@ -12,7 +12,8 @@
         <ion-accordion-group ref="accordion">
           <ion-accordion value="first" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
-              <input type="text" v-model="country" class="input" placeholder="Введите населенный пункт" />
+              <input type="text" :value="country" @input="(e) => countryChange(e)" class="input"
+                placeholder="Введите населенный пункт" />
             </div>
 
             <div slot="content">
@@ -32,7 +33,8 @@
           </ion-accordion>
           <ion-accordion value="second" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
-              <input type="text" v-model="settlement" class="input" placeholder="Введите населенный пункт" />
+              <input type="text" :value="settlement" @input="(e) => settlementChange(e)" class="input"
+                placeholder="Введите населенный пункт" />
             </div>
 
             <div slot="content">
@@ -49,7 +51,8 @@
           </ion-accordion>
           <ion-accordion value="third" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
-              <input type="text" v-model="street" class="input" placeholder="Введите улицу" />
+              <input type="text" :value="street" @input="(e) => streetChange(e)" class="input"
+                placeholder="Введите улицу" />
             </div>
 
             <div slot="content">
@@ -69,7 +72,8 @@
           </ion-accordion>
           <ion-accordion value="fourth" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
-              <input type="text" v-model="house" class="input" placeholder="Введите дом улицы" />
+              <input type="text" :value="house" @input="(e) => houseChange(e)" class="input"
+                placeholder="Введите дом улицы" />
             </div>
             <div slot="content">
               <ion-item v-show="loading4">
@@ -89,12 +93,12 @@
 
           <ion-accordion v-show="
             housesList?.length !== 0 &&
-            housesList !== undefined &&
-            apartmentsList.length > 0
+            apartmentsList[0]
             // housesList[0]?.apartments
           " value="fifth" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
-              <input type="text" v-model="apartment" class="input" placeholder="Введите номер квартиры" />
+              <input type="text" :value="apartment" @input="(e) => apartmentChange(e)" class="input"
+                placeholder="Введите номер квартиры" />
             </div>
             <div slot="content">
               <div v-for="el in apartmentsList" :key="el">
@@ -121,7 +125,6 @@
             </ion-text>
           </div>
         </div>
-
         <div v-show="
           housesList?.length !== 0 &&
           housesList !== undefined &&
@@ -202,24 +205,29 @@ export default defineComponent({
       loading2: true,
       loading3: false,
       loading4: false,
+      ulusList: [],
+      settlementsList: [],
+      streetsList: [],
+      housesList: [],
+      apartmentsList: [],
     };
   },
   computed: {
-    ulusList() {
+    /* ulusList() {
       return this.$pinia.state.value?.personalAccount?.getSettlementsResponse?.data.filter((el) => {
         return el.ulus
           .toLowerCase()
           .includes(this.$data.country.toLowerCase());
       });
-    },
-    settlementsList() {
+    }, */
+    /* settlementsList() {
       return this.ulusList?.filter((el) => {
         return el?.ulusId === this.$data.settlementId
       })[0]?.settlements?.filter((el2) => {
         return el2?.settlement?.toLowerCase().includes(this.$data.settlement.toLowerCase())
       })
-    },
-    streetsList() {
+    }, */
+    /* streetsList() {
       return this.$pinia.state.value?.personalAccount?.getStreetsResponse?.data
         .flatMap((el) => el)
         .filter((el) => {
@@ -227,8 +235,8 @@ export default defineComponent({
             .toLowerCase()
             .includes(this.$data.street.toLowerCase());
         });
-    },
-    housesList() {
+    }, */
+    /* housesList() {
       return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data
         .flatMap((el) => el)
         .filter((el) => {
@@ -236,8 +244,8 @@ export default defineComponent({
             .toLowerCase()
             .includes(this.$data.house.toLowerCase());
         });
-    },
-    apartmentsList() {
+    }, */
+    /* apartmentsList() {
       return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data?.filter((el) => el.house.toLowerCase() === this.$data.house.toLowerCase())
         .flatMap((el) => el?.apartments?.flatMap((el) => el))
         .filter((el) => {
@@ -245,7 +253,7 @@ export default defineComponent({
             ?.toLowerCase()
             .includes(this.$data.apartment.toLowerCase());
         });
-    },
+    }, */
     licsApartmentsList() {
       return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data.filter((el) => el.house.toLowerCase() === this.$data.house.toLowerCase())
         .flatMap((el) => el?.apartments?.flatMap((el) => el))
@@ -265,11 +273,58 @@ export default defineComponent({
   },
   mounted() {
     this.$data.loading2 = true
-    this.getSettlements().then(() => (this.$data.loading2 = false));
-
-
+    this.getSettlements().then(() => {
+      this.$data.ulusList = this.$pinia.state.value?.personalAccount?.getSettlementsResponse?.data
+      this.$data.loading2 = false
+    });
   },
   methods: {
+    countryChange(e) {
+      this.$data.country = e.target.value
+      this.$data.ulusList = this.$pinia.state.value?.personalAccount?.getSettlementsResponse?.data.filter((el) => {
+        return el.ulus
+          .toLowerCase()
+          .includes(this.$data.country.toLowerCase());
+      });
+    },
+    settlementChange(e) {
+      this.$data.settlement = e.target.value
+      this.$data.settlementsList = this.ulusList?.filter((el) => {
+        return el?.ulusId === this.$data.settlementId
+      })[0]?.settlements?.filter((el2) => {
+        return el2?.settlement?.toLowerCase().includes(this.$data.settlement.toLowerCase())
+      })
+    },
+    streetChange(e) {
+      this.$data.street = e.target.value
+      this.$data.streetsList = this.$pinia.state.value?.personalAccount?.getStreetsResponse?.data
+        .flatMap((el) => el)
+        .filter((el) => {
+          return el.street
+            .toLowerCase()
+            .includes(this.$data.street.toLowerCase());
+        });
+    },
+    houseChange(e) {
+      this.$data.house = e.target.value
+      this.$data.housesList = this.$pinia.state.value?.personalAccount?.getHousesResponse?.data
+        .flatMap((el) => el)
+        .filter((el) => {
+          return el.house
+            .toLowerCase()
+            .includes(this.$data.house.toLowerCase());
+        });
+    },
+    apartmentChange(e) {
+      this.$data.apartment = e.target.value
+      this.$data.apartmentsList = this.$pinia.state.value?.personalAccount?.getHousesResponse?.data?.filter((el) => el.house.toLowerCase() === this.$data.house.toLowerCase())
+        .flatMap((el) => el?.apartments?.flatMap((el) => el))
+        .filter((el) => {
+          return el?.apartment
+            ?.toLowerCase()
+            .includes(this.$data.apartment.toLowerCase());
+        });
+    },
     ...mapActions(usePersonalAccountStore, [
       "getSettlements",
       "getStreets",
@@ -284,22 +339,36 @@ export default defineComponent({
       this.$data.settlementId = ulus_id
       this.$data.country = ulus
       this.$refs.accordion.$el.value = undefined;
+      this.$data.settlementsList = this.ulusList?.filter((el) => {
+        return el?.ulusId === this.$data.settlementId
+      })[0]?.settlements
+
     },
     fetchStreetsHandler(s_id, settlement) {
       this.$data.loading3 = true;
       const getStreets = new Promise((resolve) => {
         resolve(this.getStreets(s_id));
       });
-      getStreets.then(() => (this.$data.loading3 = false));
+      getStreets.then(() => {
+        this.$data.loading3 = false
+        this.$data.streetsList = this.$pinia.state.value?.personalAccount?.getStreetsResponse?.data
+          .flatMap((el) => el)
+      });
       this.$refs.accordion.$el.value = undefined;
       this.$data.settlement = settlement;
+
     },
     fetchHousesHandler(ids, street) {
       this.$data.loading4 = true;
       const getHouses = new Promise((resolve) => {
         resolve(this.getHouses(ids));
       });
-      getHouses.then(() => (this.$data.loading4 = false));
+      getHouses.then(() => {
+        this.$data.loading4 = false
+        this.$data.housesList = this.$pinia.state.value?.personalAccount?.getHousesResponse?.data
+          .flatMap((el) => el)
+
+      });
       this.$refs.accordion.$el.value = undefined;
 
       this.$data.street = street;
@@ -307,6 +376,9 @@ export default defineComponent({
     fetchLicsHandler(street) {
       this.$refs.accordion.$el.value = undefined;
       this.$data.house = street;
+      this.$data.apartmentsList = this.$pinia.state.value?.personalAccount?.getHousesResponse?.data?.filter((el) => el.house.toLowerCase() === street.toLowerCase())
+        .flatMap((el) => el?.apartments?.flatMap((el) => el)) ? this.$pinia.state.value?.personalAccount?.getHousesResponse?.data?.filter((el) => el.house.toLowerCase() === street.toLowerCase())
+          .flatMap((el) => el?.apartments?.flatMap((el) => el)) : []
     },
     fetchLicsHandler2(street) {
       this.$refs.accordion.$el.value = undefined;
@@ -338,7 +410,7 @@ export default defineComponent({
           this.$data.error = "";
           this.getAccount().then(() => {
             this.$router.push("/personalAccountPayment");
-            const itemData = this.$pinia.state.value?.personalAccount?.getAccountResponse?.data.filter((el)=>el.code === licsCodes[0])
+            const itemData = this.$pinia.state.value?.personalAccount?.getAccountResponse?.data.filter((el) => el.code === licsCodes[0])
             this.$pinia.state.value.personalAccount.personalItemData = itemData[0]
           });
           this.$data.loading = false;
@@ -380,14 +452,14 @@ ion-checkbox {
   margin: 0;
 }
 
-.listText{
+.listText {
   color: #000;
 }
 
 p {
   margin-bottom: 20px;
   word-break: break-all;
-  
+
 }
 
 ion-item {

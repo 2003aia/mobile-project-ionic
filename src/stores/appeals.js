@@ -28,6 +28,7 @@ export const useAppealsStore = defineStore({
             const store = new Storage();
             await store.create();
             const token = await store.get('support')
+            console.log('testetest, ', token)
             try {
                 this.appealsListResponse = await axios.post(`https://api.aostng.ru/api/v2/support/list/`, { token: token.token })
                     .then((response) => response.data)

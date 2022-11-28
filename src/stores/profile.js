@@ -11,6 +11,9 @@ export const useProfileStore = defineStore({
         pushError: null,
         editProfileError: null,
         editProfileResponse: null,
+        profileResponse: null,
+        profileError: null,
+
     }),
     getters: {
         getPostsPerAuthor: (state) => {
@@ -42,13 +45,31 @@ export const useProfileStore = defineStore({
                 this.pushError = error
             }
         },
-        async editProfile(token, name, email) {
+        async getProfile() {
+            const store = new Storage()
+            await store.create()
+            const token = await store.get('token')
 
             try {
                 await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
-                    token: token,
-                    name: name,
-                    email: email,
+                    token: JSON.parse(token).token
+                }).then((response) => {
+
+                    this.profileResponse = response.data
+
+                })
+            } catch (error) {
+                this.profileError = error
+            }
+        },
+        async editProfile(data) {
+            const store = new Storage()
+            store.create()
+            const token = await store.get('token')
+            try {
+                await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
+                    token: JSON.parse(token).token,
+                    ...data
                 }).then((response) => {
 
                     this.editProfileResponse = response.data

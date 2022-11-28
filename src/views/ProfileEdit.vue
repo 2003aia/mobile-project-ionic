@@ -1,40 +1,53 @@
 <template>
   <ion-page>
-    <Back :btnSrc="()=>router.push('profile')"/>
-    <Layout
-      height="false"
-      :method="editProfileHandler"
-      :method2="
-        () => {
-          router.push('/newPassPage');
-        }
-      "
-      :loading="loading"
-      :filledBtn="'Сохранить'"
-      title="Личный кабинет"
-      :outlineBtn="'Изменить пароль'"
-    >
+    <Back :btnSrc="() => router.push('profile')" />
+    <Layout height="false" :method="editProfileHandler" :method2="
+      () => {
+        router.push('/newPassPage');
+      }
+    " :loading="loading" :filledBtn="'Сохранить'" title="Личный кабинет" :outlineBtn="'Изменить пароль'">
       <template v-slot:main-content>
         <ion-text>
           <p class="title ion-text-start">Мои данные</p>
         </ion-text>
         <div>
-          <ion-text><p class="sub-title">Имя</p> </ion-text>
-          <Input
-            @updated="(item) => (name = item)"
-            :changeHandler="nameChange"
-            :value="name"
-            name="Укажите имя"
-          />
-          
           <ion-text>
-            <p class="sub-title">{{ data.email }}</p>
+            <p class="sub-title">Имя</p>
           </ion-text>
-          <Input
-            name="Электронная почта"
-            :value="email"
-            :changeHandler="emailChange"
-          />
+          <Input @updated="(item) => (name = item)" :changeHandler="(e) => name = e.target.value" :value="name"
+            name="Укажите имя" />
+
+          <ion-text>
+            <p class="sub-title">Электронная почта</p>
+          </ion-text>
+          <Input type="email" @updated="(item) => (email = item)" name="Электронная почта" :value="email"
+            :changeHandler="(e) => email = e.target.value" />
+          <ion-text>
+            <p class="sub-title">СНИЛС</p>
+          </ion-text>
+          <Input :mask="'###########'" @updated="(item) => (snils = item)" name="СНИЛС" :value="snils"
+            :changeHandler="(e) => snils = e.target.value" />
+
+          <ion-text>
+            <p class="sub-title">Пасспорт выдан</p>
+          </ion-text>
+          <Input @updated="(item) => (issuedBy = item)" :changeHandler="(e) => issuedBy = e.target.value"
+            :value="issuedBy" name="Пасспорт выдан" />
+          <ion-text>
+            <p class="sub-title">Дата выдачи пасспорта</p>
+          </ion-text>
+          <Input :mask="'##.##.####'" @updated="(item) => (issuedDate = item)"
+            :changeHandler="(e) => issuedDate = e.target.value" :value="issuedDate" name="Дата выдачи" />
+          <ion-text>
+            <p class="sub-title">Серия пасспорта</p>
+          </ion-text>
+          <Input :mask="'####'" @updated="(item) => (serial = item)" :changeHandler="(e) => serial = e.target.value"
+            :value="serial" name="Серия пасспорта" />
+          <ion-text>
+            <p class="sub-title">Номер пасспорта</p>
+          </ion-text>
+          <Input :mask="'######'" @updated="(item) => (number = item)" :changeHandler="(e) => number = e.target.value"
+            :value="number" name="Номер пасспорта" />
           <ion-item>
             <ion-text>
               <p class="sub-title">{{ login }}</p>
@@ -52,18 +65,17 @@
 
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import {
-  onIonViewDidEnter,
   IonPage,
   IonText,
   IonItem,
 } from "@ionic/vue";
 import Input from "../components/Input.vue";
 import Back from "../components/Back.vue";
-import { storeToRefs } from "pinia";
+import { mapActions } from "pinia";
 import { useProfileStore } from "../stores/profile";
 import { Storage } from "@ionic/storage";
 
@@ -73,14 +85,15 @@ export default defineComponent({
     return {
       codeSent: false,
       edit: false,
-      data: {
-        name: "Иван",
-        surname: "Иванов",
-        secondname: "Иванович",
-
-        email: "Pochta@mail.ru",
-        phone: "+7(996)-915-88-31",
-      },
+      name: '',
+      email: '',
+      login: '',
+      issuedBy: '',
+      issuedDate: '',
+      serial: '',
+      number: '',
+      snils: '',
+      loading: false,
     };
   },
   components: {
@@ -91,71 +104,72 @@ export default defineComponent({
     IonItem,
     IonText,
   },
-  setup() {
-    const router = useRouter();
-    const { profileResponse, profileError } = storeToRefs(useProfileStore());
-    const { editProfile } = useProfileStore();
-    let name = ref("");
-    const surname = ref("");
-    const email = ref("");
-    const login = ref("");
-    let profileData = null;
-    let profileDataParsed = null;
-    let loading = ref(false)
-    const storageHandler = async () => {
-      const store = new Storage();
-      await store.create();
-      profileData = await store.get("token");
-      profileDataParsed = JSON.parse(profileData);
-      name.value = profileDataParsed?.name;
-      /* surname.value = profileDataParsed?.lastName; */
-      email.value = profileDataParsed?.email;
-      login.value = profileDataParsed?.phone;
-    };
 
-    const editProfileHandler = async () => {
-      loading.value = true
-      editProfile(JSON.parse(profileData)?.token, name.value, email.value).then(
+  methods: {
+    ...mapActions(useProfileStore, ["editProfile"]),
+    async editProfileHandler() {
+      this.$data.loading = true
+
+      const formData = {
+        passport: {
+          serial: this.$data.serial,
+          number: this.$data.number,
+          issuedBy: this.$data.issuedBy,
+          issuedDate: this.$data.issuedDate,
+        },
+
+        snils: this.$data.snils,
+        name: this.$data.name,
+        email: this.$data.email,
+      }
+      this.editProfile(formData,).then(
         async () => {
-          loading.value = false
+          this.$data.loading = false
           const store = new Storage();
           await store.create();
+          const profileData = await store.get('token')
           const data = {
-            ...profileDataParsed,
-            name: name.value,
-            email: email.value,
+            ...JSON.parse(profileData),
+            name: this.$data.name,
+            email: this.$data.email,
+
           };
           await store.set("token", JSON.stringify(data))
         }
       );
-    };
+    }
+  },
+  ionViewDidEnter() {
 
-    const nameChange = (e) => {
-      name.value = e.target.value;
-    };
-    const surnameChange = (e) => {
-      surname.value = e.target.value;
-    };
-    const emailChange = (e) => {
-      email.value = e.target.value;
-    };
+    const storageHandler = async () => {
+      const store = new Storage()
+      await store.create()
+      const token = await store.get('token')
+      this.$data.login = JSON.parse(token).phone
+      this.$data.email = this.profileData?.email
+      this.$data.name = this.profileData?.name
+      this.$data.snils = this.profileData?.snils
+      this.$data.serial = this.profileData?.passport?.serial
+      this.$data.number = this.profileData?.passport?.number
+      this.$data.issuedBy = this.profileData?.passport?.issuedBy
+      this.$data.issuedDate = this.profileData?.passport?.issuedDate
+    }
+    storageHandler()
 
-    onIonViewDidEnter(() => {
-      storageHandler();
-    });
+  },
+  computed: {
+    profileData() {
+      return this.$pinia.state.value?.profile?.profileResponse?.data;
+    },
+    profileError() {
+      return this.$pinia.state.value?.profile?.profileError;
+    }
+  },
+  setup() {
+    const router = useRouter();
+
     return {
-      loading,
-      profileResponse,
-      profileError,
       router,
-      editProfileHandler,
-      nameChange,
-      surnameChange,
-      emailChange,
-      surname,
-      name,
-      email,
-      login,
     };
   },
 });

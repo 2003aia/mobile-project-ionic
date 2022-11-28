@@ -59,6 +59,7 @@ export default defineComponent({
     mask: String,
     padding: Boolean,
     blue: Boolean,
+    keypressHandler: Function,
   },
 });
 </script>
@@ -136,6 +137,11 @@ export default defineComponent({
 input:not(:placeholder-shown)+ion-text {
   display: none;
 }
+
+input:not(:placeholder-shown) {
+  color: #000;
+}
+
 
 .dot {
   color: #62d0ce;

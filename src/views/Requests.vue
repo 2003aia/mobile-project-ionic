@@ -73,7 +73,7 @@ export default defineComponent({
     ...mapActions(useServicesStore, ["getListServices"]),
     infoHandler(el) {
       this.$pinia.state.value.services.requestsInfo = el
-      this.$router.push('/requestsInfo')
+      this.$router.push('/tabs/requestsInfo')
     }
   },
   mounted() {

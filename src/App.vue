@@ -1,11 +1,12 @@
 <template>
   <ion-app>
-    <ion-router-outlet />
+    
+    <ion-router-outlet id="main2" />
   </ion-app>
 </template>
 
 <script>
-import { IonApp, IonRouterOutlet, isPlatform } from "@ionic/vue";
+import { IonApp, IonRouterOutlet, isPlatform, } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
@@ -118,8 +119,13 @@ export default defineComponent({
       });
 
   },
+  methods: {
+
+  },
   setup() {
-    return {};
+    return {
+
+    };
   },
 });
 </script>

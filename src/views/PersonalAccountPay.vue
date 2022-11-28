@@ -1,32 +1,19 @@
 <template>
   <ion-page>
     <Back :btnSrc="() => router.push('/tabs/personalAccounts')" />
-    <Layout
-      v-if="paySent === false"
-      :method="paymentHandler"
-      height="false"
-      outlineBtn="."
-      filledBtn="Оплатить"
-      title="Оплатить"
-    >
+    <Layout v-if="paySent === false" :method="paymentHandler" height="false" outlineBtn="." filledBtn="Оплатить"
+      title="Оплатить">
       <template v-slot:main-content>
-        <ion-text
-          ><p class="ion-text-start">
+        <ion-text>
+          <p class="ion-text-start">
             Введите адрес электронной почты (email) или номер телефона
-          </p></ion-text
-        >
-        <Input
-          v-if="email"
-          name="Введите email"
-          :value="email"
-          :changeHandler="changeEmail"
-        />
-        <ion-text v-else><p>Электронная почта</p></ion-text>
-        <Input
-          name="Введите номер телефона"
-          :value="phone"
-          :changeHandler="changePhone"
-        />
+          </p>
+        </ion-text>
+        <Input v-if="email" name="Введите email" :value="email" :changeHandler="changeEmail" />
+        <ion-text v-else>
+          <p>Электронная почта</p>
+        </ion-text>
+        <Input name="Введите номер телефона" :value="phone" :changeHandler="changePhone" />
         <ion-text>
           На электронную почту или на мобильный телефон будет направлен кассовый
           чек
@@ -35,12 +22,13 @@
     </Layout>
     <ion-content v-else class="background">
       <div class="container">
-        <ion-text
-          ><p class="title">Выберите удобный вам способ оплаты</p></ion-text
-        >
+        <ion-text>
+          <p class="title">Выберите удобный вам способ оплаты</p>
+        </ion-text>
         <layout-box :onClick="sberPayHanler">
           <template v-slot:content>
-            <ion-img :src="require('@/assets/img/Sberpay.png')" />
+            <!-- <ion-img :src="require('@/assets/img/Sberpay.png')" /> -->
+            <ion-text class="ion-text-center title">Оплатить платежной картой</ion-text>
           </template>
         </layout-box>
 
@@ -109,13 +97,9 @@ export default defineComponent({
         this.$pinia.state.value.personalAccount.personalItemData.code,
         this.$data.phone,
         this.$data.email,
-        +this.$pinia.state.value.personalAccount.personalItemData.sberPay
-          .accruals,
-        +this.$pinia.state.value.personalAccount.personalItemData.sberPay.sumTO,
-        +this.$pinia.state.value.personalAccount.personalItemData.sberPay
-          .penalties,
         this.$pinia.state.value.personalAccount.personalItemData.sberPay
-          .advances
+          .accruals,
+        // +this.$pinia.state.value.personalAccount.personalItemData.sberPay.others,
       );
       this.$data.paySent = true;
     },
@@ -155,14 +139,17 @@ export default defineComponent({
   margin-bottom: 30px;
   margin-top: 10px;
 }
+
 ion-img {
   width: 113.6px;
   height: 40px;
   margin: auto;
 }
+
 .container {
   padding-top: 20px;
 }
+
 .title {
   padding: 20px;
 }

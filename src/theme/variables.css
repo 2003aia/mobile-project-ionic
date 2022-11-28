@@ -75,12 +75,10 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
 }
-
+/* 
 @media (prefers-color-scheme: dark) {
-  /*
-   * Dark Colors
-   * -------------------------------------------
-   */
+  // Dark Colors
+   
 
   body {
     --ion-color-primary: #428cff;
@@ -147,17 +145,15 @@ http://ionicframework.com/docs/theming/ */
     --ion-color-light-tint: #383a3e;
   }
 
-  /*
-   * iOS Dark Theme
-   * -------------------------------------------
-   */
+  // iOS Dark Theme
+   
 
   .ios body {
-    --ion-background-color: #000000;
-    --ion-background-color-rgb: 0, 0, 0;
-
-    --ion-text-color: #ffffff;
-    --ion-text-color-rgb: 255, 255, 255;
+    --ion-background-color: #ffffff;
+    --ion-background-color-rgb: rgb(255, 255, 255);
+  
+    --ion-text-color: #000000;
+    --ion-text-color-rgb: rgb(0, 0, 0);
 
     --ion-color-step-50: #0d0d0d;
     --ion-color-step-100: #1a1a1a;
@@ -190,10 +186,10 @@ http://ionicframework.com/docs/theming/ */
     --ion-toolbar-border-color: var(--ion-color-step-250);
   }
 
-  /*
-   * Material Design Dark Theme
-   * -------------------------------------------
-   */
+  
+   // Material Design Dark Theme
+   // -------------------------------------------
+  
 
   .md body {
     --ion-background-color: #fff;
@@ -232,7 +228,7 @@ http://ionicframework.com/docs/theming/ */
 
     --ion-card-background: #fff;
   }
-}
+} */
 
 @font-face {
   font-family: 'Open-sans', sans-serif;
@@ -373,7 +369,7 @@ ion-datetime {
   --title-color: #000;
   /* color: black !important; */
   box-shadow: rgba(var(--ion-item-background), 0.3) 0px 10px 15px -3px;
-}
+} 
 
 ion-datetime-button {
   --color: rgb(0, 0, 0);
@@ -421,10 +417,15 @@ ion-list {
 .ion-color-date {
   --ion-color-base: #62d0ce;
   --ion-color-base-rgb: rgb(98, 208, 206);
-  --ion-color-contrast: #343434;
-  --ion-color-contrast-rgb: rgb(81, 76, 76);
-  --ion-color-shade: #fff;
+  --ion-color-contrast: #ff0000;
+  --ion-color-contrast-rgb: rgb(255, 0, 0);
+  --ion-color-shade: rgb(23, 23, 23);
   --ion-color-tint: #62d0ce;
+
+}
+
+.force-black-font {
+  color: black !important;
 }
 
 

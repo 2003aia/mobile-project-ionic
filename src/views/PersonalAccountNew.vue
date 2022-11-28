@@ -2,24 +2,13 @@
   <ion-page>
     <Back />
     <!-- :btnSrc="'/personalAccountInfo'" -->
-    <Layout
-      
-      height="false"
-      outlineBtn="."
-      :loading="loading"
-      filledBtn="Добавить"
-      title="Лицевой счёт"
-      :method="addAccountHandler"
-    >
+    <Layout height="false" outlineBtn="." :loading="loading" filledBtn="Добавить" title="Лицевой счёт"
+      :method="addAccountHandler">
       <template v-slot:main-content>
-        <ion-text
-          ><p class="title ion-text-start">Новый лицевой счёт</p></ion-text
-        >
-        <Input
-          :value="lc"
-          @change="lcChange"
-          name="Введите номер лицевого счета"
-        />
+        <ion-text>
+          <p class="title ion-text-start">Новый лицевой счёт</p>
+        </ion-text>
+        <Input :value="lc" @change="lcChange" name="Введите номер лицевого счета" />
         <!-- <ion-text
           ><p class="title ion-text-start">
             Введите данные владельца лицевого счета
@@ -29,7 +18,7 @@
         <Input name="Введите имя" />
         <Input name="Введите отчество" /> -->
         <ion-text v-if="response">
-          <p>{{response}}</p>
+          <p>{{ response }}</p>
         </ion-text>
       </template>
     </Layout>
@@ -51,7 +40,7 @@ import {
 import Back from "../components/Back.vue";
 import { usePersonalAccountStore } from "../stores/personalAccount";
 import { storeToRefs } from "pinia";
-import {Storage} from '@ionic/storage'
+import { Storage } from '@ionic/storage'
 
 export default defineComponent({
   name: "personalAccauntNewPage",
@@ -67,20 +56,21 @@ export default defineComponent({
     const { addAccountResponse, } = storeToRefs(
       usePersonalAccountStore()
     );
-    const { addAccount } = usePersonalAccountStore();
+    const { addAccount, getAccount, } = usePersonalAccountStore();
     const lc = ref("");
     const loading = ref(false);
     const lcChange = (e) => {
       lc.value = e.target.value;
     };
     const response = ref('')
-    const addAccountHandler = async() => {
+    const addAccountHandler = async () => {
       loading.value = true;
       const store = new Storage()
       await store.create()
       const token = await store.get('token')
       addAccount(JSON.parse(token).token, lc.value).then(() => {
         loading.value = false;
+        getAccount()
         response.value = addAccountResponse.value.message
       });
     };

@@ -53,7 +53,7 @@ export const useLoginStore = defineStore({
           )
           .then(async (response) => {
             this.registrResponse2 = response.data;
- 
+
             if (response.data.error === false) {
               await axios
                 .post(
@@ -62,15 +62,15 @@ export const useLoginStore = defineStore({
                 )
               await axios
                 .post(`${apiUrl}/user/create`, {
-                  login: JSON.parse(token).phone,
-                  password: password,
+                  login: `${JSON.parse(token).phone}_app`,
+                  password: JSON.parse(token).phone,
                 })
                 .then(async (res) => {
                   if (res.data.status === false) {
                     await axios
                       .post(`${apiUrl}/user/auth`, {
-                        login: JSON.parse(token).phone,
-                        password: password,
+                        login: `${JSON.parse(token).phone}_app`,
+                        password: JSON.parse(token).phone,
                       })
                       .then(async (res2) => {
                         await store.set("support", {
@@ -82,7 +82,15 @@ export const useLoginStore = defineStore({
                       token: res.data.data.token,
                     });
                   }
-                });
+                }).catch(async (e) => {
+                  if (e?.response?.data?.status === false) {
+                    await axios
+                      .post(`${apiUrl}/user/auth`, {
+                        login: `${JSON.parse(token).phone}_app`,
+                        password: JSON.parse(token).phone,
+                      })
+                  }
+                })
             }
           });
       } catch (error) {
@@ -124,17 +132,19 @@ export const useLoginStore = defineStore({
                   `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`,
                   { token: response.data?.data?.token, fcmToken: fcmToken }
                 )
+
               await axios
                 .post(`${apiUrl}/user/auth`, {
-                  login: phone,
-                  password: password,
+                  login: `${phone}_app`,
+                  password: phone,
                 })
                 .then(async (res) => {
                   if (res.data.status === false) {
+
                     await axios
                       .post(`${apiUrl}/user/create`, {
-                        login: phone,
-                        password: password,
+                        login: `${phone}_app`,
+                        password: phone,
                       })
                       .then(async (res2) => {
                         await store.set("support", {
@@ -146,7 +156,20 @@ export const useLoginStore = defineStore({
                       token: res.data.data.token,
                     });
                   }
-                });
+                }).catch(async (e) => {
+                  if (e?.response?.data?.status === false) {
+                    await axios
+                      .post(`${apiUrl}/user/create`, {
+                        login: `${phone}_app`,
+                        password: phone,
+                      })
+                      .then(async (res2) => {
+                        await store.set("support", {
+                          token: res2.data.data.token,
+                        });
+                      });
+                  }
+                })
             }
           });
       } catch (error) {
@@ -167,11 +190,11 @@ export const useLoginStore = defineStore({
           })
           .then(async (response) => {
             // if (response.data.error === false) {
-              console.log("changepass");
-              await axios.post(`${apiUrl}/user/password/change/`, {
-                token: supportToken.token,
-                password: password
-              })
+            console.log("changepass");
+            await axios.post(`${apiUrl}/user/password/change/`, {
+              token: supportToken.token,
+              password: password
+            })
             // }
             this.changePassResponse = response.data;
           });

@@ -4,6 +4,7 @@
       () => {
         this.$pinia.state.value.appeals.newAppeal = false;
         router.push('/appeals');
+        message = ''
       }
     " />
     <Layout height="false" outlineBtn="." :method="() => (checkStatus = false)" :filledBtn="'.'"
@@ -61,7 +62,7 @@
                   <ion-chip>
                     <ion-text style="color: #7f8da8; font-size: 12px; font-weight: 400;">{{ file?.NAME || file?.name }}
                     </ion-text>
-                    <ion-icon :icon="downloadOutline" @click="downloadFile(file.SRC)"></ion-icon>
+                    <ion-icon :icon="downloadOutline" @click="downloadFile(file?.SRC)"></ion-icon>
                   </ion-chip>
                 </div>
               </div>
@@ -78,7 +79,7 @@
                   <ion-chip>
                     <ion-text style="color: #7f8da8; font-size: 12px; font-weight: 400;">{{ file?.NAME && file?.name }}
                     </ion-text>
-                    <ion-icon :icon="downloadOutline" @click="downloadFile(file.SRC)"></ion-icon>
+                    <ion-icon :icon="downloadOutline" @click="downloadFile(file?.SRC)"></ion-icon>
                   </ion-chip>
                 </div>
               </div>
@@ -98,7 +99,8 @@
       <ion-item lines="none" class="input-wrapper">
         <ion-button mode="ios" class="btn-support" fill="clear">
           <label for="file">
-            <input :value="files.value" @change="filesChange" class="input-file" multiple id="file" type="file" accept="image/jpeg, application/pdf, .zip, image/png" />
+            <input :value="files.value" @change="filesChange" class="input-file" multiple id="file" type="file"
+              accept="image/jpeg, application/pdf, .zip, image/png" />
 
             <ion-img class="input-icon-left" :src="require('@/assets/img/scrape.png')"></ion-img>
           </label>
@@ -172,7 +174,6 @@ export default defineComponent({
   data() {
     return {
       checkStatus: false,
-      newAppeal: false,
       categories: [
         {
           name: "Вопросы по подключению (технологического подключения)",
@@ -199,7 +200,7 @@ export default defineComponent({
       appealsCategoriesResponse,
       appealsInfoResponse,
       appealsItem,
-
+      newAppeal,
       createMessageResponse,
     } = storeToRefs(useAppealsStore());
     const {
@@ -207,6 +208,7 @@ export default defineComponent({
       createAppeal,
       getAppealsInfo,
       createMessage,
+
     } = useAppealsStore();
     let message = ref("");
     let files = ref([]);
@@ -244,9 +246,12 @@ export default defineComponent({
       await store.create();
       const storeValue = await store.get("support");
       const token = storeValue.token;
+      console.log('createAppealHandler')
+
       if (message.value !== "" && selected.value?.id) {
         createAppeal(token, message.value, selected.value?.id, files.value).then(() => {
           supportCreate.value = true;
+          newAppeal.value = false
           appealsInfoMessages.value = [
             {
               support_message: false,
@@ -254,7 +259,7 @@ export default defineComponent({
               date_create: moment().format("DD.MM.YYYY hh:ss"),
               files: files.value,
             },
-          ];
+          ]
         });
       }
     };
@@ -262,6 +267,7 @@ export default defineComponent({
       await store.create();
       const storeValue = await store.get("support");
       const token = storeValue.token;
+      console.log('createMessageHandler')
       if (message.value !== "") {
         createMessage(
           token,
@@ -270,18 +276,26 @@ export default defineComponent({
           appealsItem.value.id,
           files.value,
         ).then(() => {
-          appealsInfoMessages.value.push({
-            support_message: false,
-            message: message.value,
-            date_create: moment().format("DD.MM.YYYY hh:ss"),
-            files: files.value,
-          });
+          const pushMessage = new Promise((resolve) => {
+            resolve(appealsInfoMessages.value.push({
+              support_message: false,
+              message: message.value,
+              date_create: moment().format("DD.MM.YYYY hh:ss"),
+              files: files.value,
+            }))
+          })
+          pushMessage.then(() => {
+            message.value = ''
+          })
+
+
           console.log("test", createMessageResponse.value);
         });
       }
     };
     const messageChange = (e) => {
       message.value = e.currentTarget.value;
+      
     };
 
     const filesChange = (e) => {
@@ -296,7 +310,7 @@ export default defineComponent({
       }
     };
     const downloadFile = (file) => {
-      window.open(file, '_blank')
+      window.open(file, "_system")
     }
 
     onIonViewDidEnter(() => {
@@ -333,6 +347,7 @@ export default defineComponent({
   --padding-start: 0;
   --padding-end: 0;
   width: 30px;
+
 }
 
 .btn-select {
@@ -395,6 +410,7 @@ export default defineComponent({
 .input-icon-left {
   width: 30px;
   height: 30px;
+  margin-left: 0;
 }
 
 .input {
@@ -411,6 +427,9 @@ export default defineComponent({
 
 .input-wrapper {
   --padding-bottom: 0;
+  /* background: red; */
+  padding: 0;
+  margin-left: -10px;
 }
 
 .input-container {

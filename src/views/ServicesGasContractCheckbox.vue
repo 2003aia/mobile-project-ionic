@@ -143,7 +143,7 @@
                   <ButtonSelect
                     slot="header"
                     :name="
-                      el.typeHouse ? el.typeHouse : 'Виберите вид помещения'
+                      el.typeHouse ? el.typeHouse : 'Выберите вид помещения'
                     "
                   />
                   <div slot="content">
@@ -203,7 +203,7 @@
                 <ion-accordion value="first" :toggle-icon="caretDownSharp">
                   <ButtonSelect
                     slot="header"
-                    :name="el.name ? el.name : 'Виберите оборудование'"
+                    :name="el.name ? el.name : 'Выберите оборудование'"
                   />
                   <div slot="content">
                     <div v-for="el2 in el.select" :key="el2">
