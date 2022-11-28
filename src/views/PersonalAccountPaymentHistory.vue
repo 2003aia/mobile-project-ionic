@@ -16,21 +16,22 @@
                 Выберите период:
               </ion-text>
               <div style="display: flex;">
-                <ion-datetime-button  mode="ios" color="date" datetime="date"></ion-datetime-button>
+                <ion-datetime-button mode="ios" color="date" datetime="date"></ion-datetime-button>
                 <ion-text style="margin: 0 5px;">-</ion-text>
 
-                <ion-datetime-button  mode="ios" color="date" datetime="date2"></ion-datetime-button>
+                <ion-datetime-button mode="ios" color="date" datetime="date2"></ion-datetime-button>
               </div>
 
               <ion-modal mode="ios" :keep-contents-mounted="true">
-                <ion-datetime @ionChange="(e)=>onBeginDateChange(e)" color="date" presentation="date" mode="ios"
+
+                <ion-datetime @ionChange="(e) => onBeginDateChange(e)" color="date" presentation="date" mode="ios"
                   id="date">
                 </ion-datetime>
 
               </ion-modal>
               <ion-modal mode="ios" :keep-contents-mounted="true">
 
-                <ion-datetime @ionChange="(e)=>onEndDateChange(e)" color="date" presentation="date" mode="ios"
+                <ion-datetime @ionChange="(e) => onEndDateChange(e)" color="date" presentation="date" mode="ios"
                   id="date2">
                 </ion-datetime>
               </ion-modal>
@@ -47,7 +48,7 @@
           ?.data?.length === 0 && !loading">
             <ion-text>У №{{ this.$pinia.state.value?.personalAccount?.personalItemData?.code }} лицевого счета нет
               платежей</ion-text>
-            </ion-item>
+          </ion-item>
           <ion-item v-show="loading" lines="none">
             <ion-spinner name="bubbles" />
           </ion-item>

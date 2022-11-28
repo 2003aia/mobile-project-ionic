@@ -1,23 +1,16 @@
 <template>
   <ion-page>
-    <Back
-      :btnSrc="
-        () => {
-          if (open === true) open = false;
-          else {
-            router.push('/tabs/servicesRequestGas');
-          }
+    <Back :btnSrc="
+      () => {
+        if (open === true) open = false;
+        else {
+          router.push('/tabs/servicesRequestGas');
         }
-      "
-    />
-    <Layout
-      height="false"
-      :method="open === true ? countValue : storageHandler"
-      :method2="setValue"
-      :filledBtn="open === true ? 'Рассчитать ' : 'Далее'"
-      :outlineBtn="open === true ? 'Установить значение' : '.'"
-      title="Заявка на социальную газификацию"
-    >
+      }
+    " />
+    <Layout height="false" :method="open === true ? countValue : storageHandler" :method2="setValue"
+      :filledBtn="open === true ? 'Рассчитать ' : 'Далее'" :outlineBtn="open === true ? 'Установить значение' : '.'"
+      title="Заявка на социальную газификацию">
       <template v-slot:header-content>
         <ion-text>
           <p class="text-20-600">
@@ -38,43 +31,28 @@
             </p>
           </ion-text>
 
-          <Input
-            :type="'number'"
-            name="0"
-            :min="0"
-            :value="max"
-            :changeHandler="changeMax"
-          />
+          <Input name="0" :min="0" :value="max" :changeHandler="changeMax" />
           <ion-text v-show="error">
             <p class="error">{{ error }}</p>
           </ion-text>
           <ion-text>
             <p class="sub-title">Калькулятор МЧРГ</p>
           </ion-text>
-          <Input
-            name="Открыть  "
-            @click="
-              () => {
-                if (open === false) {
-                  open = true;
-                } else {
-                  open = false;
-                }
+          <Input name="Открыть  " @click="
+            () => {
+              if (open === false) {
+                open = true;
+              } else {
+                open = false;
               }
-            "
-          />
+            }
+          " />
         </div>
         <div v-if="open === true">
           <ion-text>
             <p class="sub-title">Площадь помещения (м2)</p>
           </ion-text>
-          <Input
-            :type="'number'"
-            :name="'0'"
-            :min="0"
-            :value="area"
-            :changeHandler="changeArea"
-          />
+          <Input :type="'number'" :name="'0'" :min="0" :value="area" :changeHandler="changeArea" />
           <ion-text>
             <p class="text">
               Уточнять у заявителя, площадь всех помещений суммарно
@@ -83,13 +61,7 @@
           <ion-text>
             <p class="sub-title">Высота наружная (м)</p>
           </ion-text>
-          <Input
-            :type="'number'"
-            :min="0"
-            :name="'0'"
-            :value="height"
-            :changeHandler="changeHeight"
-          />
+          <Input :type="'number'" :min="0" :name="'0'" :value="height" :changeHandler="changeHeight" />
           <ion-text>
             <p class="text">У заявителя высота здания снаружи (без кровли)</p>
           </ion-text>
@@ -98,30 +70,22 @@
           </ion-text>
           <div v-for="el in formPlate" :key="el">
             <ion-item class="check">
-              <input
-                @click="
-                  (e) => {
-                    uniqueCheck(e);
-                  }
-                "
-                :ref="el.name"
-                :value="el.name"
-                v-model="gasPlate"
-                @change="uniqueCheck"
-                class="check2"
-                type="checkbox"
-                slot="start"
-              />
+              <input @click="
+                (e) => {
+                  uniqueCheck(e);
+                }
+              " :ref="el.name" :value="el.name" v-model="gasPlate" @change="uniqueCheck" class="check2" type="checkbox"
+                slot="start" />
               {{ el.name }}
             </ion-item>
           </div>
 
-          <ion-text
-            ><p class="sub-title footer">
+          <ion-text>
+            <p class="sub-title footer">
               У вас примерный МЧРГ:
               <ion-text class="blue">{{ counted }}</ion-text>
-            </p></ion-text
-          >
+            </p>
+          </ion-text>
         </div>
       </template>
     </Layout>
@@ -154,6 +118,16 @@ export default defineComponent({
   directives: { mask },
 
   methods: {
+
+    isNumber(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+        evt.preventDefault();
+      } else {
+        return true;
+      }
+    },
     changeMax(e) {
       this.$data.max = e.target.value;
     },
@@ -281,15 +255,19 @@ export default defineComponent({
   margin-top: 0px;
   margin-bottom: 10px;
 }
+
 .dot {
   color: #62d0ce;
 }
+
 .text {
   margin-top: 2px;
 }
+
 .input-checkbox {
   margin-top: -10px;
 }
+
 .footer {
   margin-top: 20px;
 }

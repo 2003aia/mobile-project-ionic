@@ -182,7 +182,7 @@ export default defineComponent({
         },
         {
           name: "Мои обращения",
-          path: "/appeals",
+          path: "/tabs/appeals",
           icon: paperPlaneOutline,
           method: async function () {
 
@@ -190,7 +190,7 @@ export default defineComponent({
         },
         {
           name: "Мои заявки",
-          path: "/requests",
+          path: "/tabs/requests",
           icon: pencilOutline,
           method: async function () {
 
@@ -198,7 +198,7 @@ export default defineComponent({
         },
         {
           name: "Мониторинг АГЗС",
-          path: "/cameras",
+          path: "/tabs/cameras",
           icon: videocamOutline,
           method: async function () {
 
@@ -206,7 +206,7 @@ export default defineComponent({
         },
         {
           name: "Уведомления",
-          path: "/notifications",
+          path: "/tabs/notifications",
           icon: notificationsOutline,
           number: this.$pinia.state.value?.profile?.pushResponseRead?.length,
           method: async function () {
@@ -215,7 +215,7 @@ export default defineComponent({
         },
         {
           name: "Лицевые счета",
-          path: "/personalAccounts",
+          path: "/tabs/personalAccounts",
           icon: documentTextOutline,
           method: async function () {
 
@@ -223,7 +223,7 @@ export default defineComponent({
         },
         {
           name: "Контакты",
-          path: "/contacts",
+          path: "/tabs/contacts",
           icon: callOutline,
           method: async function () {
 
@@ -249,7 +249,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    
+
   },
   methods: {
     ...mapActions(useProfileStore, ["getPush"]),

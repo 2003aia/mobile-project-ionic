@@ -239,7 +239,7 @@ export const usePersonalAccountStore = defineStore({
           .then((response) => {
             /* const counterStorage = usePersonalAccountStore()
             counterStorage.getIndices(counterId) */
-            if (response.data.error) router.push('/authPage')
+            this.setIndicesResponse = response.data;
 
             if (response.data.error === false) {
               this.getIndices(counterId);
@@ -250,7 +250,7 @@ export const usePersonalAccountStore = defineStore({
         this.setIndicesError = error;
       }
     },
-    async sberPay(lc, phone, email, accruals, sumTO, penalties, advances) {
+    async sberPay(lc, phone, email, accruals,) {
       try {
         const store = new Storage();
         await store.create();
@@ -263,9 +263,7 @@ export const usePersonalAccountStore = defineStore({
             email: email,
             LC: lc,
             accruals: accruals,
-            penalties: penalties,
-            advances: advances,
-            sumTO: sumTO,
+            // others: others,
           })
           .then((response) => {
             if (response.data.error) router.push('/authPage')

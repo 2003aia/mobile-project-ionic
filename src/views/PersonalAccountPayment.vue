@@ -31,76 +31,29 @@
             </ion-item>
           </template>
         </layout-box>
-        <layout-box>
-          <template v-slot:content>
-            <ion-text>
-              <p class="title ion-text-start">
-                Газ
-              </p>
-            </ion-text>
-            <ion-item>
-              <ion-text>Задолженность:</ion-text>
-              <ion-text slot="end" class="text-end">{{ maskMoney(lcList?.debts?.accruals) }}</ion-text>
-            </ion-item>
 
-
-            <ion-text>
-              <p class="title ion-text-start">Оплата</p>
-            </ion-text>
-            <Input :value="accruals" :type="'number'" :changeHandler="changeAccruals" name="Введите сумму за сет. газ"
-              :textBlue="true" :min="0" />
-          </template>
-        </layout-box>
-        <layout-box>
-          <template v-slot:content>
-            <ion-text>
-              <p class="title ion-text-start">Техобслуживание</p>
-            </ion-text>
-            <ion-item>
-              <ion-text> Задолженность: </ion-text>
-              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.sumTO) }}
+        <div v-for="(el, index) in lcList?.debts" :key="index">
+          <layout-box>
+            <template v-slot:content>
+              <ion-text>
+                <p class="title ion-text-start">
+                  {{ el.label }}
+                </p>
               </ion-text>
-            </ion-item>
+              <ion-item>
+                <ion-text>Задолженность:</ion-text>
+                <ion-text slot="end" class="text-end">{{ maskMoney(el.sum) }}</ion-text>
+              </ion-item>
 
-            <ion-text>
-              <p class="title ion-text-start">Оплата</p>
-            </ion-text>
-            <Input :value="sumTO" :changeHandler="changeSumTO" name="Введите сумму за техобслуж." :textBlue="true"
-              :type="'number'" :min="0" />
-          </template>
-        </layout-box>
-        <layout-box>
-          <template v-slot:content>
-            <ion-text>
-              <p class="title ion-text-start">Пени</p>
-            </ion-text>
-            <ion-item>
-              <ion-text> Задолженность: </ion-text>
-              <ion-text slot="end" class="text-end">{{ maskMoney(lcList.debts?.penalties) }}
+
+              <ion-text>
+                <p class="title ion-text-start">Оплата</p>
               </ion-text>
-            </ion-item>
-
-            <ion-text>
-              <p class="title ion-text-start">Оплата</p>
-            </ion-text>
-            <Input name="Введите сумму" :value="penalties" :changeHandler="changePenalties" :textBlue="true"
-              :type="'number'" :min="0" />
-          </template>
-        </layout-box>
-        <layout-box>
-          <template v-slot:content>
-            <ion-text>
-              <p class="title ion-text-start">Аванс</p>
-            </ion-text>
-            <ion-item>
-              <ion-text> Сумма: </ion-text>
-              <ion-text slot="end" class="text-end green">{{ maskMoney(lcList.debts?.advances
-                )
-              }}</ion-text>
-            </ion-item>
-
-          </template>
-        </layout-box>
+              <Input :value="el?.value" :type="'number'" @input="(e) => el.value = e.target.value" name="Введите сумму"
+                :textBlue="true" :min="0" />
+            </template>
+          </layout-box>
+        </div>
 
 
         <ion-text v-show="error">
@@ -137,12 +90,16 @@ export default defineComponent({
       sumTO: "",
       error: "",
       advances: "",
+      others: '',
     };
   },
   computed: {
     lcList() {
       return this.$pinia.state.value?.personalAccount?.personalItemData;
     },
+  },
+  ionViewDidLeave() {
+    this.$data.error = ''
   },
   methods: {
     changeAccruals(e) {
@@ -159,30 +116,25 @@ export default defineComponent({
     },
     paymentHandler() {
       if (
-        this.$data.accruals !== "" ||
-        this.$data.penalties !== "" ||
-        this.$data.sumTO
+        this.lcList?.debts?.filter((el) => el.value).length !== 0
       ) {
+        let res = this.lcList.debts.map(({ label, value }) => {
+
+          if (value === undefined) {
+            return { label, sum: 0 }
+          } else {
+            return { label, sum: +value }
+          }
+        });
         this.$pinia.state.value.personalAccount.personalItemData = {
           ...this.$pinia.state.value?.personalAccount?.personalItemData,
           sberPay: {
-            accruals: this.$data.accruals,
-            penalties: this.$data.penalties,
-            sumTO: this.$data.sumTO,
-            advances: this.lcList.debts?.advances,
+            accruals: res,
           }
         }
         this.$router.push({
           name: "personalAccountPay",
-          /* params: {
-            ...this.lcList,
-            sberPay: JSON.stringify({
-              accruals: this.$data.accruals,
-              penalties: this.$data.penalties,
-              sumTO: this.$data.sumTO,
-              advances: this.$data.advances,
-            }),
-          }, */
+          
         });
       } else {
         this.$data.error = "Заполните поля";

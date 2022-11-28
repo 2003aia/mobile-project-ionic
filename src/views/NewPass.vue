@@ -1,17 +1,10 @@
 <template>
   <ion-page>
     <Back />
-    <Layout
-      :method="authUserHandler"
-      filledBtn="Сохранить новый пароль"
-      height="false"
-      outlineBtn="."
-    >
+    <Layout :method="authUserHandler" filledBtn="Сохранить новый пароль" height="false" outlineBtn="."
+      :loading="loading">
       <template v-slot:header-content>
-        <ion-text
-          v-if="route.params.recovery === 'true'"
-          class="main-title ion-text-wrap ion-text-start"
-        >
+        <ion-text v-if="route.params.recovery === 'true'" class="main-title ion-text-wrap ion-text-start">
           Восстановление пароля
         </ion-text>
         <ion-text v-else class="main-title ion-text-wrap ion-text-start">
@@ -37,30 +30,20 @@
           <ion-label class="ion-text-wrap">
             <ion-text class="sub-title">{{ phone }}</ion-text>
             <br />
-            Номер телефона</ion-label
-          ></ion-item
-        >
+            Номер телефона
+          </ion-label>
+        </ion-item>
         <div class="input-container" v-if="route.params?.edit === 'true'">
           <ion-text class="sub-title sub-margin">Введите код</ion-text>
           <Input :code="code" @change="codeChange" name="Введите код" />
         </div>
         <div class="input-container">
           <ion-text class="sub-title sub-margin">Новый пароль</ion-text>
-          <Input
-            :value="password"
-            :changeHandler="passwordChange"
-            name="Новый пароль"
-          />
+          <Input :value="password" :changeHandler="passwordChange" name="Новый пароль" />
         </div>
         <div class="input-container">
-          <ion-text class="sub-title sub-margin"
-            >Повторите новый пароль</ion-text
-          >
-          <Input
-            name="Повторите новый пароль"
-            :value="confirmPassword"
-            @change="confirmPasswordChange"
-          />
+          <ion-text class="sub-title sub-margin">Повторите новый пароль</ion-text>
+          <Input name="Повторите новый пароль" :value="confirmPassword" @change="confirmPasswordChange" />
         </div>
         <ion-text v-if="error">
           <p class="ion-text-start error">
@@ -118,6 +101,7 @@ export default defineComponent({
     const confirmPassword = ref("");
     const code = ref("");
     const error = ref("");
+    const loading = ref(false)
     const { changePassResponse, changePassError } = storeToRefs(
       useLoginStore()
     );
@@ -142,13 +126,10 @@ export default defineComponent({
       } else {
         const token = await store.get("token");
         if (password.value === confirmPassword.value) {
+          loading.value = true
           changePass(JSON.parse(token).token, password.value)
             .then(() => {
-              console.log(
-                JSON.parse(token).token,
-                changePassResponse.value,
-                "test"
-              );
+              loading.value = false
               if (changePassResponse.value?.status === true) {
                 router.push("/tabs");
               } else {
@@ -156,11 +137,12 @@ export default defineComponent({
               }
             })
             .catch((e) => {
+              loading.value = false
               console.log(e, "error2");
             });
         } else {
-        error.value = "Пароли не совпадают";
-          
+          error.value = "Пароли не совпадают";
+
         }
       }
     };
@@ -180,7 +162,6 @@ export default defineComponent({
     onIonViewDidEnter(() => {
       storageHandler();
     });
-    console.log(route.params, "params");
     return {
       router,
       route,
@@ -194,16 +175,17 @@ export default defineComponent({
       oldPassword,
       phone,
       error,
+      loading,
     };
   },
 });
 </script>
 
 <style scoped>
-
 .sub-margin {
   margin-bottom: 15px;
 }
+
 .input-container {
   display: flex;
   flex-direction: column;

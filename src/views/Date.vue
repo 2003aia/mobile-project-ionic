@@ -7,7 +7,7 @@
         <ion-datetime v-if="time === true" color="date" mode="ios" presentation="time" @ionChange="onDateChange">
         </ion-datetime>
 
-        <ion-datetime v-if="time === false" color="date" :is-date-enabled="isDateEnabled" first-day-of-week="1"
+        <ion-datetime v-if="time === false"  color="date" :is-date-enabled="isDateEnabled" first-day-of-week="1"
           presentation="date" @ionChange="onDateChange" mode="ios" :min="today" :max="maxDay"></ion-datetime>
 
       </template>

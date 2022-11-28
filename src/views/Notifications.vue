@@ -3,7 +3,10 @@
     <Back />
     <Layout btnSrc="/registrPage" height="false" outlineBtn="." filledBtn="." title="Уведомления">
       <template v-slot:main-content>
-        <div v-for="el in pushList" :key="el">
+        <ion-item v-show="loading">
+          <ion-spinner name="bubbles"></ion-spinner>
+        </ion-item>
+        <div v-show="!loading" v-for="el in pushList" :key="el">
           <ion-item @click="openLink(el.link)">
             <div>
               <ion-text>
@@ -30,7 +33,7 @@
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { IonPage, IonText, IonItem, } from "@ionic/vue";
+import { IonPage, IonText, IonItem, IonSpinner, } from "@ionic/vue";
 import Back from "../components/Back.vue";
 import { mapActions } from "pinia";
 import { useProfileStore } from '../stores/profile'
@@ -46,6 +49,7 @@ export default defineComponent({
     Back,
     IonItem,
     IonText,
+    IonSpinner,
   },
   methods: {
     ...mapActions(useProfileStore, ["getPush"]),
@@ -59,15 +63,17 @@ export default defineComponent({
     }
   },
   mounted() {
+    this.$data.loading = true
     this.getPush().then(async () => {
+      this.$data.loading = false
       const store = new Storage()
       await store.create()
-      await store.set('notifications', JSON.stringify(this.pushList))
+      // await store.set('notifications', JSON.stringify(this.pushList))
     })
   },
   data() {
     return {
-
+      loading: false,
     };
   },
   setup() {

@@ -118,26 +118,7 @@ export default defineComponent({
   data() {
     return {
       checkStatus: false,
-      data2: [
-        {
-          title: "№3432",
-          date: "14.04.3434",
-          time: "12.23.43",
-          notifications: "23",
-        },
-        {
-          title: "№3432",
-          date: "14.04.3434",
-          time: "12.23.43",
-          notifications: "23",
-        },
-        {
-          title: "№3432",
-          date: "14.04.3434",
-          time: "12.23.43",
-          notifications: "23",
-        },
-      ],
+
     };
   },
   setup() {
@@ -149,6 +130,7 @@ export default defineComponent({
     const fetchAppealsHandler = async () => {
       await store.create();
       loading.value = true;
+      console.log('testappeals')
       await getAppealsList().then(async () => {
         await store.create();
         loading.value = false;

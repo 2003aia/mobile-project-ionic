@@ -31,7 +31,7 @@
             </ion-item>
           </template>
         </layout-box>
-        <div v-show="!loadingGetIndices && lcList.counters?.length !== 0" v-for="(el) in indicesList" :key="el">
+        <div v-show="!loadingGetIndices && lcList.counters?.length !== 0" v-for="(el) in indicationList" :key="el">
           <layout-box>
             <template v-slot:content>
               <ion-text>
@@ -75,6 +75,7 @@
                       el.response = ''
                       el.error = 'Текущие показания меньше предыдущих'
                     }
+                    
                   } else {
                     el.response = ''
                     el.error = 'За этот день уже имеется начисление по счетчику'
@@ -88,22 +89,22 @@
                     Выберите период:
                   </ion-text>
                   <div style="display: flex;">
-                    <ion-datetime-button mode="ios" color="date" datetime="date"></ion-datetime-button>
+                    <ion-datetime-button mode="ios" color="date" :datetime="el?.id"></ion-datetime-button>
                     <ion-text style="margin: 0 5px;">-</ion-text>
 
-                    <ion-datetime-button mode="ios" color="date" datetime="date2"></ion-datetime-button>
+                    <ion-datetime-button mode="ios" color="date" :datetime="`${el?.id}_2`"></ion-datetime-button>
                   </div>
 
                   <ion-modal mode="ios" :keep-contents-mounted="true">
                     <ion-datetime @ionChange="(e) => onBeginDateChange(e, el?.id)" color="date" presentation="date"
-                      mode="ios" id="date">
+                      mode="ios" :id="el?.id">
                     </ion-datetime>
 
                   </ion-modal>
                   <ion-modal mode="ios" :keep-contents-mounted="true">
 
                     <ion-datetime @ionChange="(e) => onEndDateChange(e, el?.id)" color="date" presentation="date"
-                      mode="ios" id="date2">
+                      mode="ios" :id="`${el?.id}_2`">
                     </ion-datetime>
                   </ion-modal>
                 </ion-row>
@@ -243,7 +244,7 @@ export default defineComponent({
       beginDate: '',
       endDate: '',
       indicationList: [],
-      value: ''
+      value: '',
     };
   },
   methods: {
@@ -282,13 +283,21 @@ export default defineComponent({
 
       this.getIndices(id, moment(event.detail.value).format('yyyyMMDD'), this.$data.endDate ? this.$data.endDate : moment().format('yyyyMMDD')).then(() => {
         // this.$data.loadingGetIndices = false
-
+        let data = this.$data.indicationList.filter((el) => {
+          return el.id === id
+        })
+        Object.assign(data[0], this.indicesList[0])
       })
       this.$data.beginDate = moment(event.detail.value).format('yyyyMMDD')
     },
     onEndDateChange(event, id) {
 
-      this.getIndices(id, this.$data.beginDate ? this.$data.beginDate : moment().format('yyyyMMDD'), moment(event.detail.value).format('yyyyMMDD'))
+      this.getIndices(id, this.$data.beginDate ? this.$data.beginDate : moment().format('yyyyMMDD'), moment(event.detail.value).format('yyyyMMDD')).then(() => {
+        let data = this.$data.indicationList.filter((el) => {
+          return el.id === id
+        })
+        Object.assign(data[0], this.indicesList[0])
+      })
 
       this.$data.endDate = moment(event.detail.value).format('yyyyMMDD')
     },
@@ -322,9 +331,7 @@ export default defineComponent({
             if (this.indicesList[0]?.id) resolve(this.$data.indicationList.push({ ...this.indicesList[0] }))
 
           })
-          setIndicationList.then(() => {
-
-          })
+          setIndicationList
 
           this.$data.loadingGetIndices = false
         })

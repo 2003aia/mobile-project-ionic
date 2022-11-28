@@ -5,12 +5,12 @@
       <template v-slot:main-content>
         <div v-show="lcList?.length === 0 && !loading">
 
-          <ion-item router-link="/personalAccountNew">
+          <ion-item router-link="/tabs/personalAccountNew">
             <ion-Icon class="icon-start" size="large" slot="start" :icon="pencilOutline"></ion-Icon>
             <ion-text class="sub-title">Добавить лицевой счет</ion-text>
             <ion-icon class="icon-end" size="large" slot="end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
-          <ion-item router-link="/personalAccountInfoSearch">
+          <ion-item router-link="/tabs/personalAccountInfoSearch">
             <ion-Icon class="icon-start" size="large" slot="start" :icon="documentTextOutline"></ion-Icon>
             <ion-text class="sub-title">Узнать лицевой счет</ion-text>
             <ion-icon size="large" class="icon-end" slot="end" :icon="chevronForwardOutline"></ion-icon>
@@ -79,17 +79,11 @@
             <ion-item>
               <ion-text>{{ lcList[0]?.address }}</ion-text>
             </ion-item>
-            <ion-item v-show="parseFloat(lcList[0]?.debts?.accruals?.toFixed(2)) +
-            parseFloat(lcList[0]?.debts?.penalties?.toFixed(2)) +
-            parseFloat(lcList[0]?.debts?.sumTO?.toFixed(2)) !== 0">
+            <ion-item v-show="sumValues(lcList[0]?.debts) !== 0">
               <ion-text> Задолженность: </ion-text>
               <ion-text slot="end" class="text-blue">
                 {{
-                    maskMoney(
-                      parseFloat(lcList[0]?.debts?.accruals?.toFixed(2)) +
-                      parseFloat(lcList[0]?.debts?.penalties?.toFixed(2)) +
-                      parseFloat(lcList[0]?.debts?.sumTO?.toFixed(2))
-                    )
+                    maskMoney(sumValues(lcList[0]?.debts))
                 }}
 
               </ion-text>
@@ -102,24 +96,23 @@
                   maskMoney(lcList[0]?.debts?.penalties)
               }}</ion-text>
             </ion-item> -->
-            <ion-item v-show="lcList[0]?.debts?.advances !== 0" lines="none">
+            <ion-item v-show="lcList[0]?.debts?.find((el) => el?.label.includes('Аванс'))?.sum !== 0" lines="none">
               <ion-text> Аванс: </ion-text>
               <ion-text class="text-blue" slot="end">{{
-                  maskMoney(lcList[0]?.debts?.advances)
-              }}</ion-text>
+                  maskMoney(lcList[0]?.debts?.find((el) => el?.label.includes('Аванс'))?.sum)
+              }}
+              </ion-text>
             </ion-item>
           </div>
-          <Button v-show="lcList[0]?.debts?.advances !== 0 || parseFloat(lcList[0]?.debts?.accruals?.toFixed(2)) +
-          parseFloat(lcList[0]?.debts?.penalties?.toFixed(2)) +
-          parseFloat(lcList[0]?.debts?.sumTO?.toFixed(2)) !== 0" class="btn" name="Оплата" @click="
-    () => {
-      personalItemDataHandler(lcList[0]);
-  
-      router.push({
-        name: 'personalAccountPayment',
-      });
-    }
-  " />
+          <Button class="btn" name="Оплата" @click="
+            () => {
+              personalItemDataHandler(lcList[0]);
+          
+              router.push({
+                name: 'personalAccountPayment',
+              });
+            }
+          " />
 
           <Button v-show="lcList[0]?.counters?.length !== 0" class="btn" :outline="true" name="Внести показания" @click="
             () => {
@@ -207,21 +200,13 @@
                   <ion-item>
                     <ion-text>{{ el.address }}</ion-text>
                   </ion-item>
-                  <ion-item v-show="parseFloat(el?.debts?.accruals?.toFixed(2)) +
-                  parseFloat(el?.debts?.penalties?.toFixed(2)) +
-                  parseFloat(el?.debts?.sumTO?.toFixed(2)) !== 0">
+                  <ion-item v-show="sumValues(el?.debts) !== 0">
                     <ion-text> Задолженность: </ion-text>
+
                     <ion-text slot="end" class="text-blue">
-
                       {{
-                          maskMoney(
-                            parseFloat(el?.debts?.accruals?.toFixed(2)) +
-                            parseFloat(el?.debts?.penalties?.toFixed(2)) +
-                            parseFloat(el?.debts?.sumTO?.toFixed(2))
-                          )
+                          maskMoney(sumValues(el?.debts))
                       }}
-
-
                     </ion-text>
 
                   </ion-item>
@@ -231,10 +216,10 @@
                         maskMoney(el.debts?.penalties)
                     }}</ion-text>
                   </ion-item> -->
-                  <ion-item v-show="el.debts?.advances !== 0" lines="none">
+                  <ion-item v-show="el?.debts?.find((el) => el?.label.includes('Аванс'))?.sum !== 0" lines="none">
                     <ion-text> Аванс: </ion-text>
                     <ion-text class="text-blue" slot="end">{{
-                        maskMoney(el.debts?.advances)
+                        maskMoney(el?.debts?.find((el) => el?.label.includes('Аванс'))?.sum)
                     }}</ion-text>
                   </ion-item>
                 </div>
@@ -274,12 +259,12 @@
         <div class="footer" v-show="lcList?.length !== 0 && !loading">
           <LayoutBox>
             <template v-slot:content>
-              <ion-item router-link="/personalAccountNew">
+              <ion-item router-link="/tabs/personalAccountNew">
                 <ion-Icon class="icon-start" size="large" slot="start" :icon="pencilOutline"></ion-Icon>
                 <ion-text class="sub-title">Добавить лицевой счет</ion-text>
                 <ion-icon class="icon-end" size="large" slot="end" :icon="chevronForwardOutline"></ion-icon>
               </ion-item>
-              <ion-item router-link="/personalAccountInfoSearch">
+              <ion-item router-link="/tabs/personalAccountInfoSearch">
                 <ion-Icon class="icon-start" size="large" slot="start" :icon="documentTextOutline"></ion-Icon>
                 <ion-text class="sub-title">Узнать лицевой счет</ion-text>
                 <ion-icon size="large" class="icon-end" slot="end" :icon="chevronForwardOutline"></ion-icon>
@@ -355,6 +340,22 @@ export default defineComponent({
         this.$pinia.state.value?.personalAccount?.personalItemData,
         data
       );
+    },
+    sumValues(data) {
+      let v = 0
+      Number.prototype.toFixedNoRounding = function (n) {
+        const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
+        const a = this.toString().match(reg)[0];
+        const dot = a.indexOf(".");
+        if (dot === -1) { // integer, insert decimal dot and pad up zeros
+          return a + "." + "0".repeat(n);
+        }
+        const b = n - (a.length - dot) + 1;
+        return b > 0 ? (a + "0".repeat(b)) : a;
+      }
+      let data2 = data?.filter((el) => !el.label.includes('Аванс'))
+      data2?.map((el) => v += parseFloat(el.sum.toFixedNoRounding(2)))
+      return v
     },
     maskMoney(value) {
       const valueAsNumber = value?.toString().replace('.', '')
