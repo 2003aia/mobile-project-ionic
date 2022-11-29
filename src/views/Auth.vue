@@ -99,7 +99,7 @@ export default defineComponent({
     let password = ref("");
     let errorText = ref("");
     let loading = ref(false);
-    let fcmToken = ref('')
+    let fcmToken = []
     const authUserHandler = async () => {
       let myModel = phone.value.replace(/\D+/g, "");
       if (password.value === "" || phone.value === "") {
@@ -107,12 +107,23 @@ export default defineComponent({
 
       } else {
         loading.value = true;
-        if (isPlatform('android') && isPlatform('ios')) {
+        if (isPlatform('android') || isPlatform('ios')) {
+          console.log('test11')
+
           await PushNotifications.addListener('registration', token => {
-            fcmToken.value = token.value
+            fcmToken.push(token.value)
+            console.log(token.value, 'test')
           });
-        }
-        authUser(myModel, password.value, fcmToken.value)
+        } 
+        /* if (isPlatform('android')) {
+          console.log('test22')
+          await PushNotifications.addListener('registration', token => {
+            fcmToken.push(token.value)
+            console.log(token.value, 'test2')
+          });
+        } */
+        console.log(isPlatform('android'), 'testisplatform', fcmToken)
+        authUser(myModel, password.value, fcmToken)
           .then(async () => {
             loading.value = false;
             if (authResponse?.value?.error === false) {

@@ -75,7 +75,7 @@
                       el.response = ''
                       el.error = 'Текущие показания меньше предыдущих'
                     }
-                    
+              
                   } else {
                     el.response = ''
                     el.error = 'За этот день уже имеется начисление по счетчику'
@@ -96,15 +96,15 @@
                   </div>
 
                   <ion-modal mode="ios" :keep-contents-mounted="true">
-                    <ion-datetime @ionChange="(e) => onBeginDateChange(e, el?.id)" color="date" presentation="date"
-                      mode="ios" :id="el?.id">
+                    <ion-datetime :show-default-buttons="true" @ionChange="(e) => onBeginDateChange(e, el?.id)"
+                      color="date" presentation="date" mode="ios" :id="el?.id">
                     </ion-datetime>
 
                   </ion-modal>
                   <ion-modal mode="ios" :keep-contents-mounted="true">
 
-                    <ion-datetime @ionChange="(e) => onEndDateChange(e, el?.id)" color="date" presentation="date"
-                      mode="ios" :id="`${el?.id}_2`">
+                    <ion-datetime :show-default-buttons="true" @ionChange="(e) => onEndDateChange(e, el?.id)"
+                      color="date" presentation="date" mode="ios" :id="`${el?.id}_2`">
                     </ion-datetime>
                   </ion-modal>
                 </ion-row>
@@ -286,8 +286,13 @@ export default defineComponent({
         let data = this.$data.indicationList.filter((el) => {
           return el.id === id
         })
-        Object.assign(data[0], this.indicesList[0])
+        if (this.indicesList[0]) {
+          Object.assign(data[0]?.indications, this.indicesList[0]?.indications)
+        } else {
+          data[0].indications = []
+        }
       })
+
       this.$data.beginDate = moment(event.detail.value).format('yyyyMMDD')
     },
     onEndDateChange(event, id) {
@@ -296,7 +301,11 @@ export default defineComponent({
         let data = this.$data.indicationList.filter((el) => {
           return el.id === id
         })
-        Object.assign(data[0], this.indicesList[0])
+        if (this.indicesList[0]) {
+          Object.assign(data[0]?.indications, this.indicesList[0]?.indications)
+        } else {
+          data[0].indications = []
+        }
       })
 
       this.$data.endDate = moment(event.detail.value).format('yyyyMMDD')

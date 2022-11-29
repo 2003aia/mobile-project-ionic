@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back />
+    <Back :menu="true"/>
     <ion-content :fullscreen="true" class="background">
       <div class="pattern"></div>
       <!-- <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img> -->

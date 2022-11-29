@@ -32,7 +32,7 @@
           </template>
         </layout-box>
 
-        <layout-box>
+        <!-- <layout-box>
           <template v-slot:content>
             <ion-img :src="require('@/assets/img/Yandexpay.png')" />
           </template>
@@ -42,7 +42,7 @@
           <template v-slot:content>
             <ion-img :src="require('@/assets/img/Yoomoney.png')" />
           </template>
-        </layout-box>
+        </layout-box> -->
       </div>
     </ion-content>
   </ion-page>
@@ -54,7 +54,7 @@ import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Input from "../components/Input.vue";
-import { IonPage, IonText, IonImg, IonContent } from "@ionic/vue";
+import { IonPage, IonText, IonContent } from "@ionic/vue";
 import {
   pencilOutline,
   documentTextOutline,
@@ -75,7 +75,6 @@ export default defineComponent({
     Input,
     LayoutBox,
     IonContent,
-    IonImg,
   },
   data() {
     return {

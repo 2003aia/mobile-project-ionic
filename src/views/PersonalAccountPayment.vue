@@ -37,25 +37,41 @@
             <template v-slot:content>
               <ion-text>
                 <p class="title ion-text-start">
-                  {{ el.label }}
+                  {{ el?.label }}
                 </p>
               </ion-text>
               <ion-item>
                 <ion-text>Задолженность:</ion-text>
-                <ion-text slot="end" class="text-end">{{ maskMoney(el.sum) }}</ion-text>
+                <ion-text slot="end" class="text-end">{{ maskMoney(el?.sum) }}</ion-text>
               </ion-item>
 
 
-              <ion-text>
-                <p class="title ion-text-start">Оплата</p>
-              </ion-text>
-              <Input :value="el?.value" :type="'number'" @input="(e) => el.value = e.target.value" name="Введите сумму"
-                :textBlue="true" :min="0" />
+
             </template>
           </layout-box>
         </div>
+        <layout-box>
+          <template v-slot:content>
 
 
+
+
+            <ion-text>
+              <p class="title ion-text-start">Оплата</p>
+
+            </ion-text>
+            <ion-item lines="none">
+              <ion-text>Итог:</ion-text>
+              <ion-text class="text-end" slot="end">{{
+                  maskMoney(sumValues(lcList?.debts))
+              }}</ion-text>
+            </ion-item>
+            <Input @updated="(item) => (sum = item)" :value="sum" :type="'number'" @input="(e) => sum = e.target.value" name="Введите сумму"
+              :textBlue="true" :min="0" />
+
+
+          </template>
+        </layout-box>
         <ion-text v-show="error">
           <p class="ion-text-start error">{{ error }}</p>
         </ion-text>
@@ -91,12 +107,16 @@ export default defineComponent({
       error: "",
       advances: "",
       others: '',
+      sum: ''
     };
   },
   computed: {
     lcList() {
       return this.$pinia.state.value?.personalAccount?.personalItemData;
     },
+  },
+  ionViewDidEnter() {
+    this.$data.sum = this.sumValues(this.lcList?.debts).toFixed(2)
   },
   ionViewDidLeave() {
     this.$data.error = ''
@@ -116,25 +136,25 @@ export default defineComponent({
     },
     paymentHandler() {
       if (
-        this.lcList?.debts?.filter((el) => el.value).length !== 0
+        this.$data.sum.length !== 0
       ) {
-        let res = this.lcList.debts.map(({ label, value }) => {
+        /* let res = this.lcList?.debts.map(({ label, value }) => {
 
           if (value === undefined) {
             return { label, sum: 0 }
           } else {
             return { label, sum: +value }
           }
-        });
+        }); */
         this.$pinia.state.value.personalAccount.personalItemData = {
           ...this.$pinia.state.value?.personalAccount?.personalItemData,
           sberPay: {
-            accruals: res,
+            accruals: this.$data.sum,
           }
         }
         this.$router.push({
           name: "personalAccountPay",
-          
+
         });
       } else {
         this.$data.error = "Заполните поля";
@@ -143,12 +163,19 @@ export default defineComponent({
     maskMoney(value) {
       const valueAsNumber = value?.toString().replace('.', '')
       const valueAsNumber2 = parseFloat(value?.toFixed(2).toString().replace('.', ''))
+
       if (value?.toString().split('.')[1]?.length < 2) {
         return new Intl.NumberFormat("ru-RU", {
           style: "currency",
           currency: "RUB",
         }).format(valueAsNumber2 / 100);
       } else {
+        if (value?.toString().split('.')[1]?.length > 2) {
+          return new Intl.NumberFormat("ru-RU", {
+            style: "currency",
+            currency: "RUB",
+          }).format(valueAsNumber2 / 100);
+        }
         if (value?.toString().includes('.')) {
           return new Intl.NumberFormat("ru-RU", {
             style: "currency",
@@ -162,6 +189,22 @@ export default defineComponent({
           }).format(valueAsNumber);
         }
       }
+    },
+    sumValues(data) {
+      let v = 0
+      Number.prototype.toFixedNoRounding = function (n) {
+        const reg = new RegExp("^-?\\d+(?:\\.\\d{0," + n + "})?", "g")
+        const a = this.toString().match(reg)[0];
+        const dot = a.indexOf(".");
+        if (dot === -1) { // integer, insert decimal dot and pad up zeros
+          return a + "." + "0".repeat(n);
+        }
+        const b = n - (a.length - dot) + 1;
+        return b > 0 ? (a + "0".repeat(b)) : a;
+      }
+      let data2 = data?.filter((el) => !el?.label.includes('Аванс'))
+      data2?.map((el) => v += parseFloat(el?.sum.toFixedNoRounding(2)))
+      return v
     },
   },
   names: "personalAccauntPayment",

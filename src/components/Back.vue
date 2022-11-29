@@ -14,7 +14,9 @@
         " v-show="!noBack" fill="clear">
           <ion-icon class="arrow" :icon="arrowBackOutline" />
         </ion-button>
-
+        <ion-button style="opacity: 0" v-show="noBack" fill="clear">
+          <ion-icon class="arrow" :icon="arrowBackOutline" />
+        </ion-button>
         <ion-title v-show="title">
           <p :class="{ textURL: true, 'textURL-margin': true, 'ion-text-start': !title, 'ion-text-center': title }">{{
               title && title
@@ -22,7 +24,11 @@
         </ion-title>
         <ion-img v-show="!title" :src="require('../assets/img/logoSTNG.png')" />
         <!-- <ion-icon v-show="!noBack" class="arrow" :icon="arrowBackOutline" style="opacity: 0;" /> -->
-        <ion-button @click="closeMenu" fill="clear">
+        <ion-button v-show="!menu" @click="closeMenu" fill="clear">
+          <ion-icon class="menu" :icon="menuOutline"></ion-icon>
+
+        </ion-button>
+        <ion-button style="opacity: 0" v-show="menu" @click="closeMenu" fill="clear">
           <ion-icon class="menu" :icon="menuOutline"></ion-icon>
 
         </ion-button>
@@ -51,6 +57,7 @@ export default defineComponent({
     title: String,
     logo: Boolean,
     noBack: Boolean,
+    menu: Boolean,
   },
   components: {
     IonToolbar,

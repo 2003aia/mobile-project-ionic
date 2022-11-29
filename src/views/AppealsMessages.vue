@@ -3,8 +3,10 @@
     <Back @click="() => (checkStatus = false)" :btnSrc="
       () => {
         this.$pinia.state.value.appeals.newAppeal = false;
-        router.push('/appeals');
+        router.push('/tabs/appeals');
         message = ''
+        files = []
+        appealsInfoMessages = []
       }
     " />
     <Layout height="false" outlineBtn="." :method="() => (checkStatus = false)" :filledBtn="'.'"
@@ -24,6 +26,7 @@
         <ion-text>
           <p v-show="!this.$pinia.state.value.appeals.newAppeal && category">
             {{ category }}
+
           </p>
         </ion-text>
         <ion-accordion-group ref="accordionSupport" v-show="this.$pinia.state.value.appeals.newAppeal">
@@ -83,18 +86,19 @@
                   </ion-chip>
                 </div>
               </div>
+
               <div class="message-footer">
                 <ion-text class="message-text">{{ el.date_create }}</ion-text>
               </div>
             </div>
           </div>
         </div>
+       
         <ion-item lines="none" v-show="loading">
           <ion-spinner name="bubbles" />
         </ion-item>
       </template>
     </Layout>
-
     <div class="input-container">
       <ion-item lines="none" class="input-wrapper">
         <ion-button mode="ios" class="btn-support" fill="clear">
@@ -144,6 +148,7 @@ import {
   IonChip,
   IonIcon,
   onIonViewDidEnter,
+  onIonViewDidLeave,
   IonSpinner,
   IonButton,
   IonInput,
@@ -201,7 +206,6 @@ export default defineComponent({
       appealsInfoResponse,
       appealsItem,
       newAppeal,
-      createMessageResponse,
     } = storeToRefs(useAppealsStore());
     const {
       getAppealsCategoreis,
@@ -246,7 +250,6 @@ export default defineComponent({
       await store.create();
       const storeValue = await store.get("support");
       const token = storeValue.token;
-      console.log('createAppealHandler')
 
       if (message.value !== "" && selected.value?.id) {
         createAppeal(token, message.value, selected.value?.id, files.value).then(() => {
@@ -267,7 +270,6 @@ export default defineComponent({
       await store.create();
       const storeValue = await store.get("support");
       const token = storeValue.token;
-      console.log('createMessageHandler')
       if (message.value !== "") {
         createMessage(
           token,
@@ -289,7 +291,6 @@ export default defineComponent({
           })
 
 
-          console.log("test", createMessageResponse.value);
         });
       }
     };
@@ -317,6 +318,12 @@ export default defineComponent({
       getAppealsCategoriesHandler();
       getAppealsInfoHandler();
     });
+
+    onIonViewDidLeave(()=>{
+      appealsInfoMessages.value = []
+      message.value = ''
+      files.value = []
+    })
     return {
       supportCreate,
       router,

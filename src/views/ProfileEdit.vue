@@ -1,9 +1,9 @@
 <template>
   <ion-page>
-    <Back :btnSrc="() => router.push('profile')" />
+    <Back :btnSrc="() => router.push('/tabs/profile')" />
     <Layout height="false" :method="editProfileHandler" :method2="
       () => {
-        router.push('/newPassPage');
+        router.push('/tabs/newPassPage');
       }
     " :loading="loading" :filledBtn="'Сохранить'" title="Личный кабинет" :outlineBtn="'Изменить пароль'">
       <template v-slot:main-content>

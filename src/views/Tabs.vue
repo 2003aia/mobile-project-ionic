@@ -20,6 +20,7 @@
               () => {
                 router.push(el.path);
                 el?.method()
+                closeMenu()
               }
             " lines="none">
               <ion-icon slot="start" :icon="el.icon"></ion-icon>

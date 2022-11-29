@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back :btnSrc="() => router.push('/authPage')" />
+    <Back :btnSrc="() => router.push('/authPage')" :menu="true"/>
     <ion-content :fullscreen="true" class="background">
       <div class="pattern"></div>
 
@@ -191,7 +191,7 @@ export default defineComponent({
 
       if (password.value === passwordConfirm.value) {
         loading2.value = true;
-        if (isPlatform('android') && isPlatform('ios')) {
+        if (isPlatform('android') || isPlatform('ios')) {
           await PushNotifications.addListener('registration', token => {
             fcmToken.value = token.value
           });

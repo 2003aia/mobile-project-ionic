@@ -95,6 +95,7 @@ import {
   IonSpinner,
   IonIcon,
   IonImg,
+  menuController,
   onIonViewDidEnter,
 } from "@ionic/vue";
 import { useAppealsStore } from "../stores/appeals";
@@ -138,6 +139,8 @@ export default defineComponent({
     };
     onIonViewDidEnter(() => {
       fetchAppealsHandler();
+      menuController.close("menu");
+
     });
 
     return {

@@ -1,6 +1,6 @@
 <template>
   <ion-app>
-    
+
     <ion-router-outlet id="main2" />
   </ion-app>
 </template>
@@ -12,6 +12,7 @@ import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
 import { FCM } from "@capacitor-community/fcm"
 import { StatusBar } from '@capacitor/status-bar';
+import axios from 'axios'
 
 export default defineComponent({
   name: "App",
@@ -25,12 +26,27 @@ export default defineComponent({
   },
   mounted() {
     const addListeners = async () => {
+      const store = new Storage()
+      await store.create()
       FCM.subscribeTo({ topic: "all" })
         .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
         .catch((err) => console.log(err));
 
-      await PushNotifications.addListener('registration', token => {
+      await PushNotifications.addListener('registration', (token) => {
         console.log('Registration token: ', token.value);
+        let tokenStorage = ''
+        const getToken = async () => {
+          tokenStorage = await store.get('token')
+        }
+        getToken()
+        if (JSON.parse(tokenStorage)?.token) {
+
+          axios.post('https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile', {
+            token: JSON.parse(token)?.token,
+            fcmToken: token.value
+          })
+        }
+
       });
 
       await PushNotifications.addListener('registrationError', err => {
@@ -67,7 +83,7 @@ export default defineComponent({
     const setStatusBarStyle = async () => {
       await StatusBar.setBackgroundColor({ color: '#1F3766' });
     };
-    if (isPlatform('ios') && isPlatform('android')) {
+    if (isPlatform('ios') || isPlatform('android')) {
       addListeners()
       registerNotifications()
       getDeliveredNotifications()

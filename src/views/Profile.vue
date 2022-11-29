@@ -3,11 +3,11 @@
     <Back :title="'Личный кабинет'" :btnSrc="() => router.push('/tabs/personalAccounts')" />
     <Layout height="false" :method="
       () => {
-        router.push('/profileEdit');
+        router.push('/tabs/profileEdit');
       }
     " :method2="
   () => {
-    router.push('/newPassPage');
+    router.push('/tabs/newPassPage');
   }
 " :filledBtn="'Редактировать'" title="Личный кабинет" :outlineBtn="'Изменить пароль'">
       <template v-slot:main-content>

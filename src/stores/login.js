@@ -180,7 +180,7 @@ export const useLoginStore = defineStore({
       const store = new Storage();
       await store.create();
       const profileData = await store.get("token");
-      const supportToken = await store.get('support')
+      // const supportToken = await store.get('support')
       try {
         await axios
           .post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
@@ -190,11 +190,11 @@ export const useLoginStore = defineStore({
           })
           .then(async (response) => {
             // if (response.data.error === false) {
-            console.log("changepass");
+            /* console.log("changepass");
             await axios.post(`${apiUrl}/user/password/change/`, {
               token: supportToken.token,
               password: password
-            })
+            }) */
             // }
             this.changePassResponse = response.data;
           });

@@ -35,15 +35,16 @@ const routes = [
     component: TermsPage,
     name: "termsPage",
   },
-  {
-    path: "/newPassPage",
-    component: NewPassPage,
-    name: "newPassPage",
-  },
+  
   {
     path: "/tabs/",
     component: Tabs,
     children: [
+      {
+        path: "newPassPage",
+        component: NewPassPage,
+        name: "newPassPage",
+      },
       {
         path: "",
         redirect: "/tabs/main",
