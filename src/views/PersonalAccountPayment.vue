@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back :btnSrc="() => router.push('/tabs/personalAccounts')" />
+    <Back :btnSrc="() =>  router.push('/tabs/personalAccounts')" />
     <ion-content :fullscreen="true" class="background">
       <div class="header-wrapper">
         <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img>
@@ -66,7 +66,7 @@
                   maskMoney(sumValues(lcList?.debts))
               }}</ion-text>
             </ion-item>
-            <Input @updated="(item) => (sum = item)" :value="sum" :type="'number'" @input="(e) => sum = e.target.value" name="Введите сумму"
+            <Input @updated="(item) => (sum = item)" :value="sum" :type="'number'" :changeHandler="(e) => sum = e.target.value" name="Введите сумму"
               :textBlue="true" :min="0" />
 
 
@@ -120,6 +120,8 @@ export default defineComponent({
   },
   ionViewDidLeave() {
     this.$data.error = ''
+    this.$data.sum = ''
+
   },
   methods: {
     changeAccruals(e) {
@@ -135,6 +137,7 @@ export default defineComponent({
       this.$data.advances = e.target.value;
     },
     paymentHandler() {
+      
       if (
         this.$data.sum.length !== 0
       ) {

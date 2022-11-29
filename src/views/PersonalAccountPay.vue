@@ -20,7 +20,7 @@
         </ion-text>
       </template>
     </Layout>
-    <ion-content v-else class="background">
+    <ion-content v-if="paySent && !link" class="background">
       <div class="container">
         <ion-text>
           <p class="title">Выберите удобный вам способ оплаты</p>
@@ -28,10 +28,16 @@
         <layout-box :onClick="sberPayHanler">
           <template v-slot:content>
             <!-- <ion-img :src="require('@/assets/img/Sberpay.png')" /> -->
-            <ion-text class="ion-text-center title">Оплатить платежной картой</ion-text>
+            <ion-text>
+              <p class="ion-text-center title">Оплатить платежной картой</p>
+            </ion-text>
           </template>
         </layout-box>
-
+        <layout-box :onClick="sberPayHanler">
+          <template v-slot:content>
+            <ion-img :src="require('@/assets/img/Sberpay.png')" />
+          </template>
+        </layout-box>
         <!-- <layout-box>
           <template v-slot:content>
             <ion-img :src="require('@/assets/img/Yandexpay.png')" />
@@ -45,6 +51,11 @@
         </layout-box> -->
       </div>
     </ion-content>
+
+    <ion-content v-if="link" class="background">
+      <iframe id="iframe" class="video" height="100%" width="100%" :src="linkSrc" frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </ion-content>
   </ion-page>
 </template>
 
@@ -54,7 +65,7 @@ import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Input from "../components/Input.vue";
-import { IonPage, IonText, IonContent } from "@ionic/vue";
+import { IonPage, IonText, IonContent, IonImg, } from "@ionic/vue";
 import {
   pencilOutline,
   documentTextOutline,
@@ -65,6 +76,8 @@ import { Storage } from "@ionic/storage";
 import { mapActions } from "pinia";
 import { usePersonalAccountStore } from "../stores/personalAccount";
 
+const v = document.getElementById("iframe")
+console.log(v, 'test')
 export default defineComponent({
   name: "personalAccauntPayPage",
   components: {
@@ -75,13 +88,29 @@ export default defineComponent({
     Input,
     LayoutBox,
     IonContent,
+    IonImg,
   },
   data() {
     return {
       phone: "",
       email: "",
       paySent: false,
+      link: false,
+      linkSrc: ''
     };
+  },
+  ionViewDidLeave() {
+    this.$data.link = false
+    this.$data.paySent = false
+  },
+  watch: {
+    linkSrc(newv, old) {
+      console.log(newv, 'testwatch', old)
+
+      if (newv?.includes('https://aostng.ru')) {
+        this.router.push('/tabs/personalAccounts')
+      }
+    }
   },
   methods: {
     ...mapActions(usePersonalAccountStore, ["sberPay"]),
@@ -96,20 +125,28 @@ export default defineComponent({
         this.$pinia.state.value.personalAccount.personalItemData.code,
         this.$data.phone,
         this.$data.email,
-        this.$pinia.state.value.personalAccount.personalItemData.sberPay
+        +this.$pinia.state.value.personalAccount.personalItemData.sberPay
           .accruals,
         // +this.$pinia.state.value.personalAccount.personalItemData.sberPay.others,
-      );
+      ).then(() => {
+        this.$data.linkSrc = this.$pinia.state.value?.personalAccount?.sberPayResponse?.link
+      })
       this.$data.paySent = true;
     },
     sberPayHanler() {
-      window.open(
+      this.$data.link = true
+      /* window.open(
         this.$pinia.state.value?.personalAccount?.sberPayResponse?.link,
         "_system"
-      );
+      ); */
     },
   },
   setup() {
+    const v = document.getElementById("iframe")
+    console.log(v, 'test')
+    if (v !== undefined && v?.includes('aostng.ru')) {
+      router.push('/tabs/personalAccounts')
+    }
     const router = useRouter();
     return {
       router,
