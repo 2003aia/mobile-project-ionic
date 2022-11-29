@@ -96,15 +96,17 @@
                   </div>
 
                   <ion-modal mode="ios" :keep-contents-mounted="true">
-                    <ion-datetime :show-default-buttons="true" @ionChange="(e) => onBeginDateChange(e, el?.id)"
-                      color="date" presentation="date" mode="ios" :id="el?.id">
+                    <ion-datetime doneText="Готово" cancelText="Отменить" :show-default-buttons="true"
+                      @ionChange="(e) => onBeginDateChange(e, el?.id)" color="date" presentation="date" mode="ios"
+                      :id="el?.id">
                     </ion-datetime>
 
                   </ion-modal>
                   <ion-modal mode="ios" :keep-contents-mounted="true">
 
-                    <ion-datetime :show-default-buttons="true" @ionChange="(e) => onEndDateChange(e, el?.id)"
-                      color="date" presentation="date" mode="ios" :id="`${el?.id}_2`">
+                    <ion-datetime doneText="Готово" cancelText="Отменить" :show-default-buttons="true"
+                      @ionChange="(e) => onEndDateChange(e, el?.id)" color="date" presentation="date" mode="ios"
+                      :id="`${el?.id}_2`">
                     </ion-datetime>
                   </ion-modal>
                 </ion-row>

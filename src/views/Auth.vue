@@ -107,21 +107,14 @@ export default defineComponent({
 
       } else {
         loading.value = true;
-        if (isPlatform('android') || isPlatform('ios')) {
-          console.log('test11')
+        if (isPlatform('android') && isPlatform('ios')) {
 
           await PushNotifications.addListener('registration', token => {
             fcmToken.push(token.value)
             console.log(token.value, 'test')
           });
         } 
-        /* if (isPlatform('android')) {
-          console.log('test22')
-          await PushNotifications.addListener('registration', token => {
-            fcmToken.push(token.value)
-            console.log(token.value, 'test2')
-          });
-        } */
+       
         console.log(isPlatform('android'), 'testisplatform', fcmToken)
         authUser(myModel, password.value, fcmToken)
           .then(async () => {

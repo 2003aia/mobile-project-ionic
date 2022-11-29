@@ -26,64 +26,79 @@ export default defineComponent({
   },
   mounted() {
     const addListeners = async () => {
-      const store = new Storage()
-      await store.create()
-      FCM.subscribeTo({ topic: "all" })
-        .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
-        .catch((err) => console.log(err));
+      if (isPlatform('android') || isPlatform('ios')) {
 
-      await PushNotifications.addListener('registration', (token) => {
-        console.log('Registration token: ', token.value);
-        let tokenStorage = ''
-        const getToken = async () => {
-          tokenStorage = await store.get('token')
-        }
-        getToken()
-        if (JSON.parse(tokenStorage)?.token) {
+        const store = new Storage()
+        await store.create()
+        FCM.subscribeTo({ topic: "all" })
+          .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
+          .catch((err) => console.log(err));
 
-          axios.post('https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile', {
-            token: JSON.parse(token)?.token,
-            fcmToken: token.value
-          })
-        }
+        await PushNotifications.addListener('registration', (token) => {
+          console.log('Registration token: ', token.value);
+          let tokenStorage = ''
+          const getToken = async () => {
+            tokenStorage = await store.get('token')
+          }
+          getToken()
+          if (JSON.parse(tokenStorage)?.token) {
 
-      });
+            axios.post('https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile', {
+              token: JSON.parse(token)?.token,
+              fcmToken: token.value
+            })
+          }
 
-      await PushNotifications.addListener('registrationError', err => {
-        console.log('Registration error: ', err.error);
-      });
+        });
 
-      await PushNotifications.addListener('pushNotificationReceived', notification => {
-        console.log('Push notification received: ', JSON.stringify(notification));
-      });
+        await PushNotifications.addListener('registrationError', err => {
+          console.log('Registration error: ', err.error);
+        });
 
-      await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
-        console.log('Push notification action performed', notification.actionId, notification.inputValue);
-      });
+        await PushNotifications.addListener('pushNotificationReceived', notification => {
+          console.log('Push notification received: ', JSON.stringify(notification));
+        });
+
+        await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
+          console.log('Push notification action performed', notification.actionId, notification.inputValue);
+        });
+      }
     }
 
     const registerNotifications = async () => {
-      let permStatus = await PushNotifications.checkPermissions();
+      if (isPlatform('android') || isPlatform('ios')) {
 
-      if (permStatus.receive === 'prompt') {
-        permStatus = await PushNotifications.requestPermissions();
+        let permStatus = await PushNotifications.checkPermissions();
+
+        if (permStatus.receive === 'prompt') {
+          permStatus = await PushNotifications.requestPermissions();
+        }
+
+        if (permStatus.receive !== 'granted') {
+          console.log('User denied permissions!');
+        }
+
+        await PushNotifications.register();
       }
 
-      if (permStatus.receive !== 'granted') {
-        console.log('User denied permissions!');
-      }
-
-      await PushNotifications.register();
     }
 
     const getDeliveredNotifications = async () => {
-      const notificationList = await PushNotifications.getDeliveredNotifications();
-      console.log('delivered notifications', JSON.stringify(notificationList));
+      if (isPlatform('android') || isPlatform('ios')) {
+
+        const notificationList = await PushNotifications.getDeliveredNotifications();
+        console.log('delivered notifications', JSON.stringify(notificationList));
+      }
+
     }
     const setStatusBarStyle = async () => {
-      await StatusBar.setBackgroundColor({ color: '#1F3766' });
+      if (isPlatform('android') || isPlatform('ios')) {
+
+        await StatusBar.setBackgroundColor({ color: '#1F3766' });
+      }
+
     };
-    if (isPlatform('ios') || isPlatform('android')) {
+    if (isPlatform('ios') && isPlatform('android')) {
       addListeners()
       registerNotifications()
       getDeliveredNotifications()

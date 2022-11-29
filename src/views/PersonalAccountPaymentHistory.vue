@@ -22,18 +22,18 @@
                 <ion-datetime-button mode="ios" color="date" datetime="date2"></ion-datetime-button>
               </div>
 
-              <ion-modal mode="ios"  :keep-contents-mounted="true">
+              <ion-modal mode="ios" :keep-contents-mounted="true">
 
-                <ion-datetime :show-default-buttons="true" @ionChange="(e) => onBeginDateChange(e)" color="date" presentation="date" mode="ios"
-                  id="date">
+                <ion-datetime doneText="Готово" cancelText="Отменить" :show-default-buttons="true"
+                  @ionChange="(e) => onBeginDateChange(e)" color="date" presentation="date" mode="ios" id="date">
                 </ion-datetime>
 
 
               </ion-modal>
               <ion-modal mode="ios" :keep-contents-mounted="true">
 
-                <ion-datetime  :show-default-buttons="true" @ionChange="(e) => onEndDateChange(e)" color="date" presentation="date" mode="ios"
-                  id="date2">
+                <ion-datetime doneText="Готово" cancelText="Отменить" :show-default-buttons="true"
+                  @ionChange="(e) => onEndDateChange(e)" color="date" presentation="date" mode="ios" id="date2">
                 </ion-datetime>
               </ion-modal>
             </ion-row>
@@ -123,7 +123,7 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(usePersonalAccountStore, ["getPayments"]),
-    
+
     maskMoney(value) {
       const valueAsNumber = value?.toString().replace('.', '')
       const valueAsNumber2 = parseFloat(value?.toFixed(2).toString().replace('.', ''))
