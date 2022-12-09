@@ -5,6 +5,9 @@ const config: CapacitorConfig = {
   appName: 'СТНГ',
   webDir: 'dist',
   bundledWebRuntime: false,
+  server: {
+    androidScheme: 'ionic'
+  },
   plugins: {
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"],

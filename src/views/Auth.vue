@@ -37,7 +37,7 @@
 
         <ion-text class="text ion-text-center">Или с помощью</ion-text>
         <div>
-          <div @click="authUrl">
+          <div @click="authUrlEsia">
             <ion-img class="logoURL" :src="require('@/assets/img/logoGOS.png')" alt="logoGOSUSLUGI"></ion-img>
           </div>
 
@@ -88,7 +88,9 @@ export default defineComponent({
     IonImg,
   },
   methods: {
-    authUrl() {
+    async authUrlEsia() {
+      const backUrl = `https://esia.gosuslugi.ru/login/`;
+      window.open(backUrl, '_system')
     }
   },
   setup() {

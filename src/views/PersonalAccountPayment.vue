@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back :btnSrc="() =>  router.push('/tabs/personalAccounts')" />
+    <Back :btnSrc="() => router.push('/tabs/personalAccounts')" />
     <ion-content :fullscreen="true" class="background">
       <div class="header-wrapper">
         <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img>
@@ -33,22 +33,23 @@
         </layout-box>
 
         <div v-for="(el, index) in lcList?.debts" :key="index">
-          <layout-box>
-            <template v-slot:content>
-              <ion-text>
-                <p class="title ion-text-start">
-                  {{ el?.label }}
-                </p>
-              </ion-text>
-              <ion-item>
-                <ion-text>Задолженность:</ion-text>
-                <ion-text slot="end" class="text-end">{{ maskMoney(el?.sum) }}</ion-text>
-              </ion-item>
+          <div v-show="(el?.sum !== 0)">
+            <layout-box>
+              <template v-slot:content>
+                <ion-text>
+                  <p class="title ion-text-start">
+                    {{ el?.label }}
+                  </p>
+                </ion-text>
+                <ion-item>
+                  <ion-text>{{el?.sum.toString().includes('-') ? 'Аванс' : 'Задолженность'}}:</ion-text>
+                  <ion-text slot="end" :class="{'text-end': true, 'green': el?.sum.toString().includes('-')}">{{el?.sum.toString().includes('-') ? maskMoney(Math.abs(el?.sum)) : maskMoney(el?.sum)}}</ion-text>
+                </ion-item>
+              </template>
+            </layout-box>
+          </div>
+          
 
-
-
-            </template>
-          </layout-box>
         </div>
         <layout-box>
           <template v-slot:content>
@@ -63,11 +64,11 @@
             <ion-item lines="none">
               <ion-text>Итог:</ion-text>
               <ion-text class="text-end" slot="end">{{
-                  maskMoney(sumValues(lcList?.debts))
+                  maskMoney(Math.abs(sumValues(lcList?.debts)))
               }}</ion-text>
             </ion-item>
-            <Input @updated="(item) => (sum = item)" :value="sum" :type="'number'" :changeHandler="(e) => sum = e.target.value" name="Введите сумму"
-              :textBlue="true" :min="0" />
+            <Input @updated="(item) => (sum = item)" :value="sum" :type="'number'"
+              :changeHandler="(e) => sum = e.target.value" name="Введите сумму" :textBlue="true" :min="0" />
 
 
           </template>
@@ -116,7 +117,7 @@ export default defineComponent({
     },
   },
   ionViewDidEnter() {
-    this.$data.sum = this.sumValues(this.lcList?.debts).toFixed(2)
+    this.$data.sum = Math.abs(this.sumValues(this.lcList?.debts).toFixed(2)).toString()
   },
   ionViewDidLeave() {
     this.$data.error = ''
@@ -137,7 +138,7 @@ export default defineComponent({
       this.$data.advances = e.target.value;
     },
     paymentHandler() {
-      
+
       if (
         this.$data.sum.length !== 0
       ) {

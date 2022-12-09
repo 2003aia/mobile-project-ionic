@@ -25,15 +25,14 @@
         <ion-text>
           <p class="title">Выберите удобный вам способ оплаты</p>
         </ion-text>
-        <layout-box :onClick="sberPayHanler">
+        <!-- <layout-box :onClick="sberPayHanler2">
           <template v-slot:content>
-            <!-- <ion-img :src="require('@/assets/img/Sberpay.png')" /> -->
             <ion-text>
               <p class="ion-text-center title">Оплатить платежной картой</p>
             </ion-text>
           </template>
-        </layout-box>
-        <layout-box :onClick="sberPayHanler">
+        </layout-box> -->
+        <layout-box :onClick="sberPayHanler2">
           <template v-slot:content>
             <ion-img :src="require('@/assets/img/Sberpay.png')" />
           </template>
@@ -76,8 +75,6 @@ import { Storage } from "@ionic/storage";
 import { mapActions } from "pinia";
 import { usePersonalAccountStore } from "../stores/personalAccount";
 
-const v = document.getElementById("iframe")
-console.log(v, 'test')
 export default defineComponent({
   name: "personalAccauntPayPage",
   components: {
@@ -134,7 +131,17 @@ export default defineComponent({
       this.$data.paySent = true;
     },
     sberPayHanler() {
+      window.open(
+        `android-app://${this.$pinia.state.value?.personalAccount?.sberPayResponse?.link}`,
+        // "android-app://ru.sberbankmobile",
+        "_system"
+      );
+
+    },
+    sberPayHanler2() {
+
       this.$data.link = true
+
       /* window.open(
         this.$pinia.state.value?.personalAccount?.sberPayResponse?.link,
         "_system"
@@ -142,11 +149,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const v = document.getElementById("iframe")
-    console.log(v, 'test')
-    if (v !== undefined && v?.includes('aostng.ru')) {
-      router.push('/tabs/personalAccounts')
-    }
+
     const router = useRouter();
     return {
       router,

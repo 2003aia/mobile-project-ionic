@@ -79,7 +79,8 @@
             <ion-item>
               <ion-text>{{ lcList[0]?.address }}</ion-text>
             </ion-item>
-            <ion-item v-show="sumValues(lcList[0]?.debts) !== 0">
+            <ion-item
+              v-show="(!sumValues(lcList[0]?.debts).toString().includes('-'))">
               <ion-text> Задолженность: </ion-text>
               <ion-text slot="end" class="text-blue">
                 {{
@@ -96,10 +97,10 @@
                   maskMoney(lcList[0]?.debts?.penalties)
               }}</ion-text>
             </ion-item> -->
-            <ion-item v-show="lcList[0]?.debts?.find((el) => el?.label.includes('Аванс'))?.sum !== 0" lines="none">
+            <ion-item v-show="sumValues(lcList[0]?.debts).toString().includes('-')" lines="none">
               <ion-text> Аванс: </ion-text>
               <ion-text class="text-blue" slot="end">{{
-                  maskMoney(lcList[0]?.debts?.find((el) => el?.label.includes('Аванс'))?.sum)
+                  maskMoney(Math.abs(sumValues(lcList[0]?.debts)))
               }}
               </ion-text>
             </ion-item>
@@ -200,7 +201,7 @@
                   <ion-item>
                     <ion-text>{{ el.address }}</ion-text>
                   </ion-item>
-                  <ion-item v-show="sumValues(el?.debts) !== 0">
+                  <ion-item v-show="(!sumValues(el?.debts).toString().includes('-'))">
                     <ion-text> Задолженность: </ion-text>
 
                     <ion-text slot="end" class="text-blue">
@@ -216,10 +217,10 @@
                         maskMoney(el.debts?.penalties)
                     }}</ion-text>
                   </ion-item> -->
-                  <ion-item v-show="el?.debts?.find((el) => el?.label.includes('Аванс'))?.sum !== 0" lines="none">
+                  <ion-item v-show="sumValues(el?.debts).toString().includes('-')" lines="none">
                     <ion-text> Аванс: </ion-text>
                     <ion-text class="text-blue" slot="end">{{
-                        maskMoney(el?.debts?.find((el) => el?.label.includes('Аванс'))?.sum)
+                        maskMoney(Math.abs(sumValues(el?.debts)))
                     }}</ion-text>
                   </ion-item>
                 </div>
