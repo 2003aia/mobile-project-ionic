@@ -67,12 +67,13 @@ import {
   IonButton,
   IonContent,
   IonText,
-  isPlatform,
+  // isPlatform,
   IonImg,
   onIonViewDidEnter,
 } from "@ionic/vue";
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
+
 
 
 export default defineComponent({
@@ -101,7 +102,7 @@ export default defineComponent({
     let password = ref("");
     let errorText = ref("");
     let loading = ref(false);
-    let fcmToken = ''
+    let fcmToken = ref('')
     const authUserHandler = async () => {
       let myModel = phone.value.replace(/\D+/g, "");
       if (password.value === "" || phone.value === "") {
@@ -109,16 +110,19 @@ export default defineComponent({
 
       } else {
         loading.value = true;
-        if (isPlatform('android') || isPlatform('ios')) {
-
+        // if (isPlatform('android') || isPlatform('ios')) {
+        const fcmRegistr = async () => {
           await PushNotifications.addListener('registration', token => {
-            fcmToken = token.value
-            console.log(token.value, 'test')
+            fcmToken.value = token.value
+            console.log(token.value, 'test', JSON.stringify(token))
           });
-        } 
-       
-        console.log(isPlatform('android'), 'testisplatform', fcmToken)
-        authUser(myModel, password.value, fcmToken)
+        }
+
+        fcmRegistr()
+        // } 
+
+        console.log('testisplatform', fcmToken.value.length, fcmToken.value)
+        authUser(myModel, password.value, fcmToken.value)
           .then(async () => {
             loading.value = false;
             if (authResponse?.value?.error === false) {

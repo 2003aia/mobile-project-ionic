@@ -54,7 +54,7 @@ export const useLoginStore = defineStore({
           .then(async (response) => {
             this.registrResponse2 = response.data;
 
-            if (response.data.error === false) {
+            // if (response.data.error === false) {
               await axios
                 .post(
                   `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`,
@@ -91,7 +91,7 @@ export const useLoginStore = defineStore({
                       })
                   }
                 })
-            }
+            // }
           });
       } catch (error) {
         this.registrError = error;
@@ -125,7 +125,7 @@ export const useLoginStore = defineStore({
           )
           .then(async (response) => {
             this.authResponse = response.data;
-            if (response.data.error === false) {
+            // if (response.data.error === false) {
               console.log(fcmToken, 'fcm token auth')
               await axios
                 .post(
@@ -170,7 +170,7 @@ export const useLoginStore = defineStore({
                       });
                   }
                 })
-            }
+            // }
           });
       } catch (error) {
         this.authError = error;

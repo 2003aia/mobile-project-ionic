@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { IonApp, IonRouterOutlet, isPlatform, } from "@ionic/vue";
+import { IonApp, IonRouterOutlet, /* isPlatform, */ } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
@@ -32,24 +32,26 @@ export default defineComponent({
       FCM.subscribeTo({ topic: "all" })
         .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
         .catch((err) => console.log(err));
+      FCM.getToken()
+        .then((r) => console.log(`Token ${r.token}`))
+        .catch((err) => console.log(err));
 
-      await PushNotifications.addListener('registration', (token) => {
-        console.log('Registration token: ', token.value);
-        let tokenStorage = ''
-        const getToken = async () => {
-          tokenStorage = await store.get('token')
-        }
-        getToken()
-        if (JSON.parse(tokenStorage)?.token) {
-
-          axios.post('https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile', {
-            token: JSON.parse(token)?.token,
-            fcmToken: token.value
-          })
-        }
-
-      });
-
+      let tokenStorage = ''
+      const getToken = async () => {
+        tokenStorage = await store.get('token')
+      }
+      getToken()
+      if (JSON.parse(tokenStorage)?.token) {
+        await PushNotifications.addListener('registration', (token) => {
+          if (token?.value.length !== 0) {
+            console.log('Registration token: ', token.value);
+            axios.post('https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile', {
+              token: JSON.parse(token)?.token,
+              fcmToken: token.value
+            })
+          }
+        })
+      }
       await PushNotifications.addListener('registrationError', err => {
         console.log('Registration error: ', err.error);
       });
@@ -90,12 +92,12 @@ export default defineComponent({
       await StatusBar.setBackgroundColor({ color: '#1F3766' });
 
     };
-    if (isPlatform('ios') || isPlatform('android')) {
-      addListeners()
-      registerNotifications()
-      getDeliveredNotifications()
-      setStatusBarStyle()
-    }
+    // if (isPlatform('ios') || isPlatform('android')) {
+    addListeners()
+    registerNotifications()
+    getDeliveredNotifications()
+    setStatusBarStyle()
+    // }
 
 
     const storageHandler = async () => {
