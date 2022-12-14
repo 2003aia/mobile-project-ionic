@@ -68,17 +68,19 @@ export default defineComponent({
     const registerNotifications = async () => {
 
       let permStatus = await PushNotifications.checkPermissions();
-
-      if (permStatus.receive === 'prompt') {
-        permStatus = await PushNotifications.requestPermissions();
-      }
-
+      console.log('permStatus', JSON.stringify(permStatus))
       if (permStatus.receive !== 'granted') {
-        console.log('User denied permissions!');
+        await PushNotifications.requestPermissions().then(async () => {
+          await PushNotifications.register()
+        })
       }
-
-      await PushNotifications.register();
-
+      if (permStatus.receive === 'prompt') {
+        await PushNotifications.requestPermissions().then(async () => {
+          let permStatus = await PushNotifications.checkPermissions();
+          if (permStatus.receive === 'granted')
+            await PushNotifications.register()
+        })
+      }
     }
 
     const getDeliveredNotifications = async () => {

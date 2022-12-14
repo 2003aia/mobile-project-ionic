@@ -7,7 +7,7 @@
           <ion-spinner name="bubbles"></ion-spinner>
         </ion-item>
         <div v-show="!loading" v-for="el in pushList" :key="el">
-          <ion-item @click="openLink(el.link)">
+          <ion-item @click="openLink(el?.link)">
             <div>
               <ion-text>
                 <p class="sub-title">
@@ -54,7 +54,9 @@ export default defineComponent({
   methods: {
     ...mapActions(useProfileStore, ["getPush"]),
     openLink(link) {
-      document.location.href = link
+      if (link?.length !== 0) {
+        document.location.href = link
+      }
     }
   },
   computed: {
