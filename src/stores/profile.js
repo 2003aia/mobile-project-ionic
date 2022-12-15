@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { Storage } from "@ionic/storage";
+import { useRouter } from "vue-router";
 
+const router = useRouter()
 
 export const useProfileStore = defineStore({
     id: 'profile',
@@ -16,8 +18,8 @@ export const useProfileStore = defineStore({
 
     }),
     getters: {
-        getPostsPerAuthor: (state) => {
-            return (authorId) => state.posts.filter((post) => post.userId === authorId)
+        urlPush: (state) => {
+            return router.push(state)
         }
     },
     actions: {

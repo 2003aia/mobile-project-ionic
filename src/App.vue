@@ -25,22 +25,17 @@ export default defineComponent({
     }
   },
   mounted() {
-    const addListeners = async () => {
+    const registerFcm = async () => {
 
       const store = new Storage()
       await store.create()
-      FCM.subscribeTo({ topic: "all" })
-        .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
-        .catch((err) => console.log(err));
-      FCM.getToken()
-        .then((r) => console.log(`Token ${r.token}`))
-        .catch((err) => console.log(err));
 
       let tokenStorage = ''
       const getToken = async () => {
         tokenStorage = await store.get('token')
       }
       getToken()
+
       if (JSON.parse(tokenStorage)?.token) {
         await PushNotifications.addListener('registration', (token) => {
           if (token?.value.length !== 0) {
@@ -52,26 +47,33 @@ export default defineComponent({
           }
         })
       }
-      await PushNotifications.addListener('registrationError', err => {
-        console.log('Registration error: ', err.error);
-      });
-
-      await PushNotifications.addListener('pushNotificationReceived', notification => {
-        console.log('Push notification received: ', JSON.stringify(notification));
-      });
-
-      await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
-        console.log('Push notification action performed', notification.actionId, notification.inputValue);
-      });
     }
 
     const registerNotifications = async () => {
 
       let permStatus = await PushNotifications.checkPermissions();
       console.log('permStatus', JSON.stringify(permStatus))
+      if (permStatus.receive === "granted") {
+        console.log('addListenersblock code started')
+
+        await PushNotifications.addListener('pushNotificationReceived', notification => {
+
+          console.log('Push notification received: ', JSON.stringify(notification));
+        });
+
+        await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
+          this.$router.push("/tabs/notifications");
+          console.log('Push notification action performed', JSON.stringify(notification));
+        });
+      }
       if (permStatus.receive !== 'granted') {
         await PushNotifications.requestPermissions().then(async () => {
-          await PushNotifications.register()
+          await PushNotifications.register().then(() => {
+            FCM.subscribeTo({ topic: "all" })
+              .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
+              .catch((err) => console.log(err));
+          })
+
         })
       }
       if (permStatus.receive === 'prompt') {
@@ -79,6 +81,10 @@ export default defineComponent({
           let permStatus = await PushNotifications.checkPermissions();
           if (permStatus.receive === 'granted')
             await PushNotifications.register()
+          FCM.subscribeTo({ topic: "all" })
+            .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
+            .catch((err) => console.log(err));
+
         })
       }
     }
@@ -95,12 +101,12 @@ export default defineComponent({
 
     };
     // if (isPlatform('ios') || isPlatform('android')) {
-    addListeners()
     registerNotifications()
+    registerFcm()
     getDeliveredNotifications()
     setStatusBarStyle()
-    // }
 
+    // }
 
     const storageHandler = async () => {
       const store = new Storage();
@@ -113,8 +119,6 @@ export default defineComponent({
       }
     };
     storageHandler();
-
-
   },
   methods: {
 

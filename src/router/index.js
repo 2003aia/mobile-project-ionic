@@ -211,7 +211,7 @@ const routes = [
         component: () => import("@/views/Contacts.vue"),
       },
       {
-        name: "notificatons",
+        name: "notifications",
         path: "notifications",
         component: () => import("@/views/Notifications.vue"),
       },
