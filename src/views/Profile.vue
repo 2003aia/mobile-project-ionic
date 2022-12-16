@@ -33,13 +33,13 @@
           <ion-item>
             <ion-text>
               <p>
-                Пасспорт
+                Паспорт
               </p>
             </ion-text>
           </ion-item>
           <ion-item v-show="profileData?.passport?.issuedBy">
             <ion-text>
-              <p>Пасспорт выдан</p>
+              <p>Паспорт выдан</p>
             </ion-text>
 
             <ion-text slot="end">
@@ -50,7 +50,7 @@
           <ion-item v-show="profileData?.passport.issuedDate">
             <ion-text>
               <p>
-                Дата выдачи пасспорта
+                Дата выдачи паспорта
               </p>
             </ion-text>
             <ion-text slot="end">
@@ -62,7 +62,7 @@
           <ion-item v-show="profileData?.passport?.number">
             <ion-text>
               <p>
-                Номер пасспорта
+                Номер паспорта
               </p>
             </ion-text>
             <ion-text slot="end">
@@ -72,7 +72,7 @@
           <ion-item v-show="profileData?.passport?.serial">
             <ion-text>
               <p>
-                Серия пасспорта
+                Серия паспорта
               </p>
             </ion-text>
             <ion-text slot="end">

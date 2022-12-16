@@ -29,25 +29,25 @@
             :changeHandler="(e) => snils = e.target.value" />
 
           <ion-text>
-            <p class="sub-title">Пасспорт выдан</p>
+            <p class="sub-title">Паспорт выдан</p>
           </ion-text>
           <Input @updated="(item) => (issuedBy = item)" :changeHandler="(e) => issuedBy = e.target.value"
-            :value="issuedBy" name="Пасспорт выдан" />
+            :value="issuedBy" name="Паспорт выдан" />
           <ion-text>
-            <p class="sub-title">Дата выдачи пасспорта</p>
+            <p class="sub-title">Дата выдачи паспорта</p>
           </ion-text>
           <Input :mask="'##.##.####'" @updated="(item) => (issuedDate = item)"
             :changeHandler="(e) => issuedDate = e.target.value" :value="issuedDate" name="Дата выдачи" />
           <ion-text>
-            <p class="sub-title">Серия пасспорта</p>
+            <p class="sub-title">Серия паспорта</p>
           </ion-text>
           <Input :mask="'####'" @updated="(item) => (serial = item)" :changeHandler="(e) => serial = e.target.value"
-            :value="serial" name="Серия пасспорта" />
+            :value="serial" name="Серия паспорта" />
           <ion-text>
-            <p class="sub-title">Номер пасспорта</p>
+            <p class="sub-title">Номер паспорта</p>
           </ion-text>
           <Input :mask="'######'" @updated="(item) => (number = item)" :changeHandler="(e) => number = e.target.value"
-            :value="number" name="Номер пасспорта" />
+            :value="number" name="Номер паспорта" />
           <ion-item>
             <ion-text>
               <p class="sub-title">{{ login }}</p>
