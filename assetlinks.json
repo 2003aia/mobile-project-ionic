@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "io.ionic.stng",
+            "sha256_cert_fingerprints": [
+                "E3:55:6D:63:25:6C:FF:35:4D:89:FD:FE:33:08:50:CF:9C:CC:4B:19:EC:49:D2:BE:B3:28:6A:BE:45:69:68:AE"
+            ]
+        }
+    }
+]

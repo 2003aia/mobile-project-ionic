@@ -53,16 +53,12 @@
         </div>
         <layout-box>
           <template v-slot:content>
-
-
-
-
             <ion-text>
               <p class="title ion-text-start">Оплата</p>
 
             </ion-text>
             <ion-item lines="none">
-              <ion-text>Итог:</ion-text>
+              <ion-text>Итого:</ion-text>
               <ion-text class="text-end" slot="end">{{
                   maskMoney(Math.abs(sumValues(lcList?.debts)))
               }}</ion-text>

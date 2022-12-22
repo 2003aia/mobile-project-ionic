@@ -250,19 +250,18 @@ export const usePersonalAccountStore = defineStore({
         this.setIndicesError = error;
       }
     },
-    async sberPay(lc, phone, email, accruals,) {
+    async sberPay(lc, phone, email, sum,) {
       try {
         const store = new Storage();
         await store.create();
         const token = await store.get("token");
         const tokenParsed = JSON.parse(token);
+        console.log(phone, email,)
         await axios
-          .post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/SberPay`, {
+          .post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/SBOL`, {
             token: tokenParsed.token,
-            phone: phone,
-            email: email,
+            sum: sum,
             LC: lc,
-            accruals: accruals,
             // others: others,
           })
           .then((response) => {

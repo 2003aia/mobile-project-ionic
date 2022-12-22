@@ -25,14 +25,14 @@
         <ion-text>
           <p class="title">Выберите удобный вам способ оплаты</p>
         </ion-text>
-        <!-- <layout-box :onClick="sberPayHanler2">
+        <layout-box :onClick="sberPayHanler2">
           <template v-slot:content>
             <ion-text>
               <p class="ion-text-center title">Оплатить платежной картой</p>
             </ion-text>
           </template>
-        </layout-box> -->
-        <layout-box :onClick="sberPayHanler2">
+        </layout-box>
+        <layout-box :onClick="sberPayHanler">
           <template v-slot:content>
             <ion-img :src="require('@/assets/img/Sberpay.png')" />
           </template>
@@ -124,16 +124,14 @@ export default defineComponent({
         this.$data.email,
         +this.$pinia.state.value.personalAccount.personalItemData.sberPay
           .accruals,
-        // +this.$pinia.state.value.personalAccount.personalItemData.sberPay.others,
       ).then(() => {
-        this.$data.linkSrc = this.$pinia.state.value?.personalAccount?.sberPayResponse?.link
+        this.$data.linkSrc = this.$pinia.state.value?.personalAccount?.sberPayResponse?.data?.formUrl
       })
       this.$data.paySent = true;
     },
     sberPayHanler() {
       window.open(
-        `android-app://${this.$pinia.state.value?.personalAccount?.sberPayResponse?.link}`,
-        // "android-app://ru.sberbankmobile",
+        this.$pinia.state.value?.personalAccount?.sberPayResponse?.data?.externalParams?.sbolDeepLink,
         "_system"
       );
 
