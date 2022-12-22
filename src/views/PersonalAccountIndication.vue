@@ -285,11 +285,14 @@ export default defineComponent({
 
       this.getIndices(id, moment(event.detail.value).format('yyyyMMDD'), this.$data.endDate ? this.$data.endDate : moment().format('yyyyMMDD')).then(() => {
         // this.$data.loadingGetIndices = false
-        let data = this.$data.indicationList.filter((el) => {
+        let data = this.$data.indicationList.find((el) => {
           return el.id === id
         })
+
         if (this.indicesList[0]) {
-          Object.assign(data[0]?.indications, this.indicesList[0]?.indications)
+          // this.$data.indicationList.map(obj => this.indicesList.find(o => o.id === obj.id) || obj);
+          Object.assign(data, this.indicesList[0])
+          // console.log('test', this.indicesList, this.$data.indicationList)
         } else {
           data[0].indications = []
         }
@@ -300,11 +303,12 @@ export default defineComponent({
     onEndDateChange(event, id) {
 
       this.getIndices(id, this.$data.beginDate ? this.$data.beginDate : moment().format('yyyyMMDD'), moment(event.detail.value).format('yyyyMMDD')).then(() => {
-        let data = this.$data.indicationList.filter((el) => {
+        let data = this.$data.indicationList.find((el) => {
           return el.id === id
         })
         if (this.indicesList[0]) {
-          Object.assign(data[0]?.indications, this.indicesList[0]?.indications)
+
+          Object.assign(data, this.indicesList[0])
         } else {
           data[0].indications = []
         }

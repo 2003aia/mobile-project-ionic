@@ -79,10 +79,12 @@
               <p class="sub-title">{{ profileData?.passport?.serial }}</p>
             </ion-text>
           </ion-item>
-          <ion-item>
+          <ion-item v-show="profileData?.snils">
+            <ion-text class="sub-title">
+              СНИЛС
+            </ion-text>
             <ion-text>
-              <p class="sub-title" v-if="profileData?.snils">{{ profileData?.snils }}</p>
-              <p v-else>СНИЛС</p>
+              {{ profileData?.snils }}
             </ion-text>
           </ion-item>
           <ion-item>
@@ -91,7 +93,7 @@
               <p v-else>Контактный телефон</p>
             </ion-text>
           </ion-item>
-          
+
           <ion-item class="check">
             <ion-checkbox slot="start" @update:modelValue="checkHandler(1, $event)" :modelValue="consentSMS">
             </ion-checkbox>
@@ -101,7 +103,8 @@
             </ion-text>
           </ion-item>
           <ion-item class="check">
-            <ion-checkbox :disabled="profileData?.email == '' ? true : false" slot="start" @update:modelValue="checkHandler(2, $event)" :modelValue="consentEMAIL">
+            <ion-checkbox :disabled="profileData?.email == '' ? true : false" slot="start"
+              @update:modelValue="checkHandler(2, $event)" :modelValue="consentEMAIL">
             </ion-checkbox>
             <ion-text>
 
@@ -205,5 +208,13 @@ ion-item {
   --padding-start: 0;
   --padding-bottom: 0px;
   --inner-padding-bottom: 0px;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
+}
+ion-text{
+  margin-left: 0;
+}
+p{
+  margin: 0;
 }
 </style>

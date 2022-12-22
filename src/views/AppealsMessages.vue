@@ -410,14 +410,16 @@ export default defineComponent({
 }
 
 .input-icon {
-  width: 30px;
-  height: 30px;
+  width: 27px;
+  height: 27px;
+  object-fit: cover;
 }
 
 .input-icon-left {
-  width: 30px;
-  height: 30px;
+  width: 27px;
+  height: 27px;
   margin-left: 0;
+  object-fit: cover;
 }
 
 .input {

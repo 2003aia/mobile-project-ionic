@@ -110,7 +110,7 @@ export default defineComponent({
 
       } else {
         loading.value = true;
-        // if (isPlatform('android') || isPlatform('ios')) {
+        // if (isPlatform('android') && isPlatform('ios')) {
         const fcmRegistr = async () => {
           await PushNotifications.addListener('registration', token => {
             fcmToken.value = token.value

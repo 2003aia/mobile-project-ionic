@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { IonApp, IonRouterOutlet, /* isPlatform, */ } from "@ionic/vue";
+import { IonApp, IonRouterOutlet, /* isPlatform,  */} from "@ionic/vue";
 import { defineComponent } from "vue";
 import { App } from '@capacitor/app'
 import { Storage } from "@ionic/storage";
@@ -117,11 +117,11 @@ export default defineComponent({
       await StatusBar.setBackgroundColor({ color: '#1F3766' });
 
     };
-    // if (isPlatform('ios') || isPlatform('android')) {
-    registerNotifications()
-    registerFcm()
-    getDeliveredNotifications()
-    setStatusBarStyle()
+    // if (isPlatform('ios') && isPlatform('androi?d')) {
+      registerNotifications()
+      registerFcm()
+      getDeliveredNotifications()
+      setStatusBarStyle()
 
     // }
 
