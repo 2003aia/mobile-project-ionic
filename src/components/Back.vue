@@ -2,7 +2,8 @@
   <ion-header>
     <ion-toolbar>
       <ion-item lines="none">
-        <ion-button v-on:click="btnSrc" @click="
+        <!-- <ion-button fill="clear"> -->
+          <ion-icon v-on:click="btnSrc" @click="
           () => {
             if (!noBack) {
         
@@ -11,9 +12,8 @@
             }
         
           }
-        " v-show="!noBack" fill="clear">
-          <ion-icon class="arrow" :icon="arrowBackOutline" />
-        </ion-button>
+        " v-show="!noBack" class="arrow" :icon="arrowBackOutline" />
+        <!-- </ion-button> -->
         <ion-button style="opacity: 0" v-show="noBack" fill="clear">
           <ion-icon class="arrow" :icon="arrowBackOutline" />
         </ion-button>
