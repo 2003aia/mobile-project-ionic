@@ -115,7 +115,7 @@ export default defineComponent({
       link: false,
       linkSrc: '',
       consentEMAIL: false,
-      formTypeVal: []
+      formTypeVal: ['number']
     };
   },
   ionViewDidLeave() {
