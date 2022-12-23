@@ -125,8 +125,6 @@ export const usePersonalAccountStore = defineStore({
           )
           .then(async (response) => {
             this.addAccountResponse = response.data;
-            if (response.data.error) router.push('/authPage')
-
             const store = new Storage();
             await store.create();
             const token = await store.get("token");
@@ -161,7 +159,6 @@ export const usePersonalAccountStore = defineStore({
                 return el.code !== lc;
               }
             );
-            if (response.data.error) router.push('/authPage')
 
             const userData = JSON.parse(token);
             const lics = this.getAccountResponse?.data.filter((el) => {
@@ -262,11 +259,10 @@ export const usePersonalAccountStore = defineStore({
             token: tokenParsed.token,
             sum: sum,
             LC: lc,
+            email: email,
             // others: others,
           })
           .then((response) => {
-            if (response.data.error) router.push('/authPage')
-
             /* const counterStorage = usePersonalAccountStore()
             counterStorage.getIndices(counterId) */
             this.sberPayResponse = response.data;

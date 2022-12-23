@@ -124,6 +124,12 @@ ion-img {
   width: 100%;
 }
 
+.main-text >>>img{
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
 .mainTitleColor {
   color: rgb(0, 0, 0);
 }
@@ -161,7 +167,7 @@ ion-img {
   margin-top: 20px;
 }
 
-.main-text {
+.main-text >>> p {
   color: black;
 }
 </style>

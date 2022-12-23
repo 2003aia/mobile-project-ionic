@@ -58,7 +58,7 @@ export default defineComponent({
           if (token?.value.length !== 0) {
             console.log('Registration token: ', token.value);
             axios.post('https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile', {
-              token: JSON.parse(token)?.token,
+              token: JSON.parse(tokenStorage)?.token,
               fcmToken: token.value
             })
           }

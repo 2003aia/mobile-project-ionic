@@ -9,11 +9,30 @@
             Введите адрес электронной почты (email) или номер телефона
           </p>
         </ion-text>
-        <Input v-if="email" name="Введите email" :value="email" :changeHandler="changeEmail" />
-        <ion-text v-else>
-          <p>Электронная почта</p>
+        <ion-item class="check" lines="none">
+          <input @click="
+            (e) => {
+              uniqueCheck(e,);
+            }
+          " value="email" v-model="formTypeVal" @change="uniqueCheck" class="check2" type="checkbox" slot="start" />
+          <Input v-if="email" name="Введите email" :value="email" :changeHandler="changeEmail" />
+          <ion-text v-else>
+            <p>Электронная почта</p>
+          </ion-text>
+        </ion-item>
+
+        <ion-text>
+          <p class="ion-text-center or">или</p>
         </ion-text>
-        <Input name="Введите номер телефона" :value="phone" :changeHandler="changePhone" />
+        <ion-item class="check" lines="none">
+          <input @click="
+            (e) => {
+              uniqueCheck(e);
+            }
+          " value="number" v-model="formTypeVal" @change="uniqueCheck" class="check2" type="checkbox" slot="start" />
+          <Input name="Введите номер телефона" :value="phone" :changeHandler="changePhone" />
+
+        </ion-item>
         <ion-text>
           На электронную почту или на мобильный телефон будет направлен кассовый
           чек
@@ -64,7 +83,7 @@ import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Input from "../components/Input.vue";
-import { IonPage, IonText, IonContent, IonImg, } from "@ionic/vue";
+import { IonPage, IonText, IonContent, IonImg, IonItem } from "@ionic/vue";
 import {
   pencilOutline,
   documentTextOutline,
@@ -85,6 +104,7 @@ export default defineComponent({
     Input,
     LayoutBox,
     IonContent,
+    IonItem,
     IonImg,
   },
   data() {
@@ -93,7 +113,9 @@ export default defineComponent({
       email: "",
       paySent: false,
       link: false,
-      linkSrc: ''
+      linkSrc: '',
+      consentEMAIL: false,
+      formTypeVal: []
     };
   },
   ionViewDidLeave() {
@@ -117,11 +139,18 @@ export default defineComponent({
     changeEmail(e) {
       this.$data.email = e.target.value;
     },
+    async uniqueCheck(e) {
+      this.$data.formTypeVal = [];
+      if (e.currentTarget.checked === false) {
+        this.$data.formTypeVal.push(e.currentTarget.value);
+        console.log(this.$data.formTypeVal)
+      }
+    },
     paymentHandler() {
       this.sberPay(
         this.$pinia.state.value.personalAccount.personalItemData.code,
         this.$data.phone,
-        this.$data.email,
+        this.$data.formTypeVal[0] === 'email' ? true : false,
         +this.$pinia.state.value.personalAccount.personalItemData.sberPay
           .accruals,
       ).then(() => {
@@ -183,11 +212,25 @@ ion-img {
   margin: auto;
 }
 
+ion-item {
+  --padding-start: 0;
+  --padding-bottom: 0px;
+  --inner-padding-bottom: 0px;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
+}
+
 .container {
   padding-top: 20px;
 }
 
 .title {
   padding: 20px;
+}
+
+.or {
+  margin: 0;
+  margin-bottom: 10px;
+
 }
 </style>
