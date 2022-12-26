@@ -73,6 +73,7 @@ import {
 } from "@ionic/vue";
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
+import { FCM } from "@capacitor-community/fcm"
 
 
 
@@ -115,6 +116,10 @@ export default defineComponent({
           await PushNotifications.addListener('registration', token => {
             fcmToken.value = token.value
             console.log(token.value, 'test', JSON.stringify(token))
+            FCM.subscribeTo({ topic: "all" })
+            .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
+            .catch((err) => console.log(err));
+
           });
         }
 

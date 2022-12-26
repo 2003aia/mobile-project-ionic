@@ -350,6 +350,16 @@ ion-tab-button {
   background: #ffffff;
   --padding-end: 0;
   --padding-start: 0;
+  --padding-top: 3px;
+  position: relative;
+}
+ion-tab-button ion-img{
+  /* background-color: red; */
+  position: absolute;
+  top: 0;
+}
+ion-tab-button ion-label{
+  margin-top: 15px;
 }
 
 .tabslogo {
