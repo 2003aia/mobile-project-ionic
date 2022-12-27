@@ -37,9 +37,9 @@
 
         <ion-text class="text ion-text-center">Или с помощью</ion-text>
         <div>
-          <div @click="authUrlEsia">
+          <!-- <div @click="authUrlEsia">
             <ion-img class="logoURL" :src="require('@/assets/img/logoGOS.png')" alt="logoGOSUSLUGI"></ion-img>
-          </div>
+          </div> -->
 
           <a href="https://aostng.ru/login/">
             <ion-img class="logoURL" :src="require('@/assets/img/logoSTNG2.png')" alt="aostng"></ion-img>
