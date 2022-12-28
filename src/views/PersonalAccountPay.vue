@@ -11,13 +11,13 @@
         </ion-text>
         <ion-item class="check" lines="none">
           <input @click="
-            (e) => {
-              uniqueCheck(e,);
-            }
-          " value="email" v-model="formTypeVal" @change="uniqueCheck" class="check2" type="checkbox" slot="start" />
-          <Input v-if="email" name="Введите email" :value="email" :changeHandler="changeEmail" />
-          <ion-text v-else>
-            <p>Электронная почта</p>
+  (e) => {
+    uniqueCheck(e,);
+  }
+" value="email" v-model="formTypeVal" @change="uniqueCheck" class="check2" type="checkbox" slot="start" />
+          <Input v-show="email" name="Введите email" :value="email" :changeHandler="changeEmail" />
+          <ion-text v-show="!email">
+            <p class="ion-text-center" style="">Электронная почта</p>
           </ion-text>
         </ion-item>
 
@@ -26,10 +26,10 @@
         </ion-text>
         <ion-item class="check" lines="none">
           <input @click="
-            (e) => {
-              uniqueCheck(e);
-            }
-          " value="number" v-model="formTypeVal" @change="uniqueCheck" class="check2" type="checkbox" slot="start" />
+  (e) => {
+    uniqueCheck(e);
+  }
+" value="number" v-model="formTypeVal" @change="uniqueCheck" class="check2" type="checkbox" slot="start" />
           <Input name="Введите номер телефона" :value="phone" :changeHandler="changePhone" />
 
         </ion-item>
@@ -83,7 +83,7 @@ import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Input from "../components/Input.vue";
-import { IonPage, IonText, IonContent, IonImg, IonItem } from "@ionic/vue";
+import { IonPage, IonText, IonContent, IonImg, IonItem, isPlatform } from "@ionic/vue";
 import {
   pencilOutline,
   documentTextOutline,
@@ -153,6 +153,7 @@ export default defineComponent({
         this.$data.formTypeVal[0] === 'email' ? true : false,
         +this.$pinia.state.value.personalAccount.personalItemData.sberPay
           .accruals,
+        isPlatform('ios') ? true : false
       ).then(() => {
         this.$data.linkSrc = this.$pinia.state.value?.personalAccount?.sberPayResponse?.data?.formUrl
       })

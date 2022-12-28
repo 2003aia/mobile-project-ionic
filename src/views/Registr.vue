@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back :btnSrc="() => router.push('/authPage')" :menu="true"/>
+    <Back :btnSrc="() => router.push('/authPage')" :menu="true" />
     <ion-content :fullscreen="true" class="background">
       <div class="pattern"></div>
 
@@ -58,10 +58,10 @@
             </ion-button>
             <Button :lightBlue="true" :disabled="!check && phone === ''" :loading="loading" name="Зарегистрироваться"
               @click="
-                () => {
-                  registrUserHandler();
-                }
-              " />
+  () => {
+    registrUserHandler();
+  }
+" />
           </div>
 
           <div v-else>
@@ -106,7 +106,7 @@ import {
   IonItem,
   IonButton,
   IonImg,
-  isPlatform,
+  /* isPlatform, */
   IonCheckbox,
   IonText,
 } from "@ionic/vue";
@@ -188,14 +188,14 @@ export default defineComponent({
       }
     };
     const codeUserHandler = async () => {
-
+      console.log('codeuserHandler')
       if (password.value === passwordConfirm.value) {
         loading2.value = true;
-        if (isPlatform('android') || isPlatform('ios')) {
+        // if (isPlatform('android') || isPlatform('ios')) {
           await PushNotifications.addListener('registration', token => {
             fcmToken.value = token.value
           });
-        }
+        // }
 
         registrUser2(code.value, password.value, fcmToken.value).then(() => {
           loading2.value = false;

@@ -166,6 +166,12 @@ export default defineComponent({
 
                 })
               )
+              await store.set(
+                "lics",
+                JSON.stringify(
+                  authResponse?.value?.data?.lics,
+                )
+              )
               updateLogin.value = true
               router.push("/tabs/personalAccounts");
             } else {
@@ -222,7 +228,7 @@ export default defineComponent({
   padding: 10px;
 }
 
-.modal-header ion-icon{
+.modal-header ion-icon {
   font-size: 20px;
   margin-left: auto;
 }

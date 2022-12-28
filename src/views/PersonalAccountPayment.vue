@@ -116,9 +116,7 @@ export default defineComponent({
     },
   },
   ionViewDidEnter() {
-    this.$data.sum = Math.abs(this.sumValues(this.lcList?.debts.filter((e) => !e.sum.includes('-'))).toFixed(2)).toString()
-    // let filtedered = this.lcList?.debts.filter((e)=>!e.sum.includes('-'))
-    // this.$data.sum = 
+    this.$data.sum = this.sumValues(this.lcList?.debts.filter((e) => !e.sum.toString().includes('-')))?.toFixed(2).toString()
   },
   ionViewDidLeave() {
     this.$data.error = ''
@@ -167,7 +165,7 @@ export default defineComponent({
     },
     maskMoney(value) {
       const valueAsNumber = value?.toString().replace('.', '')
-      const valueAsNumber2 = parseFloat(value?.toFixed(2).toString().replace('.', ''))
+      const valueAsNumber2 = parseFloat(value).toFixed(2).toString().replace('.', '')
 
       if (value?.toString().split('.')[1]?.length < 2) {
         return new Intl.NumberFormat("ru-RU", {

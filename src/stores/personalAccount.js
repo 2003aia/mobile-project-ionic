@@ -39,7 +39,6 @@ export const usePersonalAccountStore = defineStore({
   },
   actions: {
     async getSettlements() {
-      console.log("getting settlements");
       try {
         const store = new Storage();
         await store.create();
@@ -102,12 +101,14 @@ export const usePersonalAccountStore = defineStore({
         const store = new Storage();
         await store.create();
         const token = await store.get("token");
+        const lics = await store.get("lics");
         const tokenParsed = JSON.parse(token).token;
-        const lc = JSON.parse(token).lics;
+        const licsParsed = JSON.parse(lics);
+        console.log(licsParsed, lics)
         await axios
           .post(
             `${apiUrlStng}GetAccount`,
-            { token: tokenParsed, LC: lc }
+            { token: tokenParsed, LC: licsParsed }
           )
           .then((response) => {
             if (response.data.error) router.push('/authPage')
@@ -128,14 +129,18 @@ export const usePersonalAccountStore = defineStore({
             this.addAccountResponse = response.data;
             const store = new Storage();
             await store.create();
-            const token = await store.get("token");
+            const token = await store.get("lics");
             const tokenParsed = JSON.parse(token);
+           /*  lc.forEach(element => {
+              console.log(element, 'test')
+              tokenParsed.push(element)
+            }); */
+            let newArray = [].concat(tokenParsed, lc);
+            console.log('addacc', JSON.stringify(tokenParsed), newArray)
+
             await store.set(
-              "token",
-              JSON.stringify({
-                ...tokenParsed,
-                lics: [...tokenParsed.lics, lc],
-              })
+              "lics",
+              JSON.stringify(newArray)
             );
             /*  }); */
           });
@@ -161,19 +166,19 @@ export const usePersonalAccountStore = defineStore({
               }
             );
 
-            const userData = JSON.parse(token);
+            // const userData = JSON.parse(token);
             const lics = this.getAccountResponse?.data.filter((el) => {
               return el?.code !== lc;
             });
             const userObject = {
-              name: userData.name,
+              /* name: userData.name,
               phone: userData.phone,
               email: userData.email,
               password: userData.password,
-              token: userData.token,
+              token: userData.token, */
               lics: lics?.map((el) => el?.code),
             };
-            await store.set("token", JSON.stringify(userObject));
+            await store.set("lics", JSON.stringify(userObject));
             this.delAccountResponse = response.data;
           });
       } catch (error) {
@@ -248,7 +253,7 @@ export const usePersonalAccountStore = defineStore({
         this.setIndicesError = error;
       }
     },
-    async sberPay(lc, phone, email, sum,) {
+    async sberPay(lc, phone, email, sum, ios) {
       try {
         const store = new Storage();
         await store.create();
@@ -261,6 +266,7 @@ export const usePersonalAccountStore = defineStore({
             sum: sum,
             LC: lc,
             email: email,
+            ios: ios
             // others: others,
           })
           .then((response) => {
