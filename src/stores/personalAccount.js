@@ -3,6 +3,7 @@ import axios from "axios";
 import { Storage } from "@ionic/storage";
 import router from "../router";
 // import { useLoginStore } from "./login";
+let apiUrlStng = 'https://1c.aostng.ru/VESTA/hs/API_STNG/V2/'
 
 export const usePersonalAccountStore = defineStore({
   id: "personalAccount",
@@ -46,7 +47,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetSettlements`,
+            `${apiUrlStng}GetSettlements`,
             { token: tokenParsed }
           )
           .then((response) => {
@@ -65,7 +66,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetStreets`,
+            `${apiUrlStng}GetStreets`,
             { token: tokenParsed, s_id: s_id }
           )
           .then((response) => {
@@ -85,7 +86,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetHouses`,
+            `${apiUrlStng}GetHouses`,
             { token: tokenParsed, ids: ids }
           )
           .then((response) => {
@@ -105,7 +106,7 @@ export const usePersonalAccountStore = defineStore({
         const lc = JSON.parse(token).lics;
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetAccount`,
+            `${apiUrlStng}GetAccount`,
             { token: tokenParsed, LC: lc }
           )
           .then((response) => {
@@ -120,7 +121,7 @@ export const usePersonalAccountStore = defineStore({
       try {
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/AddAccount`,
+            `${apiUrlStng}AddAccount`,
             { token: token, LC: lc }
           )
           .then(async (response) => {
@@ -150,7 +151,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/DelAccount`,
+            `${apiUrlStng}DelAccount`,
             { token: tokenParsed, LC: lc }
           )
           .then(async (response) => {
@@ -187,7 +188,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetPayments`,
+            `${apiUrlStng}GetPayments`,
             {
               token: tokenParsed,
               LC: lc, beginPeriod: beginDate, endPeriod: endDate,
@@ -210,7 +211,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/GetIndices`,
+            `${apiUrlStng}GetIndices`,
             { token: tokenParsed, counterId: counterId, beginPeriod: beginDate, endPeriod: endDate, }
           )
           .then((response) => {
@@ -230,7 +231,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/SetIndices`,
+            `${apiUrlStng}SetIndices`,
             { token: tokenParsed, counterId: counterId, indice: indice }
           )
           .then((response) => {
@@ -255,7 +256,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token);
         console.log(phone, email,)
         await axios
-          .post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/SBOL`, {
+          .post(`${apiUrlStng}SBOL`, {
             token: tokenParsed.token,
             sum: sum,
             LC: lc,

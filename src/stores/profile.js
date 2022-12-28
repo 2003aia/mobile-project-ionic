@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { Storage } from "@ionic/storage";
 import { useRouter } from "vue-router";
+let apiUrlStng = 'https://1c.aostng.ru/VESTA/hs/API_STNG/V2/'
 
 const router = useRouter()
 
@@ -29,7 +30,7 @@ export const useProfileStore = defineStore({
             const token = await store.get("token");
             const tokenParsed = JSON.parse(token).token;
             try {
-                await axios.get(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/getPUSH?token=${tokenParsed}`)
+                await axios.get(`${apiUrlStng}getPUSH?token=${tokenParsed}`)
                     .then(async (response) => {
                         this.pushResponse = response.data
 
@@ -53,7 +54,7 @@ export const useProfileStore = defineStore({
             const token = await store.get('token')
 
             try {
-                await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
+                await axios.post(`${apiUrlStng}Profile`, {
                     token: JSON.parse(token).token
                 }).then((response) => {
 
@@ -69,7 +70,7 @@ export const useProfileStore = defineStore({
             store.create()
             const token = await store.get('token')
             try {
-                await axios.post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
+                await axios.post(`${apiUrlStng}Profile`, {
                     token: JSON.parse(token).token,
                     ...data
                 }).then((response) => {

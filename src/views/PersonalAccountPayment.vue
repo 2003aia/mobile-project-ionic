@@ -7,11 +7,11 @@
         <div class="btn-wrapper">
           <Button class="btn" :lightBlue="true" name="Оплата" />
           <Button class="btn" v-show="lcList?.counters.length > 0" :grey="true" name="Показания" @click="
-            () =>
-              router.push({
-                name: 'personalAccountIndication',
-              })
-          " />
+  () =>
+    router.push({
+      name: 'personalAccountIndication',
+    })
+" />
         </div>
       </div>
       <div class="container">
@@ -42,13 +42,16 @@
                   </p>
                 </ion-text>
                 <ion-item>
-                  <ion-text>{{el?.sum.toString().includes('-') ? 'Аванс' : 'Задолженность'}}:</ion-text>
-                  <ion-text slot="end" :class="{'text-end': true, 'green': el?.sum.toString().includes('-')}">{{el?.sum.toString().includes('-') ? maskMoney(Math.abs(el?.sum)) : maskMoney(el?.sum)}}</ion-text>
+                  <ion-text>{{ el?.sum.toString().includes('-') ? 'Аванс' : 'Задолженность' }}:</ion-text>
+                  <ion-text slot="end" :class="{ 'text-end': true, 'green': el?.sum.toString().includes('-') }">{{
+    el?.sum.toString().includes('-')
+      ? maskMoney(Math.abs(el?.sum)) : maskMoney(el?.sum)
+}}</ion-text>
                 </ion-item>
               </template>
             </layout-box>
           </div>
-          
+
 
         </div>
         <layout-box>
@@ -60,8 +63,8 @@
             <ion-item lines="none">
               <ion-text>Итого:</ion-text>
               <ion-text class="text-end" slot="end">{{
-                  maskMoney(Math.abs(sumValues(lcList?.debts)))
-              }}</ion-text>
+    maskMoney(sum)
+}}</ion-text>
             </ion-item>
             <Input @updated="(item) => (sum = item)" :value="sum" :type="'number'"
               :changeHandler="(e) => sum = e.target.value" name="Введите сумму" :textBlue="true" :min="0" />
@@ -113,7 +116,9 @@ export default defineComponent({
     },
   },
   ionViewDidEnter() {
-    this.$data.sum = Math.abs(this.sumValues(this.lcList?.debts).toFixed(2)).toString()
+    this.$data.sum = Math.abs(this.sumValues(this.lcList?.debts.filter((e) => !e.sum.includes('-'))).toFixed(2)).toString()
+    // let filtedered = this.lcList?.debts.filter((e)=>!e.sum.includes('-'))
+    // this.$data.sum = 
   },
   ionViewDidLeave() {
     this.$data.error = ''

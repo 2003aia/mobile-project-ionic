@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { Storage } from '@ionic/storage'
 
+
 export const useAppealsStore = defineStore({
     id: 'appeals',
     state: () => ({

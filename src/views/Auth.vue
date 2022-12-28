@@ -37,9 +37,19 @@
 
         <ion-text class="text ion-text-center">Или с помощью</ion-text>
         <div>
-          <!-- <div @click="authUrlEsia">
+          <div id="open-modal">
             <ion-img class="logoURL" :src="require('@/assets/img/logoGOS.png')" alt="logoGOSUSLUGI"></ion-img>
-          </div> -->
+          </div>
+
+          <ion-modal ref="modal" trigger="open-modal" @willDismiss="onWillDismiss" mode="ios">
+            <div class="modal-header"><ion-icon @click="cancel" :icon="closeOutline"></ion-icon></div>
+            <div class="modal">
+              <ion-text>
+                <p class="ion-text-center">Сейчас в разработке</p>
+              </ion-text>
+            </div>
+
+          </ion-modal>
 
           <a href="https://aostng.ru/login/">
             <ion-img class="logoURL" :src="require('@/assets/img/logoSTNG2.png')" alt="aostng"></ion-img>
@@ -69,12 +79,16 @@ import {
   IonText,
   // isPlatform,
   IonImg,
+  IonIcon,
   onIonViewDidEnter,
 } from "@ionic/vue";
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
 import { FCM } from "@capacitor-community/fcm"
-
+import { IonModal } from '@ionic/vue'
+import {
+  closeOutline,
+} from "ionicons/icons";
 
 
 export default defineComponent({
@@ -85,15 +99,25 @@ export default defineComponent({
     IonText,
     Button,
     IonButton,
-
+    IonModal,
     Input,
     IonImg,
+    IonIcon
   },
   methods: {
     async authUrlEsia() {
       const backUrl = `https://esia.gosuslugi.ru/login/`;
       window.open(backUrl, '_system')
-    }
+
+    },
+    onWillDismiss(ev) {
+      if (ev.detail.role === 'confirm') {
+        this.message = `Hello, ${ev.detail.data}!`;
+      }
+    },
+    cancel() {
+      this.$refs.modal.$el.dismiss(null, 'cancel');
+    },
   },
   setup() {
     const router = useRouter();
@@ -117,8 +141,8 @@ export default defineComponent({
             fcmToken.value = token.value
             console.log(token.value, 'test', JSON.stringify(token))
             FCM.subscribeTo({ topic: "all" })
-            .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
-            .catch((err) => console.log(err));
+              .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
+              .catch((err) => console.log(err));
 
           });
         }
@@ -183,12 +207,32 @@ export default defineComponent({
       authUserHandler,
       phoneChange,
       passwordChange,
+      closeOutline
     };
   },
 });
 </script>
 
 <style scoped>
+.modal-header {
+  /* width: 80%;
+  height: 50%;
+  background-color: red;
+  margin: 0; */
+  padding: 10px;
+}
+
+.modal-header ion-icon{
+  font-size: 20px;
+  margin-left: auto;
+}
+
+ion-modal {
+  --height: 30%;
+  --width: 80%;
+  --border-radius: 16px;
+}
+
 .background {
   --background: linear-gradient(164.84deg, #1B7DB6 8.63%, #0F3C79 89.24%);
   position: relative;

@@ -3,6 +3,9 @@ import axios from "axios";
 import { Storage } from "@ionic/storage";
 
 const apiUrl = "https://api.aostng.ru/api/v2";
+let apiUrlStng = 'https://1c.aostng.ru/VESTA/hs/API_STNG/V2/'
+
+
 
 export const useLoginStore = defineStore({
   id: "login",
@@ -32,7 +35,7 @@ export const useLoginStore = defineStore({
       try {
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Registration`,
+            `${apiUrlStng}Registration`,
             { phone: phone }
           )
           .then((response) => (this.registrResponse = response.data));
@@ -48,49 +51,49 @@ export const useLoginStore = defineStore({
       try {
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Registration`,
+            `${apiUrlStng}Registration`,
             { token: tokenParsed, SMS: sms, password: password }
           )
           .then(async (response) => {
             this.registrResponse2 = response.data;
 
             // if (response.data.error === false) {
-              await axios
-                .post(
-                  `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`,
-                  { token: tokenParsed, fcmToken: fcmToken }
-                )
-              await axios
-                .post(`${apiUrl}/user/create`, {
-                  login: `${JSON.parse(token).phone}_app`,
-                  password: JSON.parse(token).phone,
-                })
-                .then(async (res) => {
-                  if (res.data.status === false) {
-                    await axios
-                      .post(`${apiUrl}/user/auth`, {
-                        login: `${JSON.parse(token).phone}_app`,
-                        password: JSON.parse(token).phone,
-                      })
-                      .then(async (res2) => {
-                        await store.set("support", {
-                          token: res2.data.data.token,
-                        });
+            await axios
+              .post(
+                `${apiUrlStng}Profile`,
+                { token: tokenParsed, fcmToken: fcmToken }
+              )
+            await axios
+              .post(`${apiUrl}/user/create`, {
+                login: `${JSON.parse(token).phone}_app`,
+                password: JSON.parse(token).phone,
+              })
+              .then(async (res) => {
+                if (res.data.status === false) {
+                  await axios
+                    .post(`${apiUrl}/user/auth`, {
+                      login: `${JSON.parse(token).phone}_app`,
+                      password: JSON.parse(token).phone,
+                    })
+                    .then(async (res2) => {
+                      await store.set("support", {
+                        token: res2.data.data.token,
                       });
-                  } else {
-                    await store.set("support", {
-                      token: res.data.data.token,
                     });
-                  }
-                }).catch(async (e) => {
-                  if (e?.response?.data?.status === false) {
-                    await axios
-                      .post(`${apiUrl}/user/auth`, {
-                        login: `${JSON.parse(token).phone}_app`,
-                        password: JSON.parse(token).phone,
-                      })
-                  }
-                })
+                } else {
+                  await store.set("support", {
+                    token: res.data.data.token,
+                  });
+                }
+              }).catch(async (e) => {
+                if (e?.response?.data?.status === false) {
+                  await axios
+                    .post(`${apiUrl}/user/auth`, {
+                      login: `${JSON.parse(token).phone}_app`,
+                      password: JSON.parse(token).phone,
+                    })
+                }
+              })
             // }
           });
       } catch (error) {
@@ -102,7 +105,7 @@ export const useLoginStore = defineStore({
       await store.create();
       try {
         await axios
-          .post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Restore`, {
+          .post(`${apiUrlStng}Restore`, {
             phone: phone,
           })
           .then((response) => (this.passRecoveryResponse = response.data));
@@ -117,7 +120,7 @@ export const useLoginStore = defineStore({
       try {
         await axios
           .post(
-            `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Authorization`,
+            `${apiUrlStng}Authorization`,
             {
               phone: phone,
               password: password,
@@ -126,50 +129,50 @@ export const useLoginStore = defineStore({
           .then(async (response) => {
             this.authResponse = response.data;
             // if (response.data.error === false) {
-              console.log(fcmToken, 'fcm token auth')
-              await axios
-                .post(
-                  `https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`,
-                  { token: response.data?.data?.token, fcmToken: fcmToken }
-                )
+            console.log(fcmToken, 'fcm token auth')
+            await axios
+              .post(
+                `${apiUrlStng}Profile`,
+                { token: response.data?.data?.token, fcmToken: fcmToken }
+              )
 
-              await axios
-                .post(`${apiUrl}/user/auth`, {
-                  login: `${phone}_app`,
-                  password: phone,
-                })
-                .then(async (res) => {
-                  if (res.data.status === false) {
+            await axios
+              .post(`${apiUrl}/user/auth`, {
+                login: `${phone}_app`,
+                password: phone,
+              })
+              .then(async (res) => {
+                if (res.data.status === false) {
 
-                    await axios
-                      .post(`${apiUrl}/user/create`, {
-                        login: `${phone}_app`,
-                        password: phone,
-                      })
-                      .then(async (res2) => {
-                        await store.set("support", {
-                          token: res2.data.data.token,
-                        });
+                  await axios
+                    .post(`${apiUrl}/user/create`, {
+                      login: `${phone}_app`,
+                      password: phone,
+                    })
+                    .then(async (res2) => {
+                      await store.set("support", {
+                        token: res2.data.data.token,
                       });
-                  } else {
-                    await store.set("support", {
-                      token: res.data.data.token,
                     });
-                  }
-                }).catch(async (e) => {
-                  if (e?.response?.data?.status === false) {
-                    await axios
-                      .post(`${apiUrl}/user/create`, {
-                        login: `${phone}_app`,
-                        password: phone,
-                      })
-                      .then(async (res2) => {
-                        await store.set("support", {
-                          token: res2.data.data.token,
-                        });
+                } else {
+                  await store.set("support", {
+                    token: res.data.data.token,
+                  });
+                }
+              }).catch(async (e) => {
+                if (e?.response?.data?.status === false) {
+                  await axios
+                    .post(`${apiUrl}/user/create`, {
+                      login: `${phone}_app`,
+                      password: phone,
+                    })
+                    .then(async (res2) => {
+                      await store.set("support", {
+                        token: res2.data.data.token,
                       });
-                  }
-                })
+                    });
+                }
+              })
             // }
           });
       } catch (error) {
@@ -183,7 +186,7 @@ export const useLoginStore = defineStore({
       // const supportToken = await store.get('support')
       try {
         await axios
-          .post(`https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile`, {
+          .post(`${apiUrlStng}Profile`, {
             token: token,
             password: password,
             name: JSON.parse(profileData).name,
