@@ -6,6 +6,11 @@
         <ion-item v-show="loading">
           <ion-spinner name="bubbles"></ion-spinner>
         </ion-item>
+        <ion-item v-show="pushList.length === 0" lines="none">
+          <ion-text style="width: 100%" class="ion-text-center">
+            <p style="width: 100%">Уведомлений нет</p>
+          </ion-text>
+        </ion-item>
         <div v-show="!loading" v-for="el in pushList" :key="el">
           <ion-item @click="openLink(el?.link)">
             <div>
