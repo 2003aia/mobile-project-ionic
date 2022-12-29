@@ -104,7 +104,6 @@ export const usePersonalAccountStore = defineStore({
         const lics = await store.get("lics");
         const tokenParsed = JSON.parse(token).token;
         const licsParsed = JSON.parse(lics);
-        console.log(licsParsed, lics)
         await axios
           .post(
             `${apiUrlStng}GetAccount`,
@@ -131,12 +130,7 @@ export const usePersonalAccountStore = defineStore({
             await store.create();
             const token = await store.get("lics");
             const tokenParsed = JSON.parse(token);
-           /*  lc.forEach(element => {
-              console.log(element, 'test')
-              tokenParsed.push(element)
-            }); */
             let newArray = [].concat(tokenParsed, lc);
-            console.log('addacc', JSON.stringify(tokenParsed), newArray)
 
             await store.set(
               "lics",

@@ -192,9 +192,9 @@ export default defineComponent({
       if (password.value === passwordConfirm.value) {
         loading2.value = true;
         // if (isPlatform('android') || isPlatform('ios')) {
-          await PushNotifications.addListener('registration', token => {
-            fcmToken.value = token.value
-          });
+        await PushNotifications.addListener('registration', token => {
+          fcmToken.value = token.value
+        });
         // }
 
         registrUser2(code.value, password.value, fcmToken.value).then(() => {

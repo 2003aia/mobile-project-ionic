@@ -2,11 +2,13 @@
   <ion-page>
     <Back />
     <Layout :btnSrc="'/tabs/services'" height="false" outlineBtn="." filledBtn="Создать заявку" title="Мои заявки">
+
       <template v-slot:main-content>
         <ion-item v-show="loading" lines="none">
           <ion-spinner name="bubbles">
           </ion-spinner>
         </ion-item>
+
 
 
         <div v-show="!loading" v-for="el in listServices" :key="el" class="wrapper">
@@ -25,9 +27,11 @@
               </ion-text>
             </ion-item>
           </div>
-
-
         </div>
+
+        <ion-item style="width: 100%" v-show="listServices.length === 0" lines="none">
+          <ion-text style="width: 100%" class="ion-text-center">Заявок нет</ion-text>
+        </ion-item>
 
       </template>
     </Layout>
@@ -58,7 +62,6 @@ export default defineComponent({
   components: {
     Back,
     IonItem,
-
     IonPage,
     Layout,
     IonText,
@@ -78,10 +81,10 @@ export default defineComponent({
   },
   mounted() {
     this.$data.loading = true
-    this.getListServices().then(() => { 
+    this.getListServices().then(() => {
       this.$data.loading = false
       // console.log(this.listServices, 'test')
-     })
+    })
   },
   data() {
     return {

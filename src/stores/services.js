@@ -39,7 +39,6 @@ export const useServicesStore = defineStore({
   },
   actions: {
     async getCameras() {
-      console.log("getting cameras");
       try {
         await axios
           .get(`${apiUrl}/camera/get`)
@@ -49,7 +48,6 @@ export const useServicesStore = defineStore({
       }
     },
     async getListServices() {
-      console.log("getting listServices");
       const store = new Storage();
       await store.create();
       const token = await store.get("token");
@@ -68,7 +66,6 @@ export const useServicesStore = defineStore({
       }
     },
     async getForms() {
-      console.log("getting forms");
       try {
         await axios
           .get(
@@ -80,7 +77,6 @@ export const useServicesStore = defineStore({
       }
     },
     async uploadFiles(files) {
-      console.log("uploading files");
       const store = new Storage();
       await store.create();
       const token = await store.get("token");
@@ -115,7 +111,6 @@ export const useServicesStore = defineStore({
       }
     },
     async services(forms) {
-      console.log("services");
       const store = new Storage();
       await store.create();
       const token = await store.get("token");
