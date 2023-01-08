@@ -11,14 +11,14 @@
         </ion-text>
         <ion-item class="check" lines="none">
           <input @click="
-  (e) => {
-    uniqueCheck(e,);
-  }
-" value="email" v-model="formTypeVal" @change="uniqueCheck" class="check2" type="checkbox" slot="start" />
-          <Input v-show="email" name="Введите email" :value="email" :changeHandler="changeEmail" />
-          <ion-text v-show="!email">
+            (e) => {
+              uniqueCheck(e,);
+            }
+          " value="email" v-model="formTypeVal" @change="uniqueCheck" class="check2" type="checkbox" slot="start" />
+          <Input name="Введите email" :value="email" :changeHandler="changeEmail" />
+          <!-- <ion-text v-show="!email">
             <p class="ion-text-center" style="">Электронная почта</p>
-          </ion-text>
+          </ion-text> -->
         </ion-item>
 
         <ion-text>
@@ -26,10 +26,10 @@
         </ion-text>
         <ion-item class="check" lines="none">
           <input @click="
-  (e) => {
-    uniqueCheck(e);
-  }
-" value="number" v-model="formTypeVal" @change="uniqueCheck" class="check2" type="checkbox" slot="start" />
+            (e) => {
+              uniqueCheck(e);
+            }
+          " value="number" v-model="formTypeVal" @change="uniqueCheck" class="check2" type="checkbox" slot="start" />
           <Input name="Введите номер телефона" :value="phone" :changeHandler="changePhone" />
 
         </ion-item>
@@ -143,13 +143,14 @@ export default defineComponent({
       this.$data.formTypeVal = [];
       if (e.currentTarget.checked === false) {
         this.$data.formTypeVal.push(e.currentTarget.value);
-        console.log(this.$data.formTypeVal)
       }
+
     },
     paymentHandler() {
       this.sberPay(
         this.$pinia.state.value.personalAccount.personalItemData.code,
         this.$data.phone,
+        this.$data.email,
         this.$data.formTypeVal[0] === 'email' ? true : false,
         +this.$pinia.state.value.personalAccount.personalItemData.sberPay
           .accruals,

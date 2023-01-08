@@ -3,8 +3,8 @@ import axios from "axios";
 import { Storage } from "@ionic/storage";
 
 const apiUrl = "https://api.aostng.ru/api/v2";
-let apiUrlStng = 'https://1c.aostng.ru/VESTA/hs/API_STNG/V2/'
-
+// let apiUrlStng = '${apiUrlStng2}'
+let apiUrlStng2 = 'https://fhd.aostng.ru/vesta/hs/API_STNG/V2/'
 
 
 export const useLoginStore = defineStore({
@@ -35,8 +35,8 @@ export const useLoginStore = defineStore({
       try {
         await axios
           .post(
-            `${apiUrlStng}Registration`,
-            { phone: phone }
+            `${apiUrlStng2}Registration`,
+            { phone: phone },
           )
           .then((response) => (this.registrResponse = response.data));
       } catch (error) {
@@ -51,7 +51,7 @@ export const useLoginStore = defineStore({
       try {
         await axios
           .post(
-            `${apiUrlStng}Registration`,
+            `${apiUrlStng2}Registration`,
             { token: tokenParsed, SMS: sms, password: password }
           )
           .then(async (response) => {
@@ -60,7 +60,7 @@ export const useLoginStore = defineStore({
             // if (response.data.error === false) {
             await axios
               .post(
-                `${apiUrlStng}Profile`,
+                `${apiUrlStng2}Profile`,
                 { token: tokenParsed, fcmToken: fcmToken }
               )
             await axios
@@ -105,7 +105,7 @@ export const useLoginStore = defineStore({
       await store.create();
       try {
         await axios
-          .post(`${apiUrlStng}Restore`, {
+          .post(`${apiUrlStng2}Restore`, {
             phone: phone,
           })
           .then((response) => (this.passRecoveryResponse = response.data));
@@ -120,11 +120,11 @@ export const useLoginStore = defineStore({
       try {
         await axios
           .post(
-            `${apiUrlStng}Authorization`,
+            `${apiUrlStng2}Authorization`,
             {
               phone: phone,
               password: password,
-            }
+            },
           )
           .then(async (response) => {
             this.authResponse = response.data;
@@ -132,7 +132,7 @@ export const useLoginStore = defineStore({
             console.log(fcmToken, 'fcm token auth')
             await axios
               .post(
-                `${apiUrlStng}Profile`,
+                `${apiUrlStng2}Profile`,
                 { token: response.data?.data?.token, fcmToken: fcmToken }
               )
 
@@ -186,7 +186,7 @@ export const useLoginStore = defineStore({
       // const supportToken = await store.get('support')
       try {
         await axios
-          .post(`${apiUrlStng}Profile`, {
+          .post(`${apiUrlStng2}Profile`, {
             token: token,
             password: password,
             name: JSON.parse(profileData).name,

@@ -2,8 +2,8 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
 import router from "../router";
-// import { useLoginStore } from "./login";
-let apiUrlStng = 'https://1c.aostng.ru/VESTA/hs/API_STNG/V2/'
+// let apiUrlStng = '${apiUrlStng2}'
+let apiUrlStng2 = 'https://fhd.aostng.ru/vesta/hs/API_STNG/V2/'
 
 export const usePersonalAccountStore = defineStore({
   id: "personalAccount",
@@ -46,7 +46,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `${apiUrlStng}GetSettlements`,
+            `${apiUrlStng2}GetSettlements`,
             { token: tokenParsed }
           )
           .then((response) => {
@@ -65,7 +65,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `${apiUrlStng}GetStreets`,
+            `${apiUrlStng2}GetStreets`,
             { token: tokenParsed, s_id: s_id }
           )
           .then((response) => {
@@ -85,7 +85,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `${apiUrlStng}GetHouses`,
+            `${apiUrlStng2}GetHouses`,
             { token: tokenParsed, ids: ids }
           )
           .then((response) => {
@@ -106,7 +106,7 @@ export const usePersonalAccountStore = defineStore({
         const licsParsed = JSON.parse(lics);
         await axios
           .post(
-            `${apiUrlStng}GetAccount`,
+            `${apiUrlStng2}GetAccount`,
             { token: tokenParsed, LC: licsParsed }
           )
           .then((response) => {
@@ -121,7 +121,7 @@ export const usePersonalAccountStore = defineStore({
       try {
         await axios
           .post(
-            `${apiUrlStng}AddAccount`,
+            `${apiUrlStng2}AddAccount`,
             { token: token, LC: lc }
           )
           .then(async (response) => {
@@ -150,7 +150,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `${apiUrlStng}DelAccount`,
+            `${apiUrlStng2}DelAccount`,
             { token: tokenParsed, LC: lc }
           )
           .then(async (response) => {
@@ -187,7 +187,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `${apiUrlStng}GetPayments`,
+            `${apiUrlStng2}GetPayments`,
             {
               token: tokenParsed,
               LC: lc, beginPeriod: beginDate, endPeriod: endDate,
@@ -210,7 +210,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `${apiUrlStng}GetIndices`,
+            `${apiUrlStng2}GetIndices`,
             { token: tokenParsed, counterId: counterId, beginPeriod: beginDate, endPeriod: endDate, }
           )
           .then((response) => {
@@ -230,7 +230,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `${apiUrlStng}SetIndices`,
+            `${apiUrlStng2}SetIndices`,
             { token: tokenParsed, counterId: counterId, indice: indice }
           )
           .then((response) => {
@@ -247,7 +247,7 @@ export const usePersonalAccountStore = defineStore({
         this.setIndicesError = error;
       }
     },
-    async sberPay(lc, phone, email, sum, ios) {
+    async sberPay(lc, phone, emailString, email, sum, ios) {
       try {
         const store = new Storage();
         await store.create();
@@ -255,11 +255,12 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token);
         console.log(phone, email,)
         await axios
-          .post(`${apiUrlStng}SBOL`, {
+          .post(`${apiUrlStng2}SBOL`, {
             token: tokenParsed.token,
             sum: sum,
             LC: lc,
-            email: email,
+            email: email ? emailString : '',
+            phone: email === false ? phone : '',
             ios: ios
             // others: others,
           })

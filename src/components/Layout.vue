@@ -26,7 +26,7 @@
         <slot name="content" />
       </div>
 
-      <Button @click="method" :loading="loading" :router-link="btnSrc" v-if="filledBtn !== '.'" class="button"
+      <Button :disabled="disabled" @click="method" :loading="loading" :router-link="btnSrc" v-if="filledBtn !== '.'" class="button"
         :name="filledBtn"></Button>
       <div class="outline">
         <Button @click="method2" :loading="loading2" v-if="outlineBtn !== '.'" :outline="true" :name="outlineBtn">
@@ -63,6 +63,7 @@ export default defineComponent({
     height: String,
     loading: Boolean,
     loading2: Boolean,
+    disabled: Boolean
   },
 });
 </script>

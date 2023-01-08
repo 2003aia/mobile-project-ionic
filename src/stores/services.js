@@ -2,7 +2,8 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { Storage } from "@ionic/storage";
 const apiUrl = "https://api.aostng.ru/api/v2";
-let apiUrlStng = 'https://1c.aostng.ru/VESTA/hs/API_STNG/V2/'
+// let apiUrlStng = '${apiUrlStng2}'
+let apiUrlStng2 = 'https://fhd.aostng.ru/vesta/hs/API_STNG/V2/'
 
 export const useServicesStore = defineStore({
   id: "services",
@@ -55,7 +56,7 @@ export const useServicesStore = defineStore({
       try {
         await axios
           .post(
-            `${apiUrlStng}ListServices`,
+            `${apiUrlStng2}ListServices`,
             {
               token: tokenParsed,
             }
@@ -91,7 +92,7 @@ export const useServicesStore = defineStore({
           const element = check[index];
           await axios
             .post(
-              `${apiUrlStng}get_file`,
+              `${apiUrlStng2}get_file`,
               {
                 token: tokenParsed,
                 title: element.title,
@@ -117,7 +118,7 @@ export const useServicesStore = defineStore({
       const tokenParsed = JSON.parse(token).token;
       try {
         await axios
-          .post(`${apiUrlStng}Services`, {
+          .post(`${apiUrlStng2}Services`, {
             token: tokenParsed,
             data: {
               status: [
@@ -162,7 +163,7 @@ export const useServicesStore = defineStore({
         const tokenParsed = JSON.parse(token).token;
         await axios
           .post(
-            `${apiUrlStng}CallInspector`,
+            `${apiUrlStng2}CallInspector`,
             { token: tokenParsed, LC: lc, phone: phone }
           )
           .then((response) => (this.callInspectorResponse = response.data));

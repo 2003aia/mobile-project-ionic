@@ -8,13 +8,12 @@
 <script>
 import { IonApp, IonRouterOutlet, /* isPlatform,  */} from "@ionic/vue";
 import { defineComponent } from "vue";
-import { App } from '@capacitor/app'
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
 import { FCM } from "@capacitor-community/fcm"
 import { StatusBar } from '@capacitor/status-bar';
 import axios from 'axios'
-import { useRouter } from "vue-router";
+// import { useRouter } from "vue-router";
 
 
 export default defineComponent({
@@ -28,26 +27,15 @@ export default defineComponent({
     }
   },
   mounted() {
-    const router = useRouter()
+    // const router = useRouter()
 
-    App.addListener('appUrlOpen', function (event) {
-      // Example url: https://beerswift.app/tabs/tabs2
-      // slug = /tabs/tabs2
-      const slug = event.url
-
-      // We only push to the route if there is a slug present
-      if (slug) {
-        router.push({
-          path: slug,
-        });
-      }
-    });
+    
     const registerFcm = async () => {
 
       const store = new Storage()
       await store.create()
 
-      let tokenStorage = ''
+      let tokenStorage = null
       const getToken = async () => {
         tokenStorage = await store.get('token')
       }
