@@ -45,7 +45,7 @@ export default defineComponent({
         await PushNotifications.addListener('registration', (token) => {
           if (token?.value.length !== 0) {
             console.log('Registration token: ', token.value);
-            axios.post('https://fhd.aostng.ru/vesta_storage/hs/API_STNG/V2/Profile', {
+            axios.post('https://fhd.aostng.ru/vesta/hs/API_STNG/V2/Profile', {
               token: JSON.parse(tokenStorage)?.token,
               fcmToken: token.value
             })

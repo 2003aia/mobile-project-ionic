@@ -288,13 +288,12 @@ export default defineComponent({
         let data = this.$data.indicationList.find((el) => {
           return el.id === id
         })
-
         if (this.indicesList[0]) {
           // this.$data.indicationList.map(obj => this.indicesList.find(o => o.id === obj.id) || obj);
           Object.assign(data, this.indicesList[0])
           // console.log('test', this.indicesList, this.$data.indicationList)
         } else {
-          data[0].indications = []
+          data.indications = []
         }
       })
 

@@ -18,7 +18,7 @@
           <Input type="email" @updated="(item) => (email = item)" name="Электронная почта" :value="email"
             :changeHandler="(e) => email = e.target.value" />
           
-          <Input :mask="'###########'" @updated="(item) => (snils = item)" name="СНИЛС" :value="snils"
+          <Input :mask="'###-###-###-##'" @updated="(item) => (snils = item)" name="СНИЛС" :value="snils"
             :changeHandler="(e) => snils = e.target.value" />
 
 
@@ -28,11 +28,13 @@
           <Input :mask="'##.##.####'" @updated="(item) => (issuedDate = item)"
             :changeHandler="(e) => issuedDate = e.target.value" :value="issuedDate" name="Дата выдачи паспорта" />
        
-          <Input :mask="'####'" @updated="(item) => (serial = item)" :changeHandler="(e) => serial = e.target.value"
+          <Input :mask="'## ##'" @updated="(item) => (serial = item)" :changeHandler="(e) => serial = e.target.value"
             :value="serial" name="Серия паспорта" />
          
           <Input :mask="'######'" @updated="(item) => (number = item)" :changeHandler="(e) => number = e.target.value"
             :value="number" name="Номер паспорта" />
+            <Input :mask="'###-###'" @updated="(item) => (codePodr = item)" :changeHandler="(e) => codePodr = e.target.value"
+            :value="codePodr" name="Код подразделения" />
           <ion-item>
             <ion-text>
               <p class="sub-title">{{ login }}</p>
@@ -79,6 +81,7 @@ export default defineComponent({
       number: '',
       snils: '',
       loading: false,
+      codePodr: ''
     };
   },
   components: {
@@ -101,6 +104,7 @@ export default defineComponent({
           number: this.$data.number,
           issuedBy: this.$data.issuedBy,
           issuedDate: this.$data.issuedDate,
+          codePodr: this.$data.codePodr,
         },
 
         snils: this.$data.snils,
@@ -138,6 +142,8 @@ export default defineComponent({
       this.$data.number = this.profileData?.passport?.number
       this.$data.issuedBy = this.profileData?.passport?.issuedBy
       this.$data.issuedDate = this.profileData?.passport?.issuedDate
+      this.$data.codePodr = this.profileData?.passport?.codePodr
+
     }
     storageHandler()
 

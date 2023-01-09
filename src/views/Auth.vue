@@ -89,6 +89,8 @@ import { IonModal } from '@ionic/vue'
 import {
   closeOutline,
 } from "ionicons/icons";
+import axios from 'axios'
+
 
 
 export default defineComponent({
@@ -104,6 +106,9 @@ export default defineComponent({
     IonImg,
     IonIcon
   },
+  computed: {
+
+  },
   methods: {
     async authUrlEsia() {
       const backUrl = `https://esia.gosuslugi.ru/login/`;
@@ -118,7 +123,9 @@ export default defineComponent({
     cancel() {
       this.$refs.modal.$el.dismiss(null, 'cancel');
     },
+
   },
+
   setup() {
     const router = useRouter();
     const { authResponse, authError, updateLogin } = storeToRefs(useLoginStore());
@@ -127,7 +134,6 @@ export default defineComponent({
     let password = ref("");
     let errorText = ref("");
     let loading = ref(false);
-    let fcmToken = ref('')
     const authUserHandler = async () => {
       let myModel = phone.value.replace(/\D+/g, "");
       if (password.value === "" || phone.value === "") {
@@ -137,9 +143,21 @@ export default defineComponent({
         loading.value = true;
         // if (isPlatform('android') && isPlatform('ios')) {
         const fcmRegistr = async () => {
+          const store = new Storage()
+          await store.create()
+          const token = await store.get('token')
+          const tokenParsed = JSON.parse(token)
           await PushNotifications.addListener('registration', token => {
-            fcmToken.value = token.value
-            console.log(token.value, 'test', JSON.stringify(token))
+            console.log('Registration token2: ', token.value,tokenParsed);
+
+            if (token?.value.length !== 0) {
+              console.log('Registration token: ', token.value,tokenParsed.token);
+              axios.post('https://fhd.aostng.ru/vesta/hs/API_STNG/V2/Profile', {
+                token: tokenParsed.token,
+                fcmToken: token.value
+              })
+            }
+            console.log('test', JSON.stringify(token))
             FCM.subscribeTo({ topic: "all" })
               .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
               .catch((err) => console.log(err));
@@ -147,13 +165,13 @@ export default defineComponent({
           });
         }
 
-        fcmRegistr()
+
         // } 
 
-        console.log('testisplatform', fcmToken.value.length, fcmToken.value)
-        authUser(myModel, password.value, fcmToken.value)
+        authUser(myModel, password.value)
           .then(async () => {
             loading.value = false;
+            // fcmRegistr()
             if (authResponse?.value?.error === false) {
               const store = new Storage();
               await store.create();
@@ -177,6 +195,8 @@ export default defineComponent({
             } else {
               errorText.value = authResponse.value?.message;
             }
+          }).then(()=>{
+            fcmRegistr()
           })
           .catch((e) => {
             console.log(e, "error2");

@@ -83,8 +83,16 @@
             <ion-text class="sub-title">
               СНИЛС
             </ion-text>
-            <ion-text>
+            <ion-text slot="end">
               {{ profileData?.snils }}
+            </ion-text>
+          </ion-item>
+          <ion-item v-show="profileData?.passport?.codePodr">
+            <ion-text class="sub-title">
+              Код подразделения
+            </ion-text>
+            <ion-text slot="end">
+              {{ profileData?.passport?.codePodr }}
             </ion-text>
           </ion-item>
           <ion-item>
@@ -211,10 +219,12 @@ ion-item {
   --inner-padding-start: 0;
   --inner-padding-end: 0;
 }
-ion-text{
+
+ion-text {
   margin-left: 0;
 }
-p{
+
+p {
   margin: 0;
 }
 </style>

@@ -113,7 +113,7 @@ export const useLoginStore = defineStore({
         this.passRecoveryError = error;
       }
     },
-    async authUser(phone, password, fcmToken) {
+    async authUser(phone, password) {
       const store = new Storage();
       await store.create();
 
@@ -129,12 +129,7 @@ export const useLoginStore = defineStore({
           .then(async (response) => {
             this.authResponse = response.data;
             // if (response.data.error === false) {
-            console.log(fcmToken, 'fcm token auth')
-            await axios
-              .post(
-                `${apiUrlStng2}Profile`,
-                { token: response.data?.data?.token, fcmToken: fcmToken }
-              )
+            
 
             await axios
               .post(`${apiUrl}/user/auth`, {
