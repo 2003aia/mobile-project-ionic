@@ -12,9 +12,13 @@
         </ion-text>
         <br>
         <div>
-          
+          <Input @updated="(item) => (surname = item)" :changeHandler="(e) => surname = e.target.value" :value="surname"
+            name="Укажите фамилию" />
           <Input @updated="(item) => (name = item)" :changeHandler="(e) => name = e.target.value" :value="name"
             name="Укажите имя" />
+            <Input @updated="(item) => (lastname = item)" :changeHandler="(e) => lastname = e.target.value" :value="lastname"
+            name="Укажите отчество" />
+
           <Input type="email" @updated="(item) => (email = item)" name="Электронная почта" :value="email"
             :changeHandler="(e) => email = e.target.value" />
           
@@ -73,6 +77,8 @@ export default defineComponent({
       codeSent: false,
       edit: false,
       name: '',
+      lastname: '',
+      surname: '',
       email: '',
       login: '',
       issuedBy: '',
@@ -100,7 +106,7 @@ export default defineComponent({
 
       const formData = {
         passport: {
-          serial: this.$data.serial,
+          serial: this.$data.serial.replace(/\s/g, ''),
           number: this.$data.number,
           issuedBy: this.$data.issuedBy,
           issuedDate: this.$data.issuedDate,
@@ -109,6 +115,8 @@ export default defineComponent({
 
         snils: this.$data.snils,
         name: this.$data.name,
+        surname: this.$data.surname,
+        lastname: this.$data.lastname,
         email: this.$data.email,
       }
       this.editProfile(formData,).then(
@@ -137,6 +145,8 @@ export default defineComponent({
       this.$data.login = JSON.parse(token).phone
       this.$data.email = this.profileData?.email
       this.$data.name = this.profileData?.name
+      this.$data.surname = this.profileData?.surname
+      this.$data.lastname = this.profileData?.lastname
       this.$data.snils = this.profileData?.snils
       this.$data.serial = this.profileData?.passport?.serial
       this.$data.number = this.profileData?.passport?.number

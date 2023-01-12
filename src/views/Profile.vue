@@ -9,19 +9,50 @@
   () => {
     router.push('/tabs/newPassPage');
   }
-" :filledBtn="'Редактировать'" title="Личный кабинет" :outlineBtn="'Изменить пароль'">
+" id3="open-modal2" :filledBtn="'Редактировать'" title="Личный кабинет" :outlineBtn="'Изменить пароль'"
+      :filledBtn2="'Удалить аккаунт'">
       <template v-slot:main-content>
+        <ion-modal ref="modal2" trigger="open-modal2" @willDismiss="onWillDismiss" mode="ios">
+          <div class="modal-header"><ion-icon @click="cancel" :icon="closeOutline"></ion-icon></div>
+          <div class="modal">
+
+            <ion-text>
+              <p class="title">Удаление аккаунта</p>
+              <p class="ion-text-center" style="margin-top: 20px; color: black">Вы точно хотите удалить аккаунт?</p>
+            </ion-text>
+            <div class="confirmWrapper">
+              <ion-button @click="cancel" fill="clear">НЕТ</ion-button>
+              <ion-button @click="deleteHandler" v-show="!loading" fill="clear"
+                style="color:red; border: solid red 1px;margin-left: 10px;">ДА</ion-button>
+              <ion-button @click="deleteHandler" v-show="loading" fill="clear"
+                style="color:red; border: solid red 1px; margin-left: 10px;"><ion-spinner name="bubbles" /></ion-button>
+
+            </div>
+          </div>
+
+        </ion-modal>
         <ion-text>
           <p class="title ion-text-start">Мои данные</p>
         </ion-text>
         <div>
           <ion-item>
             <ion-text>
+              <p v-if="profileData?.surname" class="sub-title">{{ profileData?.surname }}</p>
+              <p v-else>Фамилия</p>
+            </ion-text>
+          </ion-item>
+          <ion-item>
+            <ion-text>
               <p v-if="profileData?.name" class="sub-title">{{ profileData?.name }}</p>
               <p v-else>Имя</p>
             </ion-text>
           </ion-item>
-
+          <ion-item>
+            <ion-text>
+              <p v-if="profileData?.lastname" class="sub-title">{{ profileData?.lastname }}</p>
+              <p v-else>Отчество</p>
+            </ion-text>
+          </ion-item>
 
           <ion-item>
             <ion-text>
@@ -33,7 +64,7 @@
           <ion-item>
             <ion-text>
               <p>
-                Паспорт
+                Данные паспорта
               </p>
             </ion-text>
           </ion-item>
@@ -80,18 +111,18 @@
             </ion-text>
           </ion-item>
           <ion-item v-show="profileData?.snils">
-            <ion-text class="sub-title">
+            <ion-text>
               СНИЛС
             </ion-text>
-            <ion-text slot="end">
+            <ion-text slot="end" class="sub-title">
               {{ profileData?.snils }}
             </ion-text>
           </ion-item>
           <ion-item v-show="profileData?.passport?.codePodr">
-            <ion-text class="sub-title">
+            <ion-text >
               Код подразделения
             </ion-text>
-            <ion-text slot="end">
+            <ion-text slot="end" class="sub-title">
               {{ profileData?.passport?.codePodr }}
             </ion-text>
           </ion-item>
@@ -121,6 +152,7 @@
           </ion-item>
         </div>
       </template>
+
     </Layout>
   </ion-page>
 </template>
@@ -135,27 +167,33 @@ import {
   IonPage,
   IonText,
   IonItem,
-  IonCheckbox
+  IonCheckbox,
+  IonModal,
+  IonIcon,
+  IonButton,
+  IonSpinner,
 } from "@ionic/vue";
 import { useProfileStore } from "../stores/profile";
 import { mapActions } from "pinia";
 import { Storage } from '@ionic/storage'
-
+import {
+  closeOutline,
+} from "ionicons/icons";
 export default defineComponent({
   name: "profilePage",
   data() {
-    return {
+    return { 
       codeSent: false,
       edit: false,
       login: '',
       consentSMS: false,
       consentEMAIL: false,
-
+      loading: false,
       // profileData: null,
     };
   },
   methods: {
-    ...mapActions(useProfileStore, ["getProfile", "editProfile"]),
+    ...mapActions(useProfileStore, ["getProfile", "editProfile", "deleteAcc"]),
     checkHandler(v, e) {
       if (v === 1) {
         const formData = {
@@ -171,7 +209,27 @@ export default defineComponent({
         }
         this.editProfile(formData)
       }
+    },
+    onWillDismiss(ev) {
+      if (ev.detail.role === 'confirm') {
+        this.message = `Hello, ${ev.detail.data}!`;
+      }
+    },
+    cancel() {
+      this.$refs.modal2.$el.dismiss(null, 'cancel');
+    },
+    deleteHandler() {
+      this.$data.loading = true
 
+      this.deleteAcc().then(async () => {
+        this.$data.loading = false
+        this.$refs.modal2.$el.dismiss(null, 'cancel');
+        this.$router.push('/authPage')
+        const store = new Storage()
+        await store.create()
+        const token = await store.get('token')
+        await store.set('token', JSON.stringify({ phone: JSON.parse(token).phone, }))
+      })
     }
   },
   computed: {
@@ -201,17 +259,56 @@ export default defineComponent({
     IonItem,
     IonText,
     IonCheckbox,
+    IonModal,
+    IonIcon,
+    IonButton,
+    IonSpinner,
   },
   setup() {
     const router = useRouter();
 
 
-    return { router, };
+    return { router, closeOutline, };
   },
 });
 </script>
 
 <style scoped>
+.modal-header {
+  padding: 10px;
+}
+
+.modal-header ion-icon {
+  font-size: 20px;
+  margin-left: auto;
+}
+
+ion-modal {
+  --height: fit-content;
+  --width: 80%;
+  --border-radius: 16px;
+}
+
+.modal {
+  padding: 15px;
+}
+
+.confirmWrapper {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.confirmWrapper ion-button {
+  --border-radius: 25px;
+  height: 45px;
+  width: 100%;
+  border-radius: 25px;
+  border: solid 1px #0378b4;
+  color: #0378b4;
+}
+
+
 ion-item {
   --padding-start: 0;
   --padding-bottom: 0px;

@@ -69,7 +69,7 @@ export default defineComponent({
       return this.$pinia.state.value?.profile?.pushResponse?.data ? this.$pinia.state.value?.profile?.pushResponse?.data : []
     }
   },
-  mounted() {
+  ionViewDidEnter() {
     this.$data.loading = true
     this.getPush().then(async () => {
       this.$data.loading = false

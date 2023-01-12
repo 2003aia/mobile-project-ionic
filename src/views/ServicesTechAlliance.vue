@@ -334,6 +334,7 @@ import { useServicesStore } from "../stores/services";
 import { Storage } from "@ionic/storage";
 import moment from "moment";
 import { mask } from "vue-the-mask";
+import { useProfileStore } from "../stores/profile";
 
 export default defineComponent({
   name: "servicesTechAlliance",
@@ -353,6 +354,9 @@ export default defineComponent({
   directives: { mask },
 
   computed: {
+    profileDataComputed() {
+      return this.$pinia.state.value?.profile?.profileResponse?.data;
+    },
     addressList() {
       return this.$pinia.state.value?.services?.addressResponse?.suggestions;
     },
@@ -371,6 +375,8 @@ export default defineComponent({
     },
   },
   methods: {
+    ...mapActions(useProfileStore, ["getProfile"]),
+
     ...mapActions(useServicesStore, ["getForms", "addressQuery"]),
     addressQueryHandler(v, field) {
       if (field === "USER_BIRTHPLACE") {
@@ -509,6 +515,20 @@ export default defineComponent({
   },
   mounted() {
     this.getForms();
+    this.getProfile().then(async () => {
+      const store = new Storage()
+      await store.create()
+      const token = await store.get('token')
+      this.$data.formPass[0].value = this.profileDataComputed?.passport?.serial
+      this.$data.formPass[1].value = this.profileDataComputed?.passport?.number
+      this.$data.formPass[2].value = this.profileDataComputed?.passport?.issuedBy
+      this.$data.formPass[3].value = this.profileDataComputed?.passport?.issuedDate
+      this.$data.formUser[0].value = this.profileDataComputed?.name
+      this.$data.formUser[1].value = this.profileDataComputed?.surname
+      this.$data.formUser[2].value = this.profileDataComputed?.lastname
+      this.$data.formUser[6].value = JSON.parse(token).phone
+      this.$data.formUser[8].value = this.profileDataComputed?.email
+    })
     const fetchStoreHandler = async () => {
       const store = new Storage();
       await store.create();

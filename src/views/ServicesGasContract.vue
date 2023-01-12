@@ -1,13 +1,9 @@
 <template>
   <ion-page>
     <Back :btnSrc="() => router.push('/tabs/services')" />
-    <Layout
-      :method="storageHandler"
-      height="false"
-      filledBtn="Далее"
-      outlineBtn="."
-      title="Заключения договора поставки газа для обеспечения коммунально - бытовых нужд гражданина собственниками квартир"
-      ><!-- btnSrc="/tabs/servicesGasContractCheckbox" -->
+    <Layout :method="storageHandler" height="false" filledBtn="Далее" outlineBtn="."
+      title="Заключения договора поставки газа для обеспечения коммунально - бытовых нужд гражданина собственниками квартир">
+      <!-- btnSrc="/tabs/servicesGasContractCheckbox" -->
       <template v-slot:header-content>
         <ion-text>
           <p class="text-20-600">Общие сведения заявления</p>
@@ -24,49 +20,31 @@
         <div v-for="(el, index) in formUser" :key="el">
           <ion-accordion-group ref="addressQuery">
             <ion-accordion>
-              <Input
-                :mask="el.mask"
-                slot="header"
-                :value="el.value"
-                :name="el.name"
-                :required="el.required"
-                @input="
-                  (e) => {
-                    el.value = e.target.value;
-                    addressQueryHandler(e, el.field);
-                  }
-                "
-              />
-              <div
-                slot="content"
-                v-show="
+              <Input :mask="el.mask" slot="header" :value="el.value" :name="el.name" :required="el.required" @input="
+                (e) => {
+                  el.value = e.target.value;
+                  addressQueryHandler(e, el.field);
+                }
+              " />
+              <div slot="content" v-show="
+                el.field === 'USER_BIRTHPLACE' ||
+                (el.field === 'USER_ADDRESS' && el.value)
+              ">
+                <div v-show="
                   el.field === 'USER_BIRTHPLACE' ||
                   (el.field === 'USER_ADDRESS' && el.value)
-                "
-              >
-                <div
-                  v-show="
-                    el.field === 'USER_BIRTHPLACE' ||
-                    (el.field === 'USER_ADDRESS' && el.value)
-                  "
-                  v-for="address in addressList"
-                  :key="address"
-                >
-                  <ion-item
-                    button
-                    @click="
-                      () => {
-                        this.$refs.addressQuery[index].$el.value = undefined;
-                        el.value = address.value;
-                      }
-                    "
-                    :lines="
-                      addressList[addressList.length - 1]?.value ===
-                      address.value
-                        ? 'none'
-                        : 'full'
-                    "
-                  >
+                " v-for="address in addressList" :key="address">
+                  <ion-item button @click="
+                    () => {
+                      this.$refs.addressQuery[index].$el.value = undefined;
+                      el.value = address.value;
+                    }
+                  " :lines="
+  addressList[addressList.length - 1]?.value ===
+    address.value
+    ? 'none'
+    : 'full'
+">
                     <ion-text>{{ address.value }}</ion-text>
                   </ion-item>
                 </div>
@@ -94,44 +72,26 @@
             <div v-for="(el, index) in formPass" :key="el">
               <ion-accordion-group ref="addressQuery2">
                 <ion-accordion>
-                  <Input
-                    :mask="el.mask"
-                    slot="header"
-                    :value="el.value"
-                    :name="el.name"
-                    :required="el.required"
-                    @input="
-                      (e) => {
-                        el.value = e.target.value;
-                        addressQueryHandler(e, el.field);
-                      }
-                    "
-                  />
-                  <div
-                    slot="content"
-                    v-show="el.field === 'USER_REGION' && el.value"
-                  >
-                    <div
-                      v-show="el.field === 'USER_REGION' && el.value"
-                      v-for="address in addressList"
-                      :key="address"
-                    >
-                      <ion-item
-                        button
-                        @click="
-                          () => {
-                            this.$refs.addressQuery2[index].$el.value =
-                              undefined;
-                            el.value = address.value;
-                          }
-                        "
-                        :lines="
-                          addressList[addressList.length - 1]?.value ===
-                          address.value
-                            ? 'none'
-                            : 'full'
-                        "
-                      >
+                  <Input :mask="el.mask" slot="header" :value="el.value" :name="el.name" :required="el.required" @input="
+                    (e) => {
+                      el.value = e.target.value;
+                      addressQueryHandler(e, el.field);
+                    }
+                  " />
+                  <div slot="content" v-show="el.field === 'USER_REGION' && el.value">
+                    <div v-show="el.field === 'USER_REGION' && el.value" v-for="address in addressList" :key="address">
+                      <ion-item button @click="
+                        () => {
+                          this.$refs.addressQuery2[index].$el.value =
+                            undefined;
+                          el.value = address.value;
+                        }
+                      " :lines="
+  addressList[addressList.length - 1]?.value ===
+    address.value
+    ? 'none'
+    : 'full'
+">
                         <ion-text>{{ address.value }}</ion-text>
                       </ion-item>
                     </div>
@@ -169,9 +129,11 @@ import LayoutBox from "../components/LayoutBox.vue";
 import Back from "../components/Back.vue";
 import { mapActions } from "pinia";
 import { useServicesStore } from "../stores/services";
-// import { Storage } from "@ionic/storage";
+import { Storage } from "@ionic/storage";
 import moment from "moment";
 import { mask } from "vue-the-mask";
+import { useProfileStore } from "../stores/profile";
+
 export default defineComponent({
   name: "servicesGasContract",
   components: {
@@ -191,6 +153,9 @@ export default defineComponent({
     addressList() {
       return this.$pinia.state.value?.services?.addressResponse?.suggestions;
     },
+    profileDataComputed() {
+      return this.$pinia.state.value?.profile?.profileResponse?.data;
+    },
     formFields() {
       return this.$pinia.state.value?.services?.formResponse?.result?.forms.filter(
         (el) => {
@@ -204,10 +169,26 @@ export default defineComponent({
   },
   mounted() {
     this.getForms();
-    console.log(this.formFields, "testst");
+    this.getProfile().then(async () => {
+      const store = new Storage()
+      await store.create()
+      const token = await store.get('token')
+      this.$data.formPass[0].value = this.profileDataComputed?.passport?.serial
+      this.$data.formPass[1].value = this.profileDataComputed?.passport?.number
+      this.$data.formPass[2].value = this.profileDataComputed?.passport?.issuedBy
+      this.$data.formPass[3].value = this.profileDataComputed?.passport?.issuedDate
+      this.$data.formUser[0].value = this.profileDataComputed?.name
+      this.$data.formUser[1].value = this.profileDataComputed?.surname
+      this.$data.formUser[2].value = this.profileDataComputed?.lastname
+
+      this.$data.formUser[6].value = JSON.parse(token).phone
+      this.$data.formUser[8].value = this.profileDataComputed?.email
+    })
   },
   methods: {
     ...mapActions(useServicesStore, ["getForms", "addressQuery"]),
+    ...mapActions(useProfileStore, ["getProfile"]),
+
     addressQueryHandler(v, field) {
       if (field === "USER_BIRTHPLACE") {
         this.addressQuery(v.target.value, field);
@@ -279,7 +260,7 @@ export default defineComponent({
         }
       }
     },
-  
+
   },
   setup() {
     const router = useRouter();
@@ -295,7 +276,7 @@ export default defineComponent({
 
           type: "text",
           required: true,
-          value: "",
+          value: '',
         },
         {
           field: "USER_PASSPORT_NUM",
@@ -304,7 +285,7 @@ export default defineComponent({
           mask: "######",
 
           required: true,
-          value: "",
+          value: '',
         },
         {
           field: "USER_PASS_WHO",
@@ -321,7 +302,7 @@ export default defineComponent({
           name: "Дата выдачи паспорта",
           type: "text",
           required: true,
-          value: "",
+          value: '',
         },
         {
           field: "USER_REGION",
@@ -329,7 +310,7 @@ export default defineComponent({
           name: "Место регистрации",
           type: "text",
           required: true,
-          value: "",
+          value: '',
         },
       ],
       formUser: [
@@ -422,9 +403,11 @@ export default defineComponent({
 .text-white {
   color: #fff;
 }
+
 .dot {
   color: #62d0ce;
 }
+
 ion-item {
   --inner-padding-start: 15px;
   --inner-padding-bottom: 0px;

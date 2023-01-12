@@ -2,13 +2,7 @@
   <ion-page>
     <Back />
     <!-- () => router.push({ name: 'servicesOneSelect', params: { next: true } }) -->
-    <Layout
-      :method="storageHandler"
-      height="false"
-      filledBtn="Далее"
-      outlineBtn="."
-      title="Разовая услуга"
-    >
+    <Layout :method="storageHandler" height="false" filledBtn="Далее" outlineBtn="." title="Разовая услуга">
       <template v-slot:header-content>
         <ion-text>
           <p class="text-20-600">Общие сведения для формы заявления</p>
@@ -36,43 +30,25 @@
         <div v-for="(el, index) in formUser" :key="el">
           <ion-accordion-group ref="addressQuery">
             <ion-accordion>
-              <Input
-                :mask="el.mask"
-                slot="header"
-                :value="el.value"
-                :name="el.name"
-                :required="el.required"
-                @input="
-                  (e) => {
-                    el.value = e.target.value;
-                    addressQueryHandler(e, el.field);
-                  }
-                "
-              />
-              <div
-                slot="content"
-                v-show="el.field === 'USER_ADDRESS' && el.value"
-              >
-                <div
-                  v-show="el.field === 'USER_ADDRESS' && el.value"
-                  v-for="address in addressList"
-                  :key="address"
-                >
-                  <ion-item
-                    button
-                    @click="
-                      () => {
-                        this.$refs.addressQuery[index].$el.value = undefined;
-                        el.value = address.value;
-                      }
-                    "
-                    :lines="
-                      addressList[addressList.length - 1]?.value ===
-                      address.value
-                        ? 'none'
-                        : 'full'
-                    "
-                  >
+              <Input :mask="el.mask" slot="header" :value="el.value" :name="el.name" :required="el.required" @input="
+                (e) => {
+                  el.value = e.target.value;
+                  addressQueryHandler(e, el.field);
+                }
+              " />
+              <div slot="content" v-show="el.field === 'USER_ADDRESS' && el.value">
+                <div v-show="el.field === 'USER_ADDRESS' && el.value" v-for="address in addressList" :key="address">
+                  <ion-item button @click="
+                    () => {
+                      this.$refs.addressQuery[index].$el.value = undefined;
+                      el.value = address.value;
+                    }
+                  " :lines="
+  addressList[addressList.length - 1]?.value ===
+    address.value
+    ? 'none'
+    : 'full'
+">
                     <ion-text>{{ address.value }}</ion-text>
                   </ion-item>
                 </div>
@@ -98,17 +74,11 @@
               </p>
             </ion-text>
             <div v-for="el in formPass" :key="el">
-              <Input
-                :mask="el.mask"
-                :value="el.value"
-                :name="el.name"
-                :required="el.required"
-                @input="
-                  (e) => {
-                    el.value = e.target.value;
-                  }
-                "
-              />
+              <Input :mask="el.mask" :value="el.value" :name="el.name" :required="el.required" @input="
+                (e) => {
+                  el.value = e.target.value;
+                }
+              " />
 
               <ion-text v-show="el.value.length === 0 && el.error">
                 <p class="error">Заполните поле</p>
@@ -126,17 +96,11 @@
               </p>
             </ion-text>
             <div v-for="el in formGas" :key="el">
-              <Input
-                :mask="el.mask"
-                :value="el.value"
-                :name="el.name"
-                :required="el.required"
-                @input="
-                  (e) => {
-                    el.value = e.target.value;
-                  }
-                "
-              />
+              <Input :mask="el.mask" :value="el.value" :name="el.name" :required="el.required" @input="
+                (e) => {
+                  el.value = e.target.value;
+                }
+              " />
 
               <ion-text v-show="el.value.length === 0 && el.error">
                 <p class="error">Заполните поле</p>
@@ -146,23 +110,18 @@
             <ion-text>
               <p class="sub-title">Вид работ</p>
             </ion-text>
-            <ButtonSelect
-              :name="
-                this.select?.GAS_VID_USLUG?.VALUE
-                  ? this.select?.GAS_VID_USLUG?.VALUE
-                  : 'Выберите вариант'
-              "
-              :btnSrc="
-                () => {
-                  router.push('/tabs/servicesOneSelect');
-                }
-              "
-            />
-            <ion-text
-              v-show="
-                validation.select === true && !this.select?.GAS_VID_USLUG?.VALUE
-              "
-            >
+            <ButtonSelect :name="
+              this.select?.GAS_VID_USLUG?.VALUE
+                ? this.select?.GAS_VID_USLUG?.VALUE
+                : 'Выберите вариант'
+            " :btnSrc="
+  () => {
+    router.push('/tabs/servicesOneSelect');
+  }
+" />
+            <ion-text v-show="
+              validation.select === true && !this.select?.GAS_VID_USLUG?.VALUE
+            ">
               <p class="error">Выберите вариант</p>
             </ion-text>
             <ion-text>
@@ -181,14 +140,8 @@
                 с УГРС АО Сахатранснефтегаз
               </p>
             </ion-text>
-            <Input
-              name="Номер договора"
-              :value="number"
-              :changeHandler="changeNumber"
-            />
-            <ion-text
-              v-show="validation.number === true && number.length === 0"
-            >
+            <Input name="Номер договора" :value="number" :changeHandler="changeNumber" />
+            <ion-text v-show="validation.number === true && number.length === 0">
               <p class="error">Заполните поле</p>
             </ion-text>
             <ion-text>
@@ -196,14 +149,8 @@
                 Управляющая компания для многоквартирных домов
               </p>
             </ion-text>
-            <Input
-              name="Управляющая компания"
-              :value="company"
-              :changeHandler="changeCompany"
-            />
-            <ion-text
-              v-show="validation.company === true && company.length === 0"
-            >
+            <Input name="Управляющая компания" :value="company" :changeHandler="changeCompany" />
+            <ion-text v-show="validation.company === true && company.length === 0">
               <p class="error">Заполните поле</p>
             </ion-text>
           </template>
@@ -232,6 +179,9 @@ import moment from "moment";
 import { mask } from "vue-the-mask";
 import { mapActions } from "pinia";
 import { useServicesStore } from "../stores/services";
+import { useProfileStore } from "../stores/profile";
+import { Storage } from "@ionic/storage";
+
 export default defineComponent({
   name: "oneServicePage",
   components: {
@@ -253,6 +203,9 @@ export default defineComponent({
     return { router };
   },
   methods: {
+    ...mapActions(useProfileStore, ["getProfile"]),
+    ...mapActions(useServicesStore, ["getForms", "addressQuery"]),
+
     addressQueryHandler(v, field) {
       if (field === "USER_BIRTHPLACE") {
         this.addressQuery(v.target.value, field);
@@ -264,7 +217,6 @@ export default defineComponent({
         this.addressQuery(v.target.value, field);
       }
     },
-    ...mapActions(useServicesStore, ["getForms", "addressQuery"]),
     async storageHandler() {
       let checkUser = this.$data.formUser.filter((el) => {
         if (el.required === true) {
@@ -351,9 +303,8 @@ export default defineComponent({
           ...formUser,
           NAME: {
             NAME: "Название",
-            VALUE: `${formUser.USER_NAME.VALUE} ${
-              formUser.USER_LAST_NAME.VALUE
-            }[${moment().format("DD.MM.YYYY hh:mm")}]`,
+            VALUE: `${formUser.USER_NAME.VALUE} ${formUser.USER_LAST_NAME.VALUE
+              }[${moment().format("DD.MM.YYYY hh:mm")}]`,
           },
           DATE_CREATE: {
             NAME: "Дата создания",
@@ -383,10 +334,10 @@ export default defineComponent({
         };
         console.log(userObject, "test");
         if (this.$pinia.state.value?.services?.form) {
-          this.$pinia.state.value.services.servicesOneNext = true 
+          this.$pinia.state.value.services.servicesOneNext = true
           this.$router.push({
             name: "servicesOneSelect",
-           /*  params: { next: true }, */
+            /*  params: { next: true }, */
           });
           this.$pinia.state.value.services.form = userObject;
         }
@@ -405,8 +356,25 @@ export default defineComponent({
   },
   mounted() {
     this.getForms();
+    this.getProfile().then(async () => {
+      const store = new Storage()
+      await store.create()
+      const token = await store.get('token')
+      this.$data.formPass[0].value = this.profileDataComputed?.passport?.serial
+      this.$data.formPass[1].value = this.profileDataComputed?.passport?.number
+      this.$data.formPass[2].value = this.profileDataComputed?.passport?.issuedBy
+      this.$data.formPass[3].value = this.profileDataComputed?.passport?.issuedDate
+      this.$data.formUser[0].value = this.profileDataComputed?.name
+      this.$data.formUser[1].value = this.profileDataComputed?.surname
+      this.$data.formUser[2].value = this.profileDataComputed?.lastname
+      this.$data.formUser[4].value = JSON.parse(token).phone
+      this.$data.formUser[6].value = this.profileDataComputed?.email
+    })
   },
   computed: {
+    profileDataComputed() {
+      return this.$pinia.state.value?.profile?.profileResponse?.data;
+    },
     addressList() {
       return this.$pinia.state.value?.services?.addressResponse?.suggestions;
     },
@@ -583,6 +551,7 @@ export default defineComponent({
 .text-white {
   color: #fff;
 }
+
 ion-item {
   --inner-padding-start: 15px;
   --inner-padding-bottom: 0px;

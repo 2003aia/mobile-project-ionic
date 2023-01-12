@@ -12,12 +12,12 @@
       :filledBtn="licsList.length === 0 ? '.' : 'Отправить'" outlineBtn="." title="Вызов инспектора">
       <template v-slot:main-content>
         <div v-if="licsList.length === 0">
-          <ion-item router-link="/personalAccountNew">
+          <ion-item router-link="/tabs/personalAccountNew">
             <ion-Icon class="icon-start" size="large" slot="start" :icon="pencilOutline"></ion-Icon>
             <ion-text class="sub-title">Добавить лицевой счет</ion-text>
             <ion-icon class="icon-end" size="large" slot="end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
-          <ion-item router-link="/personalAccountInfoSearch">
+          <ion-item router-link="/tabs/personalAccountInfoSearch">
             <ion-Icon class="icon-start" size="large" slot="start" :icon="documentTextOutline"></ion-Icon>
             <ion-text class="sub-title">Узнать лицевой счет</ion-text>
             <ion-icon size="large" class="icon-end" slot="end" :icon="chevronForwardOutline"></ion-icon>

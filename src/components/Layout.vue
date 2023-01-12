@@ -26,11 +26,16 @@
         <slot name="content" />
       </div>
 
-      <Button :disabled="disabled" @click="method" :loading="loading" :router-link="btnSrc" v-if="filledBtn !== '.'" class="button"
-        :name="filledBtn"></Button>
+      <Button :disabled="disabled" @click="method" :loading="loading" :router-link="btnSrc" v-if="filledBtn !== '.'"
+        class="button" :name="filledBtn"></Button>
+      
+
       <div class="outline">
         <Button @click="method2" :loading="loading2" v-if="outlineBtn !== '.'" :outline="true" :name="outlineBtn">
         </Button>
+      </div>
+      <div class="button2">
+        <Button @click="method3" :loading="loading3" :id="id3" v-if="filledBtn2" :name="filledBtn2"></Button>
       </div>
     </div>
   </ion-content>
@@ -55,15 +60,21 @@ export default defineComponent({
     method2: {
       type: Function,
     },
+    method3: {
+      type: Function,
+    },
     outlineBtn: String,
     btnSrc: String,
     filledBtn: String,
+    filledBtn2: String,
     padding: Boolean,
     title: String,
     height: String,
     loading: Boolean,
     loading2: Boolean,
-    disabled: Boolean
+    loading3: Boolean,
+    disabled: Boolean,
+    id3: String,
   },
 });
 </script>
@@ -134,13 +145,17 @@ ion-text {
 
 .outline {
   margin-top: 45px;
-  margin-bottom: 15px;
 }
 
 .button {
   margin-left: 15px;
   margin-right: 15px;
   margin-top: -30px;
-  /*  margin-bottom: 15px; */
+}
+
+.button2 {
+  margin-top: 45px;
+  margin-bottom: 25px;
+
 }
 </style>

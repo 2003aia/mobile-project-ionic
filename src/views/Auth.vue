@@ -180,8 +180,6 @@ export default defineComponent({
                 JSON.stringify({
                   ...authResponse?.value?.data,
                   phone: phone.value,
-                  password: password.value,
-
                 })
               )
               await store.set(
@@ -241,10 +239,7 @@ export default defineComponent({
 
 <style scoped>
 .modal-header {
-  /* width: 80%;
-  height: 50%;
-  background-color: red;
-  margin: 0; */
+
   padding: 10px;
 }
 

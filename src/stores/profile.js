@@ -17,7 +17,8 @@ export const useProfileStore = defineStore({
         editProfileResponse: null,
         profileResponse: null,
         profileError: null,
-
+        deleteResponse: null,
+        deleteError: null,
     }),
     getters: {
         urlPush: (state) => {
@@ -64,6 +65,23 @@ export const useProfileStore = defineStore({
                 })
             } catch (error) {
                 this.profileError = error
+            }
+        },
+        async deleteAcc() {
+            const store = new Storage()
+            await store.create()
+            const token = await store.get('token')
+
+            try {
+                await axios.post(`${apiUrlStng2}delLC`, {
+                    token: JSON.parse(token).token
+                }).then((response) => {
+
+                    this.deleteResponse = response.data
+
+                })
+            } catch (error) {
+                this.deleteError = error
             }
         },
         async editProfile(data) {

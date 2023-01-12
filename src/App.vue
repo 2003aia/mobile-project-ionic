@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { IonApp, IonRouterOutlet, /* isPlatform,  */} from "@ionic/vue";
+import { IonApp, IonRouterOutlet, /* isPlatform,  */ } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
@@ -29,7 +29,7 @@ export default defineComponent({
   mounted() {
     // const router = useRouter()
 
-    
+
     const registerFcm = async () => {
 
       const store = new Storage()
@@ -58,19 +58,7 @@ export default defineComponent({
 
       let permStatus = await PushNotifications.checkPermissions();
       console.log('permStatus', JSON.stringify(permStatus))
-      if (permStatus.receive === "granted") {
-        console.log('addListenersblock code started')
 
-        await PushNotifications.addListener('pushNotificationReceived', notification => {
-
-          console.log('Push notification received: ', JSON.stringify(notification));
-        });
-
-        await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
-          this.$router.push("/tabs/notifications");
-          console.log('Push notification action performed', JSON.stringify(notification));
-        });
-      }
       if (permStatus.receive !== 'granted') {
         await PushNotifications.requestPermissions().then(async () => {
           await PushNotifications.register().then(() => {
@@ -92,6 +80,20 @@ export default defineComponent({
 
         })
       }
+      if (permStatus.receive === "granted") {
+        console.log('addListenersblock code started')
+
+        await PushNotifications.addListener('pushNotificationReceived', notification => {
+
+          console.log('Push notification received: ', JSON.stringify(notification));
+        });
+
+        await PushNotifications.addListener('pushNotificationActionPerformed', notification => {
+          this.$router.push("/tabs/notifications");
+          console.log('Push notification action performed', JSON.stringify(notification));
+        });
+      }
+      await PushNotifications.removeAllListeners()
     }
 
     const getDeliveredNotifications = async () => {
@@ -106,10 +108,10 @@ export default defineComponent({
 
     };
     // if (isPlatform('ios') && isPlatform('androi?d')) {
-      registerNotifications()
-      registerFcm()
-      getDeliveredNotifications()
-      setStatusBarStyle()
+    registerNotifications()
+    registerFcm()
+    getDeliveredNotifications()
+    setStatusBarStyle()
 
     // }
 
