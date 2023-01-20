@@ -53,7 +53,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const { addAccountResponse, } = storeToRefs(
+    const { addAccountResponse, getAccountResponse, personalItemData } = storeToRefs(
       usePersonalAccountStore()
     );
     const { addAccount, getAccount, } = usePersonalAccountStore();
@@ -68,9 +68,15 @@ export default defineComponent({
       const store = new Storage()
       await store.create()
       const token = await store.get('token')
-      addAccount(JSON.parse(token).token, lc.value).then(() => {
+      const lcArr = [lc.value]
+      addAccount(JSON.parse(token).token, lcArr).then(() => {
         loading.value = false;
-        getAccount()
+        getAccount().then(() => {
+
+          const itemData = getAccountResponse?.value?.data?.filter((el) => el.code === lc.value)
+          router.push("/tabs/personalAccountPayment");
+          personalItemData.value = itemData[0]
+        })
         response.value = addAccountResponse.value.message
       });
     };

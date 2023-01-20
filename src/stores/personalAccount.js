@@ -104,6 +104,7 @@ export const usePersonalAccountStore = defineStore({
         const lics = await store.get("lics");
         const tokenParsed = JSON.parse(token).token;
         const licsParsed = JSON.parse(lics);
+
         await axios
           .post(
             `${apiUrlStng2}GetAccount`,
@@ -130,8 +131,7 @@ export const usePersonalAccountStore = defineStore({
             await store.create();
             const token = await store.get("lics");
             const tokenParsed = JSON.parse(token);
-            let newArray = [].concat(tokenParsed, lc);
-
+            let newArray = [...tokenParsed, ...lc]
             await store.set(
               "lics",
               JSON.stringify(newArray)
@@ -164,14 +164,8 @@ export const usePersonalAccountStore = defineStore({
             const lics = this.getAccountResponse?.data.filter((el) => {
               return el?.code !== lc;
             });
-            const userObject = {
-              /* name: userData.name,
-              phone: userData.phone,
-              email: userData.email,
-              password: userData.password,
-              token: userData.token, */
-              lics: lics?.map((el) => el?.code),
-            };
+            const userObject = lics?.map((el) => el?.code)
+
             await store.set("lics", JSON.stringify(userObject));
             this.delAccountResponse = response.data;
           });

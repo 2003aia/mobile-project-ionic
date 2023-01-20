@@ -359,7 +359,7 @@ ion-tab-button ion-img{
   top: 0;
 }
 ion-tab-button ion-label{
-  margin-top: 15px;
+  margin-top: 25px;
 }
 
 .tabslogo {
