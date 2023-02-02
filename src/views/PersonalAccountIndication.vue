@@ -54,10 +54,16 @@
                 </p>
               </ion-text>
               <ion-text v-show="el.response">
-                <p class="ion-text-center">
+                <p class="ion-text-center" v-show="!el?.response?.toString()?.includes('Не удалось создать документ')">
                   {{ el.response }}
                 </p>
+                <p class="ion-text-center" v-show="el?.response?.toString()?.includes('Не удалось создать документ')">
+                  Нарушен срок предоставления показаний, в разделе услуги Вам необходимо оформить заявку
+                  <span class="blue" @click="() => router.push('/tabs/servicesCallInspector')"
+                    style="text-decoration:underline">"Вызов инспектора"</span>
+                </p>
               </ion-text>
+              
               <Button :loading="loading" :name="'Подтвердить'" @click="
                 () => {
                   if (el?.indications[0].date.substring(0, 10) !== moment().format('DD.MM.yyyy')) {
@@ -126,7 +132,7 @@
                 }">
 
                   <ion-col class="text-end">{{
-                      indice?.date.substring(0, 10)
+                    indice?.date.substring(0, 10)
                   }}</ion-col>
                   <ion-col class="text-end">{{ indice?.indication }}</ion-col>
                 </ion-row>

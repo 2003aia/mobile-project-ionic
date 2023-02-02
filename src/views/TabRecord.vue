@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <Back :noBack="true" :logo="true" />
-    <Layout v-if="!currentlySuccess" height="false" outlineBtn="." filledBtn="Оставить заявку" title="Вид услуг"
+    <Layout v-if="!currentlySuccess" height="false" outlineBtn="." filledBtn="Оставить заявку" title="Предварительная запись"
       :method="() => sendPreregRequest()">
       <template v-slot:header-content>
         <ion-text>

@@ -31,6 +31,17 @@
           </div>
 
         </ion-modal>
+        <ion-modal :is-open="isOpen" mode="ios" @willDismiss="onWillDismiss2">
+          <div class="modal-header"><ion-icon @click="cancel2" :icon="closeOutline"></ion-icon></div>
+          <div class="modal">
+
+            <ion-text>
+              <p class="ion-text-center" style="margin-top: 0px; margin-bottom: 30px; color: black">Заполните электронную почту</p>
+            </ion-text>
+
+          </div>
+
+        </ion-modal>
         <ion-text>
           <p class="title ion-text-start">Мои данные</p>
         </ion-text>
@@ -119,7 +130,7 @@
             </ion-text>
           </ion-item>
           <ion-item v-show="profileData?.passport?.codePodr">
-            <ion-text >
+            <ion-text>
               Код подразделения
             </ion-text>
             <ion-text slot="end" class="sub-title">
@@ -142,8 +153,8 @@
             </ion-text>
           </ion-item>
           <ion-item class="check">
-            <ion-checkbox :disabled="profileData?.email == '' ? true : false" slot="start"
-              @update:modelValue="checkHandler(2, $event)" :modelValue="consentEMAIL">
+            <ion-checkbox id="open-modal3" slot="start" @update:modelValue="checkHandler(2, $event)"
+              :modelValue="consentEMAIL">
             </ion-checkbox>
             <ion-text>
 
@@ -182,14 +193,14 @@ import {
 export default defineComponent({
   name: "profilePage",
   data() {
-    return { 
+    return {
       codeSent: false,
       edit: false,
       login: '',
       consentSMS: false,
       consentEMAIL: false,
       loading: false,
-      // profileData: null,
+      isOpen: false,
     };
   },
   methods: {
@@ -203,11 +214,33 @@ export default defineComponent({
         this.editProfile(formData)
       }
       if (v === 2) {
-        const formData = {
-          ...this.profileData,
-          consenttoemail: e,
+
+        if (this.profileData?.email.length === 0 && e === true) {
+          console.log(e, 'test')
+          this.$data.isOpen = true
+          this.$data.consentEMAIL = false
+          // e = false
+          this.$data.isEmail = e
         }
-        this.editProfile(formData)
+        if (e === false) {
+          this.$data.isOpen = false
+          const formData = {
+            ...this.profileData,
+            consenttoemail: e,
+          }
+          this.$data.isOpen = false
+          console.log(formData, 'testupdate')
+          this.editProfile(formData)
+        }
+        if (this.profileData?.email.length > 0 && e === true) {
+          const formData = {
+            ...this.profileData,
+            consenttoemail: e,
+          }
+          this.$data.isOpen = false
+          this.editProfile(formData)
+        }
+
       }
     },
     onWillDismiss(ev) {
@@ -215,8 +248,20 @@ export default defineComponent({
         this.message = `Hello, ${ev.detail.data}!`;
       }
     },
+    onWillDismiss2() {
+      console.log('test3')
+      // this.$data.consentEMAIL = false
+      this.$data.consentEMAIL = null
+
+    },
+    setOpen(isOpen) {
+      this.$data.isOpen = isOpen;
+    },
     cancel() {
       this.$refs.modal2.$el.dismiss(null, 'cancel');
+    },
+    cancel2() {
+      this.$data.isOpen = false
     },
     deleteHandler() {
       this.$data.loading = true
@@ -243,10 +288,8 @@ export default defineComponent({
       await store.create()
       const token = await store.get('token')
       this.$data.login = JSON.parse(token).phone
-
     }
     storageHandler()
-
     this.getProfile().then(() => {
       this.$data.consentSMS = this.profileData.consenttosms
       this.$data.consentEMAIL = this.profileData.consenttoemail
