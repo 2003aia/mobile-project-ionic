@@ -24,7 +24,7 @@
               <ion-button @click="cancel" fill="clear">НЕТ</ion-button>
               <ion-button @click="deleteHandler" v-show="!loading" fill="clear"
                 style="color:red; border: solid red 1px;margin-left: 10px;">ДА</ion-button>
-              <ion-button @click="deleteHandler" v-show="loading" fill="clear"
+              <ion-button v-show="loading" fill="clear"
                 style="color:red; border: solid red 1px; margin-left: 10px;"><ion-spinner name="bubbles" /></ion-button>
 
             </div>
@@ -32,12 +32,20 @@
 
         </ion-modal>
         <ion-modal :is-open="isOpen" mode="ios" @willDismiss="onWillDismiss2">
-          <div class="modal-header"><ion-icon @click="cancel2" :icon="closeOutline"></ion-icon></div>
+          <div class="modal-header"><ion-icon @click="cancel2()" :icon="closeOutline"></ion-icon></div>
           <div class="modal">
 
-            <ion-text>
-              <p class="ion-text-center" style="margin-top: 0px; margin-bottom: 30px; color: black">Заполните электронную почту</p>
-            </ion-text>
+            <!-- <ion-text>
+              <p class="ion-text-center" style="margin-top: 0px; margin-bottom: 30px; color: black">Заполните
+                электронную почту</p>
+            </ion-text> -->
+            <Input name="Электронная почта" :value="email" :changeHandler="(e) => email = e.target.value" />
+            <div class="confirmWrapper">
+              <ion-button :disabled="!email" @click="editHandler" v-show="!loadingEmail"
+                fill="clear">ГОТОВО</ion-button>
+              <ion-button v-show="loadingEmail" fill="clear"><ion-spinner name="bubbles" /></ion-button>
+            </div>
+
 
           </div>
 
@@ -190,6 +198,7 @@ import { Storage } from '@ionic/storage'
 import {
   closeOutline,
 } from "ionicons/icons";
+import Input from '../components/Input.vue'
 export default defineComponent({
   name: "profilePage",
   data() {
@@ -200,7 +209,9 @@ export default defineComponent({
       consentSMS: false,
       consentEMAIL: false,
       loading: false,
+      loadingEmail: false,
       isOpen: false,
+      email: ''
     };
   },
   methods: {
@@ -208,7 +219,6 @@ export default defineComponent({
     checkHandler(v, e) {
       if (v === 1) {
         const formData = {
-          ...this.profileData,
           consenttosms: e,
         }
         this.editProfile(formData)
@@ -216,7 +226,6 @@ export default defineComponent({
       if (v === 2) {
 
         if (this.profileData?.email.length === 0 && e === true) {
-          console.log(e, 'test')
           this.$data.isOpen = true
           this.$data.consentEMAIL = false
           // e = false
@@ -225,16 +234,13 @@ export default defineComponent({
         if (e === false) {
           this.$data.isOpen = false
           const formData = {
-            ...this.profileData,
             consenttoemail: e,
           }
           this.$data.isOpen = false
-          console.log(formData, 'testupdate')
           this.editProfile(formData)
         }
         if (this.profileData?.email.length > 0 && e === true) {
           const formData = {
-            ...this.profileData,
             consenttoemail: e,
           }
           this.$data.isOpen = false
@@ -249,10 +255,11 @@ export default defineComponent({
       }
     },
     onWillDismiss2() {
-      console.log('test3')
-      // this.$data.consentEMAIL = false
-      this.$data.consentEMAIL = null
-
+      if (this.profileData?.email.length === 0) {
+        this.$data.consentEMAIL = null
+      } else {
+        this.$data.consentEMAIL = true
+      }
     },
     setOpen(isOpen) {
       this.$data.isOpen = isOpen;
@@ -262,6 +269,19 @@ export default defineComponent({
     },
     cancel2() {
       this.$data.isOpen = false
+    },
+    editHandler() {
+
+      this.$data.loadingEmail = true
+      const formData = {
+        email: this.$data.email,
+        consenttoemail: true,
+      }
+      this.editProfile(formData).then(() => {
+        this.$data.loadingEmail = false
+        this.$data.isOpen = false
+        this.getProfile()
+      })
     },
     deleteHandler() {
       this.$data.loading = true
@@ -291,8 +311,8 @@ export default defineComponent({
     }
     storageHandler()
     this.getProfile().then(() => {
-      this.$data.consentSMS = this.profileData.consenttosms
-      this.$data.consentEMAIL = this.profileData.consenttoemail
+      this.$data.consentSMS = this.profileData?.consenttosms
+      this.$data.consentEMAIL = this.profileData?.consenttoemail
     })
   },
   components: {
@@ -304,6 +324,7 @@ export default defineComponent({
     IonCheckbox,
     IonModal,
     IonIcon,
+    Input,
     IonButton,
     IonSpinner,
   },

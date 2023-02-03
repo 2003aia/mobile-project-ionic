@@ -409,6 +409,8 @@ ion-label {
   /* font-size: 5px; */
   font-weight: 600;
   margin-top: 3px;
+  margin-bottom: 3px;
+
   font-size: 12px;
   line-height: 12px;
   /* word-break: break-all; */

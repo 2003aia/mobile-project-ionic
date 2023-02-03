@@ -1,29 +1,67 @@
 <template>
   <ion-app>
+    <ion-modal :is-open="versionUpdate" mode="ios">
+      <div class="modal-header"><ion-icon @click="cancel2" :icon="closeOutline"></ion-icon></div>
+      <div class="modal">
 
-    <ion-router-outlet id="main2" />
+        <ion-text>
+          <p class="ion-text-center title" style="margin-top: 0px; margin-bottom: 30px; color: black">Обновите
+            приложение до последней версии</p>
+        </ion-text>
+      </div>
+
+    </ion-modal>
+    <ion-router-outlet id="main2" v-show="!techWorks" />
+    <div v-show="techWorks">
+      <Layout :filledBtn="'.'" :outlineBtn="'.'" title="Технические работы">
+        <template v-slot:main-content>
+          <ion-text class="title">
+            <br>
+            Ведутся технические работы
+            <br>
+            <br>
+          </ion-text>
+        </template>
+      </Layout>
+    </div>
+
   </ion-app>
 </template>
 
 <script>
-import { IonApp, IonRouterOutlet, /* isPlatform,  */ } from "@ionic/vue";
+import {
+  IonApp, IonRouterOutlet, /* isPlatform,  */ IonText, IonModal,
+  IonIcon,
+} from "@ionic/vue";
 import { defineComponent } from "vue";
 import { Storage } from "@ionic/storage";
 import { PushNotifications } from '@capacitor/push-notifications'
 import { FCM } from "@capacitor-community/fcm"
 import { StatusBar } from '@capacitor/status-bar';
+import { App } from "@capacitor/app"
 import axios from 'axios'
 // import { useRouter } from "vue-router";
-
+import { useProfileStore } from "./stores/profile";
+import { mapActions } from "pinia";
+import Layout from './components/Layout.vue'
+import {
+  closeOutline,
+} from "ionicons/icons";
 
 export default defineComponent({
   name: "App",
   components: {
     IonApp,
     IonRouterOutlet,
+    Layout,
+    IonText,
+    IonModal,
+    IonIcon,
   },
   data() {
     return {
+      techWorks: false,
+      versionUpdate: false,
     }
   },
   mounted() {
@@ -33,7 +71,15 @@ export default defineComponent({
       const token = await store.get("token");
 
 
+
       if (JSON.parse(token)?.token) {
+        this.getProfile().then(() => {
+          if (this.profileError) {
+            this.$data.techWorks = true
+          } else {
+            this.$data.techWorks = false
+          }
+        })
 
         this.$router.push("/tabs/personalAccounts")
       } else {
@@ -115,21 +161,94 @@ export default defineComponent({
         await StatusBar.setBackgroundColor({ color: '#1F3766' });
 
       };
-      // if (isPlatform('ios') && isPlatform('androi?d')) {
+      const checkAppVersion = () => {
+
+        App.getInfo().then((data) => {
+          this.getVersion().then(() => {
+            if (data.version !== this.versionData) {
+              this.$data.versionUpdate = true
+            }
+          })
+        })
+      }
+      checkAppVersion()
       registerNotifications()
       registerFcm()
       getDeliveredNotifications()
       setStatusBarStyle()
     })
   },
-
+  computed: {
+    profileError() {
+      return this.$pinia.state.value?.profile?.profileError;
+    },
+    versionData() {
+      return this.$pinia.state.value?.profile?.versionResponse?.data;
+    }
+  },
   methods: {
-
+    ...mapActions(useProfileStore, ["getProfile", "getVersion"]),
+    cancel2() {
+      this.$data.versionUpdate = false
+    },
   },
   setup() {
     return {
-
+      closeOutline,
     };
   },
 });
 </script>
+
+<style scoped>
+.modal-header {
+  padding: 10px;
+}
+
+.modal-header ion-icon {
+  font-size: 20px;
+  margin-left: auto;
+}
+
+ion-modal {
+  --height: fit-content;
+  --width: 80%;
+  --border-radius: 16px;
+}
+
+.modal {
+  padding: 15px;
+}
+
+.confirmWrapper {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.confirmWrapper ion-button {
+  --border-radius: 25px;
+  height: 45px;
+  width: 100%;
+  border-radius: 25px;
+  border: solid 1px #0378b4;
+  color: #0378b4;
+}
+
+
+ion-item {
+  --padding-start: 0;
+  --padding-bottom: 0px;
+  --inner-padding-bottom: 0px;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
+}
+
+ion-text {
+  margin-left: 0;
+}
+
+p {
+  margin: 0;
+}
+</style>

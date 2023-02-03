@@ -19,6 +19,8 @@ export const useProfileStore = defineStore({
         profileError: null,
         deleteResponse: null,
         deleteError: null,
+        versionResponse: null,
+        versionError: null,
     }),
     getters: {
         urlPush: (state) => {
@@ -65,6 +67,18 @@ export const useProfileStore = defineStore({
                 })
             } catch (error) {
                 this.profileError = error
+            }
+        },
+        async getVersion() {
+            
+            try {
+                await axios.get(`${apiUrlStng2}getVersion`).then((response) => {
+
+                    this.versionResponse = response.data
+
+                })
+            } catch (error) {
+                this.versionError = error
             }
         },
         async deleteAcc() {
