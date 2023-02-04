@@ -148,10 +148,13 @@ export default defineComponent({
           const token = await store.get('token')
           const tokenParsed = JSON.parse(token)
           await PushNotifications.addListener('registration', token => {
-            console.log('Registration token2: ', token.value,tokenParsed);
-
+            console.log('Registration token2: ', token.value, tokenParsed);
+            const setFcmToken = async () => {
+              await store.set('fcmToken', token.value)
+            }
+            setFcmToken()
             if (token?.value.length !== 0) {
-              console.log('Registration token: ', token.value,tokenParsed.token);
+              console.log('Registration token: ', token.value, tokenParsed.token);
               axios.post('https://fhd.aostng.ru/vesta/hs/API_STNG/V2/Profile', {
                 token: tokenParsed.token,
                 fcmToken: token.value
@@ -193,7 +196,7 @@ export default defineComponent({
             } else {
               errorText.value = authResponse.value?.message;
             }
-          }).then(()=>{
+          }).then(() => {
             fcmRegistr()
           })
           .catch((e) => {

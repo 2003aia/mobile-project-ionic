@@ -93,12 +93,21 @@ export default defineComponent({
         await store.create()
 
         let tokenStorage = null
+        let fcmToken = ''
         const getToken = async () => {
           tokenStorage = await store.get('token')
+          fcmToken = await store.get('fcmToken')
         }
         getToken()
 
         if (JSON.parse(tokenStorage)?.token) {
+
+          if (fcmToken?.length > 0) {
+            axios.post('https://fhd.aostng.ru/vesta/hs/API_STNG/V2/Profile', {
+              token: JSON.parse(tokenStorage)?.token,
+              fcmToken: fcmToken,
+            })
+          }
           await PushNotifications.addListener('registration', (token) => {
             if (token?.value.length !== 0) {
               console.log('Registration token: ', token.value);
@@ -165,7 +174,7 @@ export default defineComponent({
 
         App.getInfo().then((data) => {
           this.getVersion().then(() => {
-            if (data.version !== this.versionData) {
+            if (data.version?.toString()?.slice(-2) < this.versionData?.toString()?.slice(-2)) {
               this.$data.versionUpdate = true
             }
           })
