@@ -239,6 +239,9 @@ export default defineComponent({
             await store.create()
             const token = await store.get('token')
             await store.set('token', JSON.stringify({ phone: JSON.parse(token).phone, }))
+            await store.remove('lics')
+            await store.remove('support')
+
           }
         },
       ],

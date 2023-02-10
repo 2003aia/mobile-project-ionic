@@ -79,12 +79,11 @@
             <ion-item>
               <ion-text>{{ lcList[0]?.address }}</ion-text>
             </ion-item>
-            <ion-item
-              v-show="(!sumValues(lcList[0]?.debts).toString().includes('-'))">
+            <ion-item v-show="(!sumValues(lcList[0]?.debts).toString().includes('-'))">
               <ion-text> Задолженность: </ion-text>
               <ion-text slot="end" class="text-blue">
                 {{
-                    maskMoney(sumValues(lcList[0]?.debts))
+  maskMoney(sumValues(lcList[0]?.debts))
                 }}
 
               </ion-text>
@@ -100,7 +99,7 @@
             <ion-item v-show="sumValues(lcList[0]?.debts).toString().includes('-')" lines="none">
               <ion-text> Аванс: </ion-text>
               <ion-text class="text-blue" slot="end">{{
-                  maskMoney(Math.abs(sumValues(lcList[0]?.debts)))
+                maskMoney(Math.abs(sumValues(lcList[0]?.debts)))
               }}
               </ion-text>
             </ion-item>
@@ -206,7 +205,7 @@
 
                     <ion-text slot="end" class="text-blue">
                       {{
-                          maskMoney(sumValues(el?.debts))
+  maskMoney(sumValues(el?.debts))
                       }}
                     </ion-text>
 
@@ -220,7 +219,7 @@
                   <ion-item v-show="sumValues(el?.debts).toString().includes('-')" lines="none">
                     <ion-text> Аванс: </ion-text>
                     <ion-text class="text-blue" slot="end">{{
-                        maskMoney(Math.abs(sumValues(el?.debts)))
+                      maskMoney(Math.abs(sumValues(el?.debts)))
                     }}</ion-text>
                   </ion-item>
                 </div>
@@ -328,11 +327,7 @@ export default defineComponent({
     async delAccountHandler(lc) {
       this.$data.loadingDel = true;
 
-      const delAccount = new Promise((resolve) => {
-        resolve(this.delAccount(lc));
-      });
-
-      delAccount.then(() => {
+      this.delAccount(lc).then(() => {
         this.$data.loadingDel = false;
       });
     },

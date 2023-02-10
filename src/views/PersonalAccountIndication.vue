@@ -54,26 +54,24 @@
                 </p>
               </ion-text>
               <ion-text v-show="el.response">
-                <p class="ion-text-center" v-show="!el?.response?.toString()?.includes('Не удалось создать документ')">
+                <p class="ion-text-center" v-show="!el?.error">
                   {{ el.response }}
                 </p>
-                <p class="ion-text-center" v-show="el?.response?.toString()?.includes('Не удалось создать документ')">
+                <p class="ion-text-center" v-show="el?.error">
                   Нарушен срок предоставления показаний, в разделе услуги Вам необходимо оформить заявку
                   <span class="blue" @click="() => router.push('/tabs/servicesCallInspector')"
                     style="text-decoration:underline">"Вызов инспектора"</span>
                 </p>
               </ion-text>
-              
+
               <Button :loading="loading" :name="'Подтвердить'" @click="
                 () => {
                   if (el?.indications[0].date.substring(0, 10) !== moment().format('DD.MM.yyyy')) {
                     if ((el.value > el?.indications[0]?.indication)) {
                       loading = true
                       setIndices(el.id, el.value).then(() => {
-                        // getIndices(el.id)
                         loading = false
-                        // if(!this.$pinia.state.value?.personalAccount?.setIndicesResponse?.error) value = el?.value
-                        // this.$data.indicationList.push( ...this.$data.indicationList, ...{name: el?.name, id: el?.id, indications: [{date: moment().format('DD.MM.yyyy HH:MM:SS'), indication: el.value}]})
+                        updateIndices()
                         el.response = this.$pinia.state.value?.personalAccount?.setIndicesResponse?.message
                         el.error = ''
                       })
@@ -257,20 +255,33 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(usePersonalAccountStore, ["getIndices", "setIndices"]),
+    updateIndices() {
+      let data = this.$data.indicationList.find((el) => {
+        return el.id === el?.id
+      })
+      this.$data.indicationList = []
+      console.log(data, 'test', this.indicesList[0])
+      if (this.indicesList[0]) {
+        this.$data.indicationList.push({ ...this.indicesList[0] })
+      } else {
+        data.indications = []
+      }
+    },
     async setIndicesHandler(counterId, indice,) {
 
       if (
         indice?.length >= 0
       ) {
         this.$data.loading = true;
-        const setIndices = new Promise((resolve) => {
-          resolve(this.setIndices(counterId, indice));
-        });
-        setIndices.then(() => {
+
+        this.setIndices(counterId, indice).then(() => {
+
           this.$data.response =
             this.$pinia.state.value?.personalAccount?.setIndicesResponse
               ?.message;
           this.$data.loading = false;
+
+
         });
       } else {
         this.$data.response = "Заполните поле";
@@ -287,17 +298,13 @@ export default defineComponent({
       return string?.charAt(0)?.toUpperCase() + string?.slice(1);
     },
     onBeginDateChange(event, id) {
-      // this.$data.loadingGetIndices = true
 
       this.getIndices(id, moment(event.detail.value).format('yyyyMMDD'), this.$data.endDate ? this.$data.endDate : moment().format('yyyyMMDD')).then(() => {
-        // this.$data.loadingGetIndices = false
         let data = this.$data.indicationList.find((el) => {
           return el.id === id
         })
         if (this.indicesList[0]) {
-          // this.$data.indicationList.map(obj => this.indicesList.find(o => o.id === obj.id) || obj);
           Object.assign(data, this.indicesList[0])
-          // console.log('test', this.indicesList, this.$data.indicationList)
         } else {
           data.indications = []
         }

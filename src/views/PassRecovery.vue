@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <Back :menu="true"/>
+    <Back :menu="true" />
     <ion-content :fullscreen="true" class="background">
       <div class="pattern"></div>
       <!-- <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img> -->
@@ -12,9 +12,8 @@
           <p style="color: #fff;" class="title">Восстановление пароля</p>
 
           <p style="color: #fff;" class="text ion-text-center">
-            Если вы забыли пароль, введите номер телефона.
-            Контрольная строка для пароля, а также ваши регистрационные
-            данные, будут высланы вам по sms. На номер телефона вам прийдет пароль.
+            Если Вы забыли пароль введите номер телефона. Контрольная строка для пароля, а также регистрационные данные
+            будут высланы по SMS. На Ваш номер телефона придет пароль.
           </p>
         </div>
         <div>

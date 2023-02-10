@@ -49,30 +49,18 @@
                   <ion-col> Наименование лицевого счета </ion-col>
                 </ion-row> -->
                 <div v-for="el in licsList" :key="el">
-                  <!-- <ion-row
-                    @click="licsHandler(el)"
-                    :class="{
-                      'ion-row-last':
-                        licsList[licsList?.length - 1]?.code === el?.code,
-                    }"
-                  >
-                    <ion-col size="3" class="sub-title">
-                      {{ el?.code }}
-                    </ion-col>
-                    <ion-col class="sub-title">
-                      {{ el?.name }}
-                    </ion-col>
-                  </ion-row> -->
-                  <ion-item @click="licsHandler(el)" :lines="
-                    licsList[licsList.length - 1]?.code === el?.code
-                      ? 'none'
-                      : ''
-                  ">
 
+                  <div class="lcItem" @click="licsHandler(el)">
+                    <ion-item lines="none">
+                      <ion-text>
+                        Лицевой счет: {{ el?.code }}
+                      </ion-text>
+                    </ion-item>
                     <ion-text>
-                      <p class="ion-text-start">Лицевой счет: {{ el?.code }}</p>
+                      {{ el?.address }}
                     </ion-text>
-                  </ion-item>
+                  </div>
+
                 </div>
               </div>
             </ion-accordion>
@@ -199,7 +187,17 @@ export default defineComponent({
 
 <style scoped>
 ion-item {
-  --inner-padding-start: 15px;
+  --inner-padding-start: 0px;
+  --padding-start: 0;
+  --padding-bottom: 0px;
+  --inner-padding-bottom: 0px;
+  --inner-padding-end: 0;
+}
+
+.lcItem {
+  margin-bottom: 15px;
+  border-bottom: solid #e0e0e0 1px;
+  padding-bottom: 5px;
 }
 
 ion-row {

@@ -168,7 +168,6 @@ export default defineComponent({
                 ...oldDataParsed,
               };
               await store.set("token", JSON.stringify(data));
-              await store.set("login", phone.value);
               codeSent.value = true;
               // codeResponse.value = registrResponse.value?.data.msg.substr(35);
             } else {

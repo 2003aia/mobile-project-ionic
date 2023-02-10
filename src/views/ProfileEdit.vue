@@ -16,29 +16,29 @@
             name="Укажите фамилию" />
           <Input @updated="(item) => (name = item)" :changeHandler="(e) => name = e.target.value" :value="name"
             name="Укажите имя" />
-            <Input @updated="(item) => (lastname = item)" :changeHandler="(e) => lastname = e.target.value" :value="lastname"
-            name="Укажите отчество" />
+          <Input @updated="(item) => (lastname = item)" :changeHandler="(e) => lastname = e.target.value"
+            :value="lastname" name="Укажите отчество" />
 
           <Input type="email" @updated="(item) => (email = item)" name="Электронная почта" :value="email"
             :changeHandler="(e) => email = e.target.value" />
-          
+
           <Input :mask="'###-###-###-##'" @updated="(item) => (snils = item)" name="СНИЛС" :value="snils"
             :changeHandler="(e) => snils = e.target.value" />
 
 
           <Input @updated="(item) => (issuedBy = item)" :changeHandler="(e) => issuedBy = e.target.value"
             :value="issuedBy" name="Паспорт выдан" />
-         
+
           <Input :mask="'##.##.####'" @updated="(item) => (issuedDate = item)"
             :changeHandler="(e) => issuedDate = e.target.value" :value="issuedDate" name="Дата выдачи паспорта" />
-       
+
           <Input :mask="'## ##'" @updated="(item) => (serial = item)" :changeHandler="(e) => serial = e.target.value"
             :value="serial" name="Серия паспорта" />
-         
+
           <Input :mask="'######'" @updated="(item) => (number = item)" :changeHandler="(e) => number = e.target.value"
             :value="number" name="Номер паспорта" />
-            <Input :mask="'###-###'" @updated="(item) => (codePodr = item)" :changeHandler="(e) => codePodr = e.target.value"
-            :value="codePodr" name="Код подразделения" />
+          <Input :mask="'###-###'" @updated="(item) => (codePodr = item)"
+            :changeHandler="(e) => codePodr = e.target.value" :value="codePodr" name="Код подразделения" />
           <ion-item>
             <ion-text>
               <p class="sub-title">{{ login }}</p>
@@ -46,6 +46,9 @@
             </ion-text>
           </ion-item>
         </div>
+        <ion-text v-show="response">
+          <p class="blue">Принято.</p>
+        </ion-text>
         <ion-text v-if="profileError?.response?.data?.error" class="error">
           {{ profileError?.response?.data?.error }}
         </ion-text>
@@ -87,7 +90,8 @@ export default defineComponent({
       number: '',
       snils: '',
       loading: false,
-      codePodr: ''
+      codePodr: '',
+      response: false
     };
   },
   components: {
@@ -118,6 +122,8 @@ export default defineComponent({
         surname: this.$data.surname,
         lastname: this.$data.lastname,
         email: this.$data.email,
+        consenttoemail: this.$data.email.length === 0 && this.profileData?.consenttoemail === true > 0 ? false : true,
+
       }
       this.editProfile(formData,).then(
         async () => {
@@ -132,9 +138,13 @@ export default defineComponent({
 
           };
           await store.set("token", JSON.stringify(data))
+          this.$data.response = true
         }
       );
     }
+  },
+  ionViewDidLeave() {
+    this.$data.response = false
   },
   ionViewDidEnter() {
 

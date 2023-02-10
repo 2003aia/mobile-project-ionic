@@ -5,8 +5,8 @@
       <div class="modal">
 
         <ion-text>
-          <p class="ion-text-center title" style="margin-top: 0px; margin-bottom: 30px; color: black">Обновите
-            приложение до последней версии</p>
+          <p class="ion-text-center title" style="margin-top: 0px; margin-bottom: 30px; color: black">Уважаемый
+            пользователь! Вышла новая версия мобильного приложения. Пожалуйста, обновите приложение.</p>
         </ion-text>
       </div>
 
@@ -74,7 +74,7 @@ export default defineComponent({
 
       if (JSON.parse(token)?.token) {
         this.getProfile().then(() => {
-          if (this.profileError) {
+          if (this.profileError || this.authError || this.registrError) {
             this.$data.techWorks = true
           } else {
             this.$data.techWorks = false
@@ -190,6 +190,12 @@ export default defineComponent({
   computed: {
     profileError() {
       return this.$pinia.state.value?.profile?.profileError;
+    },
+    authData() {
+      return this.$pinia.state.value?.login?.registrError;
+    },
+    registrData() {
+      return this.$pinia.state.value?.login?.authError;
     },
     versionData() {
       return this.$pinia.state.value?.profile?.versionResponse?.data;

@@ -31,7 +31,7 @@
           </div>
 
         </ion-modal>
-        <ion-modal :is-open="isOpen" mode="ios" @willDismiss="onWillDismiss2">
+        <ion-modal ref="modal3" :is-open="isOpen" mode="ios" @willDismiss="onWillDismiss2">
           <div class="modal-header"><ion-icon @click="cancel2()" :icon="closeOutline"></ion-icon></div>
           <div class="modal">
 
@@ -40,7 +40,10 @@
                 электронную почту</p>
             </ion-text> -->
             <Input name="Электронная почта" :value="email" :changeHandler="(e) => email = e.target.value" />
+              <ion-text v-show="this.profileData?.email.length > 0"><p class="blue">Принято.</p></ion-text>
             <div class="confirmWrapper">
+              <ion-button style="color:red; border: solid red 1px;margin-right: 10px;" @click="cancel2" fill="clear">ОТМЕНА</ion-button>
+
               <ion-button :disabled="!email" @click="editHandler" v-show="!loadingEmail"
                 fill="clear">ГОТОВО</ion-button>
               <ion-button v-show="loadingEmail" fill="clear"><ion-spinner name="bubbles" /></ion-button>
@@ -169,6 +172,14 @@
               <p>Согласие на получения квитанций на эл. почту</p>
             </ion-text>
           </ion-item>
+          <ion-item>
+            <ion-text>
+              <p class="sub-title">Версия приложения</p>
+            </ion-text>
+            <ion-text slot="end">
+              <p class="sub-title">{{ versionApp }}</p>
+            </ion-text>
+          </ion-item>
         </div>
       </template>
 
@@ -195,6 +206,7 @@ import {
 import { useProfileStore } from "../stores/profile";
 import { mapActions } from "pinia";
 import { Storage } from '@ionic/storage'
+import { App } from "@capacitor/app"
 import {
   closeOutline,
 } from "ionicons/icons";
@@ -211,7 +223,8 @@ export default defineComponent({
       loading: false,
       loadingEmail: false,
       isOpen: false,
-      email: ''
+      email: '',
+      versionApp: '',
     };
   },
   methods: {
@@ -269,6 +282,8 @@ export default defineComponent({
     },
     cancel2() {
       this.$data.isOpen = false
+      this.$refs.modal3.$el.dismiss(null, 'cancel');
+
     },
     editHandler() {
 
@@ -279,7 +294,7 @@ export default defineComponent({
       }
       this.editProfile(formData).then(() => {
         this.$data.loadingEmail = false
-        this.$data.isOpen = false
+        // this.$data.isOpen = false
         this.getProfile()
       })
     },
@@ -310,6 +325,13 @@ export default defineComponent({
       this.$data.login = JSON.parse(token).phone
     }
     storageHandler()
+    const checkAppVersion = () => {
+
+      App.getInfo().then((data) => {
+        this.$data.versionApp = data?.version
+      })
+    }
+    checkAppVersion()
     this.getProfile().then(() => {
       this.$data.consentSMS = this.profileData?.consenttosms
       this.$data.consentEMAIL = this.profileData?.consenttoemail
