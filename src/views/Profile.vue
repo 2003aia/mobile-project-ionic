@@ -172,14 +172,7 @@
               <p>Согласие на получения квитанций на эл. почту</p>
             </ion-text>
           </ion-item>
-          <ion-item>
-            <ion-text>
-              <p class="sub-title">Версия приложения</p>
-            </ion-text>
-            <ion-text slot="end">
-              <p class="sub-title">{{ versionApp }}</p>
-            </ion-text>
-          </ion-item>
+         
         </div>
       </template>
 
@@ -206,7 +199,7 @@ import {
 import { useProfileStore } from "../stores/profile";
 import { mapActions } from "pinia";
 import { Storage } from '@ionic/storage'
-import { App } from "@capacitor/app"
+
 import {
   closeOutline,
 } from "ionicons/icons";
@@ -224,7 +217,7 @@ export default defineComponent({
       loadingEmail: false,
       isOpen: false,
       email: '',
-      versionApp: '',
+     
     };
   },
   methods: {
@@ -325,13 +318,7 @@ export default defineComponent({
       this.$data.login = JSON.parse(token).phone
     }
     storageHandler()
-    const checkAppVersion = () => {
-
-      App.getInfo().then((data) => {
-        this.$data.versionApp = data?.version
-      })
-    }
-    checkAppVersion()
+    
     this.getProfile().then(() => {
       this.$data.consentSMS = this.profileData?.consenttosms
       this.$data.consentEMAIL = this.profileData?.consenttoemail

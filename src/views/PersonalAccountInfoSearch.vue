@@ -92,10 +92,10 @@
           </ion-accordion>
 
           <ion-accordion v-show="
-  housesList?.length !== 0 &&
-  apartmentsList[0]
-  // housesList[0]?.apartments
-" value="fifth" :toggle-icon="caretDownSharp">
+            housesList?.length !== 0 &&
+            apartmentsList[0]
+            // housesList[0]?.apartments
+          " value="fifth" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
               <input type="text" :value="apartment" @input="(e) => apartmentChange(e)" class="input"
                 placeholder="Введите номер квартиры" />
@@ -126,10 +126,10 @@
           </div>
         </div>
         <div v-show="
-  housesList?.length !== 0 &&
-  housesList !== undefined &&
-  licsApartmentsList?.length !== 0
-">
+          housesList?.length !== 0 &&
+          housesList !== undefined &&
+          licsApartmentsList?.length !== 0
+        ">
           <div v-for="el in licsApartmentsList" :key="el">
             <ion-text v-for="el2 in el?.lics" :key="el2?.code">
               <ion-item class="check" lines="none">
@@ -403,22 +403,19 @@ export default defineComponent({
             ? lics?.map((v) => v?.code)
             : licsApartments?.map((v) => v?.code);
 
-        const addAccount = new Promise((resolve) => {
-          resolve(this.addAccount(JSON.parse(token).token, licsCodes));
-        });
-        addAccount.then(() => {
+        this.addAccount(JSON.parse(token).token, licsCodes).then(() => {
           this.$data.error = "";
 
-            this.getAccount().then(() => {
-              this.$router.push("/tabs/personalAccountPayment");
-              const itemData = this.$pinia.state.value?.personalAccount?.getAccountResponse?.data.filter((el) => el.code === licsCodes[0])
-              this.$pinia.state.value.personalAccount.personalItemData = itemData[0]
+          this.getAccount().then(() => {
+            this.$router.push("/tabs/personalAccountPayment");
+            const itemData = this.$pinia.state.value?.personalAccount?.getAccountResponse?.data.filter((el) => el.code === licsCodes[0])
+            this.$pinia.state.value.personalAccount.personalItemData = itemData[0]
 
-            });
+          });
 
-            this.$data.loading = false;
-            this.$data.response =
-              this.$pinia.state.value.personalAccount?.addAccountResponse[0]?.message;
+          this.$data.loading = false;
+          this.$data.response =
+            this.$pinia.state.value.personalAccount?.addAccountResponse[0]?.message;
         });
       } else {
         this.$data.response = "";

@@ -54,7 +54,7 @@
 
 
         </div>
-        <layout-box>
+        <layout-box :bgBlue="true">
           <template v-slot:content>
             <ion-text>
               <p class="title ion-text-start">Оплата</p>

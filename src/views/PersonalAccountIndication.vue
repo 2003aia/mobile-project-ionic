@@ -48,42 +48,52 @@
               }" name="Введите показания счетчика (куб.
                   метр.)" type="number" :textBlue="true" />
 
-              <ion-text v-show="el.error">
-                <p class="ion-text-start error">
-                  {{ el.error }}
-                </p>
-              </ion-text>
-              <ion-text v-show="el.response">
-                <p class="ion-text-center" v-show="!el?.error">
+              <ion-text v-show="el.errorText">
+                <p class="ion-text-start error" v-show="!el?.response?.toString()?.includes('Вызов инспектора')">
                   {{ el.response }}
                 </p>
-                <p class="ion-text-center" v-show="el?.error">
+                <p class="ion-text-center" v-show="el?.response?.toString()?.includes('Вызов инспектора')">
                   Нарушен срок предоставления показаний, в разделе услуги Вам необходимо оформить заявку
                   <span class="blue" @click="() => router.push('/tabs/servicesCallInspector')"
-                    style="text-decoration:underline">"Вызов инспектора"</span>
+                    style="text-decoration:underline">Вызов инспектора</span>
+                </p>
+              </ion-text>
+              
+              <ion-text v-show="!el.errorText">
+                <p class="ion-text-start blue">
+                  {{ el.response }}
                 </p>
               </ion-text>
 
               <Button :loading="loading" :name="'Подтвердить'" @click="
                 () => {
-                  if (el?.indications[0].date.substring(0, 10) !== moment().format('DD.MM.yyyy')) {
-                    if ((el.value > el?.indications[0]?.indication)) {
-                      loading = true
-                      setIndices(el.id, el.value).then(() => {
-                        loading = false
-                        updateIndices()
-                        el.response = this.$pinia.state.value?.personalAccount?.setIndicesResponse?.message
-                        el.error = ''
+                  /* if (el?.indications[0].date.substring(0, 10) !== moment().format('DD.MM.yyyy')) {
+                    if ((el.value > el?.indications[0]?.indication)) { */
+                  loading = true
+                  setIndices(el.id, el.value).then(() => {
+                    loading = false
+                    getIndices(el.id).then(() => {
+                      let data = this.$data.indicationList.find((setInd) => {
+                        return setInd.id === el?.id
                       })
-                    } else {
-                      el.response = ''
-                      el.error = 'Текущие показания меньше предыдущих'
-                    }
-              
-                  } else {
+                      getAccount()
+                      if (data) {
+                        Object.assign(data, this.indicesList[0])
+                      }
+                    })
+                    el.response = this.$pinia.state.value?.personalAccount?.setIndicesResponse?.message
+                    el.errorText = this.$pinia.state.value?.personalAccount?.setIndicesResponse?.error
+                    el.error = ''
+                  })
+                  /* } else {
                     el.response = ''
-                    el.error = 'За этот день уже имеется начисление по счетчику'
+                    el.error = 'Текущие показания меньше предыдущих'
                   }
+               
+                } else {
+                  el.response = ''
+                  el.error = 'За этот день уже имеется начисление по счетчику'
+                } */
                 }
               " />
               <ion-grid>
@@ -254,18 +264,9 @@ export default defineComponent({
     };
   },
   methods: {
-    ...mapActions(usePersonalAccountStore, ["getIndices", "setIndices"]),
+    ...mapActions(usePersonalAccountStore, ["getIndices", "setIndices", "getAccount"]),
     updateIndices() {
-      let data = this.$data.indicationList.find((el) => {
-        return el.id === el?.id
-      })
-      this.$data.indicationList = []
-      console.log(data, 'test', this.indicesList[0])
-      if (this.indicesList[0]) {
-        this.$data.indicationList.push({ ...this.indicesList[0] })
-      } else {
-        data.indications = []
-      }
+
     },
     async setIndicesHandler(counterId, indice,) {
 

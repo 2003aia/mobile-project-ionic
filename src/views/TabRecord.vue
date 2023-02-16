@@ -44,7 +44,7 @@
           :changeHandler="(e) => preEntryStore.setPhone(e.target.value)" />
 
         <ion-text>
-          <p class="sub-title">Вид услуг</p>
+          <p class="sub-title">Предварительная записать</p>
         </ion-text>
 
         <ButtonSelect :required="true" :name="

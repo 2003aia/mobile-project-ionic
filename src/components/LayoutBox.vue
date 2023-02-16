@@ -1,12 +1,12 @@
 <template>
-  <div class="main" v-bind:class="{ padding: padding }" @click="onClick">
+  <div :class="{ main: true, padding: padding, bgBlue: bgBlue }" @click="onClick">
     <slot name="content" />
   </div>
 </template>
 <script>
 import { defineComponent } from "vue";
 export default defineComponent({
-  setup() {},
+  setup() { },
   name: "layoutBox",
   components: {},
   props: {
@@ -16,13 +16,18 @@ export default defineComponent({
     title: String,
     height: String,
     onClick: Function,
+    bgBlue: Boolean,
   },
 });
 </script>
 
 <style scoped>
+.bgBlue {
+  border: solid 1px #62d0ce;
+}
+
 .main {
-  background: rgb(255, 255, 255);
+  background-color: rgb(255, 255, 255);
   padding: 15px;
   z-index: 2000px;
   border-radius: 15px;

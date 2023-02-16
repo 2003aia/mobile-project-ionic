@@ -13,7 +13,7 @@
           </div>
 
         </ion-toolbar>
-        <div style="margin-top:20px">
+        <div style="margin-top:20px;">
 
           <div v-for="el in sideMenu" :key="el">
             <ion-item @click="
@@ -28,8 +28,13 @@
               <ion-badge slot="end">{{ el.number }}</ion-badge>
             </ion-item>
           </div>
+ <div class="versionWrapper" v-show="versionApp">
+          <ion-item lines="none">
+            <ion-text style="color: white;">{{ versionApp }}</ion-text>
+          </ion-item>
         </div>
-
+        </div>
+       
       </ion-content>
     </ion-menu>
     <ion-content>
@@ -129,6 +134,7 @@ import {
   closeOutline,
 } from "ionicons/icons";
 import { mapActions } from "pinia";
+import { App } from "@capacitor/app"
 import { useProfileStore } from '../stores/profile'
 
 export default defineComponent({
@@ -172,6 +178,7 @@ export default defineComponent({
   data() {
     return {
       selected: "",
+      versionApp: '',
       sideMenu: [
         {
           name: "Личный кабинет",
@@ -253,7 +260,13 @@ export default defineComponent({
     },
   },
   mounted() {
+    const checkAppVersion = () => {
 
+      App.getInfo().then((data) => {
+        this.$data.versionApp = data?.version
+      })
+    }
+    checkAppVersion()
   },
   methods: {
     ...mapActions(useProfileStore, ["getPush"]),
@@ -273,6 +286,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.versionWrapper {
+  margin-top: 30px;
+}
+
 .menu-logo-wrapper {
   --background: #0D3775;
   display: flex;
@@ -289,7 +306,7 @@ export default defineComponent({
 
 .menu-background {
   --background: linear-gradient(164.84deg, #1B7DB6 8.63%, #0F3C79 89.24%);
-
+  height: auto;
   position: relative;
 
 }
@@ -356,12 +373,14 @@ ion-tab-button {
   --padding-top: 3px;
   position: relative;
 }
-ion-tab-button ion-img{
+
+ion-tab-button ion-img {
   /* background-color: red; */
   position: absolute;
   top: 0;
 }
-ion-tab-button ion-label{
+
+ion-tab-button ion-label {
   margin-top: 25px;
 }
 

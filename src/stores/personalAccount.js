@@ -232,10 +232,6 @@ export const usePersonalAccountStore = defineStore({
             counterStorage.getIndices(counterId) */
             this.setIndicesResponse = response.data;
 
-            if (response.data.error === false) {
-              this.getIndices(counterId);
-              this.setIndicesResponse = response.data;
-            }
           });
       } catch (error) {
         this.setIndicesError = error;

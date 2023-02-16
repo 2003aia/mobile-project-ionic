@@ -94,6 +94,17 @@ export default defineComponent({
 
         let tokenStorage = null
         let fcmToken = ''
+        FCM.getToken()
+          .then((r) => {
+            if (r.token.length > 0) {
+              console.log('r.token.length > 0 test',)
+              axios.post('https://fhd.aostng.ru/vesta/hs/API_STNG/V2/Profile', {
+                token: JSON.parse(tokenStorage)?.token,
+                fcmToken: fcmToken,
+              })
+            }
+            console.log(r.token, 'FCM.getToken')
+          })
         const getToken = async () => {
           tokenStorage = await store.get('token')
           fcmToken = await store.get('fcmToken')

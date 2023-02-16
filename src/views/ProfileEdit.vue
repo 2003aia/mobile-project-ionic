@@ -47,7 +47,7 @@
           </ion-item>
         </div>
         <ion-text v-show="response">
-          <p class="blue">Принято.</p>
+          <p class="blue">Сохранено</p>
         </ion-text>
         <ion-text v-if="profileError?.response?.data?.error" class="error">
           {{ profileError?.response?.data?.error }}
