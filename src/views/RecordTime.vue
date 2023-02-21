@@ -5,21 +5,14 @@
       <template v-slot:main-content>
         <ion-text class="title">Выберите время</ion-text>
 
-        <div v-if="entryAvailableTimes.length > 0">
-          <ion-item
-            v-for="time in entryAvailableTimes"
-            :key="time"
-            router-link="/tabs/record"
-            @click="selectTime(time)"
-          >
-            <ion-text class="sub-title">{{ time }}</ion-text>
+        <div v-if="availableTimeSlots?.length > 0">
+          <ion-item v-for="time in availableTimeSlots" :key="time" router-link="/tabs/record" @click="selectTime(time?.time)">
+            <ion-text class="sub-title">{{ time?.time }}</ion-text>
           </ion-item>
         </div>
         <div v-else>
-          <ion-item router-link="/tabs/record" @click="selectTime(null)">
-            <ion-text class="sub-title"
-              >Выберите вид услуг и дату записи</ion-text
-            >
+          <ion-item lines="none" router-link="/tabs/record">
+            <ion-text class="sub-title">Выберите вид услуг и дату записи</ion-text>
           </ion-item>
         </div>
       </template>
@@ -33,8 +26,8 @@ import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import { IonPage, IonText, IonItem } from "@ionic/vue";
 import Back from "../components/Back.vue";
-import { storeToRefs } from "pinia";
-import { usePreEntryStore } from "../stores/preEntry";
+// import { storeToRefs } from "pinia";
+// import { usePreEntryStore } from "../stores/preEntry";
 
 export default defineComponent({
   name: "recordTime",
@@ -45,18 +38,40 @@ export default defineComponent({
     Back,
     IonText,
   },
+  data() {
+    return {
+      availableTimeSlots: []
+    }
+  },
   setup() {
     const router = useRouter();
-    const preEntryStore = usePreEntryStore();
-    const { setTime } = usePreEntryStore();
-    const { entryAvailableTimes, entryTime } = storeToRefs(preEntryStore);
-    return { router, entryAvailableTimes, entryTime, setTime };
+    // const preEntryStore = usePreEntryStore();
+    // const { setTime } = usePreEntryStore();
+    // const { entryAvailableTimes, entryTime } = storeToRefs(preEntryStore);
+    return { router,  };
+  },
+  computed: {
+    availableTimeSlotsData() {
+      return this.$pinia.state.value.preEntry.availableTimeSlots
+    },
+    reserveData() {
+      return this.$pinia.state.value.preEntry.reserveData
+    }
+  },
+  ionViewDidEnter() {
+    this.$pinia.state.value.preEntry.availableTimeSlots?.data?.forEach(element => {
+      if (element?.is_available) {
+        this.$data.availableTimeSlots.push(element)
+      }
+    });
+  },
+  ionViewDidLeave() {
+    this.$data.availableTimeSlots = []
   },
   methods: {
     selectTime(time) {
-      if (time && time != "На данную дату свободного времени нет") {
-        this.setTime(time);
-      }
+      console.log(time, 'timetest')
+      this.$pinia.state.value.preEntry.reserveData = { ...this.reserveData, slot: time }
     },
   },
 });

@@ -1,15 +1,16 @@
 <template>
   <ion-page>
     <Back />
-    <Layout height="false" filledBtn="Готово" outlineBtn="." :btnSrc="returnTo" :method="() => clickFilledBtn()"
+    <Layout height="false" filledBtn="Готово" outlineBtn="." :btnSrc="'/tabs/record'" :method="() => clickFilledBtn()"
       :title="time === true ? 'Выберите время' : 'Выберите дату'">
       <template v-slot:main-content>
-        <ion-datetime v-if="time === true" color="date" mode="ios" presentation="time" @ionChange="onDateChange">
-        </ion-datetime>
-
-        <ion-datetime v-if="time === false"  color="date" :is-date-enabled="isDateEnabled" first-day-of-week="1"
-          presentation="date" @ionChange="onDateChange" mode="ios" :min="today" :max="maxDay"></ion-datetime>
-
+        <ion-datetime v-if="availableDatesData?.data?.length > 0" color="date" presentation="date"
+          @ionChange="onDateChange" mode="ios" :dayValues="availableDates"></ion-datetime>
+        <div v-else>
+          <ion-item lines="none" router-link="/tabs/record">
+            <ion-text class="sub-title">Выберите вид услуг</ion-text>
+          </ion-item>
+        </div>
       </template>
     </Layout>
   </ion-page>
@@ -20,9 +21,10 @@ import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import Back from "../components/Back.vue";
-import { IonPage, IonDatetime } from "@ionic/vue";
+import { IonPage, IonDatetime, IonText, IonItem } from "@ionic/vue";
 // import { getDate, getMonth } from "date-fns";
-import { isWeekend } from "date-fns";
+// import { isWeekend } from "date-fns";
+import moment from 'moment'
 import { usePreEntryStore } from "../stores/preEntry";
 
 export default defineComponent({
@@ -30,16 +32,24 @@ export default defineComponent({
   props: {
     time: Boolean,
   },
+  data() {
+    return {
+      availableDates: '1',
+    }
+  },
   components: {
     IonPage,
     Back,
     IonDatetime,
     Layout,
+    IonText, IonItem
   },
+
   setup() {
     const router = useRouter();
+    const { getTimeSlots, } = usePreEntryStore();
 
-    let returnTo = router.options.history.state.back;
+    /* let returnTo = router.options.history.state.back;
     let selectedDateTime = null;
 
     const isDateEnabled = (dateIsoString) => {
@@ -47,34 +57,47 @@ export default defineComponent({
 
       return !isWeekend(date);
     };
-    const { setDate, fetchTime } = usePreEntryStore();
-
+    
     let today = new Date().toISOString();
     let maxDay = new Date();
     maxDay.setDate(maxDay.getDate() + 5);
-    maxDay = maxDay.toISOString();
+    maxDay = maxDay.toISOString(); */
 
     return {
       router,
-      returnTo,
-      selectedDateTime,
-      isDateEnabled,
-      setDate,
-      fetchTime,
-      today,
-      maxDay,
+      getTimeSlots,
+      // returnTo,
+      // selectedDateTime,
+      // isDateEnabled,
+      // setDate,
+      // fetchTime,
+      // today,
+      // maxDay,
     };
+  },
+  computed: {
+    reserveData() {
+      return this.$pinia.state.value.preEntry.reserveData
+    },
+    availableDatesData() {
+      return this.$pinia.state.value.preEntry.availableDates
+    },
+  },
+  ionViewDidEnter() {
+    this.$data.availableDates = ''
+    this.$pinia.state.value.preEntry.availableDates?.data?.forEach(element => {
+      this.$data.availableDates += `${element.slice(-2)},`
+    });
+    console.log(this.$pinia.state.value.preEntry.reserveData, 'testets')
   },
   methods: {
     onDateChange(event) {
-      this.selectedDateTime = new Date(event.detail.value)
-        .toLocaleDateString()
-        .replace("/", ".");
+      this.$pinia.state.value.preEntry.reserveData = { date: moment(event.detail.value).format('yyyy-MM-DD'), ...this.reserveData }
     },
+
     clickFilledBtn() {
-      if (this.time === false && this.returnTo == "/tabs/record") {
-        this.setDate(this.selectedDateTime);
-        this.fetchTime();
+      if (this.time === false) {
+        this.getTimeSlots(this.reserveData?.operation, this.reserveData?.date)
       }
     },
   },

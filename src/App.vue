@@ -30,7 +30,7 @@
 
 <script>
 import {
-  IonApp, IonRouterOutlet, /* isPlatform,  */ IonText, IonModal,
+  IonApp, IonRouterOutlet, useIonRouter, useBackButton, IonText, IonModal,
   IonIcon,
 } from "@ionic/vue";
 import { defineComponent } from "vue";
@@ -219,6 +219,12 @@ export default defineComponent({
     },
   },
   setup() {
+    const ionRouter = useIonRouter();
+    useBackButton(-1, () => {
+      if (!ionRouter.canGoBack()) {
+        App.exitApp();
+      }
+    });
     return {
       closeOutline,
     };

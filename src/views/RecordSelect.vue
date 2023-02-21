@@ -5,24 +5,13 @@
       <template v-slot:main-content>
         <ion-text class="title">Выберите варианты</ion-text>
         <div>
-          <ion-item
-            router-link="/tabs/record"
-            @click="selectServiceType('Q01')"
-          >
-            <ion-text class="sub-title">Прием документов </ion-text>
+          <ion-item router-link="/tabs/record" @click="selectServiceType({operation: '12', name: 'Прием документов'})">
+            <ion-text class="sub-title">Прием документов</ion-text>
           </ion-item>
-          <ion-item
-            router-link="/tabs/record"
-            @click="selectServiceType('Q03')"
-          >
-            <ion-text class="sub-title"
-              >Заключение договора на поставку газа (квартира)</ion-text
-            >
+          <ion-item router-link="/tabs/record" @click="selectServiceType({operation: '14', name: 'Заключение договора на поставку газа (квартира)'})">
+            <ion-text class="sub-title">Заключение договора на поставку газа (квартира)</ion-text>
           </ion-item>
-          <ion-item
-            router-link="/tabs/record"
-            @click="selectServiceType('Q06')"
-          >
+          <ion-item router-link="/tabs/record" @click="selectServiceType({operation: '16', name: 'Социальная газификация'})">
             <ion-text class="sub-title">Социальная газификация </ion-text>
           </ion-item>
         </div>
@@ -50,13 +39,16 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const { setServiceType, fetchTime } = usePreEntryStore();
-    return { router, setServiceType, fetchTime };
+    const { /* setServiceType, fetchTime, */ getDates } = usePreEntryStore();
+    return { router, getDates };
   },
   methods: {
     selectServiceType(type) {
-      this.setServiceType(type);
-      this.fetchTime();
+      // this.setServiceType(type);
+      // this.fetchTime();
+      this.getDates(type.operation)
+      
+      this.$pinia.state.value.preEntry.reserveData = type
     },
   },
 });

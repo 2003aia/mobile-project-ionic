@@ -165,6 +165,10 @@ const routes = [
         component: () => import("@/views/TabRecord.vue"),
       },
       {
+        path: "records",
+        component: () => import("@/views/Records.vue"),
+      },
+      {
         path: "recordSelect",
         component: () => import("@/views/RecordSelect.vue"),
       },

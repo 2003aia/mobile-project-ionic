@@ -7,7 +7,7 @@
         <ion-item lines="none">
           <ion-text>
             <p class="title ion-text-start">
-              {{ el.service }}
+              {{ el?.service }}
             </p>
           </ion-text>
         </ion-item>
@@ -16,26 +16,26 @@
           <ion-item>
             <ion-text> №: </ion-text>
             <ion-text class='sub-title' slot="end">
-              {{ el.number }}
+              {{ el?.number }}
             </ion-text>
           </ion-item>
           <ion-item>
             <ion-text> Дата: </ion-text>
             <ion-text class='sub-title' slot="end">
-              {{ el.date.substring(0, 10) }}
+              {{ el?.date.substring(0, 10) }}
             </ion-text>
           </ion-item>
 
           <ion-item>
             <ion-text> Статус: </ion-text>
             <ion-text class='sub-title' slot="end">
-              {{ el.status }}
+              {{ el?.status }}
             </ion-text>
           </ion-item>
           <ion-item lines="none">
             <ion-text> Адрес: </ion-text>
             <ion-text slot="end" class='sub-title'>
-              {{ el.address }}
+              {{ el?.address }}
 
             </ion-text>
           </ion-item>

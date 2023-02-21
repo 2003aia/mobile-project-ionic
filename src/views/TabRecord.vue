@@ -1,8 +1,12 @@
 <template>
   <ion-page>
     <Back :noBack="true" :logo="true" />
-    <Layout v-if="!currentlySuccess" height="false" outlineBtn="." filledBtn="Оставить заявку" title="Предварительная запись"
-      :method="() => sendPreregRequest()">
+    <Layout :method2="
+  () => {
+    router.push('/tabs/records');
+  }
+" :loading="loading" v-if="!currentlySuccess" height="false" :outlineBtn="'Мои заявки'" filledBtn="Оставить заявку"
+      title="Предварительная запись" :method="() => sendPreregRequest()">
       <template v-slot:header-content>
         <ion-text>
           <p class="main-text">
@@ -40,17 +44,18 @@
           <p class="title ion-text-start">Данные заявителя</p>
         </ion-text>
 
-        <Input v-mask="'+7 (###) ###-##-##'" name="Номер телефона" type="tel" :value="entryPhone"
-          :changeHandler="(e) => preEntryStore.setPhone(e.target.value)" />
+        <Input :required="true" v-mask="'+7 (###) ###-##-##'" name="Номер телефона" type="tel" :value="phone"
+          :changeHandler="(e) => phone = e.target.value" />
+        <Input name="Электронная почта" type="email" :value="email" :changeHandler="(e) => email = e.target.value" />
+        <Input name="ФИО" type="text" :value="fio" :changeHandler="(e) => fio = e.target.value" />
 
         <ion-text>
-          <p class="sub-title">Предварительная записать</p>
+          <p class="sub-title">Предварительная запись</p>
         </ion-text>
 
         <ButtonSelect :required="true" :name="
-          entryServiceType.trim() !== ''
-            ? formatServiceCode(entryServiceType)
-            : 'Выберите вариант'
+          reserveData?.name
+          || 'Выберите вариант'
         " :btnSrc="
   () => {
     router.push('/tabs/recordSelect');
@@ -61,15 +66,15 @@
           <ion-item router-link="/tabs/date">
             <ion-icon size="large" slot="start" class="icon-start" :icon="calendarNumberOutline"></ion-icon>
             <ion-text class="sub-title">{{
-                entryDate ? entryDate : "Выберите дату записи"
-            }}</ion-text>
+              reserveData?.date || "Выберите дату записи"
+            }} <span class="blue">*</span></ion-text>
             <ion-icon size="large" slot="end" class="icon-end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
           <ion-item router-link="/tabs/time">
             <ion-icon size="large" slot="start" class="icon-start" :icon="alarmOutline"></ion-icon>
             <ion-text class="sub-title">{{
-                entryTime ? entryTime : "Выберите время записи"
-            }}</ion-text>
+              reserveData?.slot || "Выберите время записи"
+            }} <span class="blue">*</span></ion-text>
             <ion-icon class="icon-end" size="large" slot="end" :icon="chevronForwardOutline"></ion-icon>
           </ion-item>
         </div>
@@ -79,11 +84,14 @@
             Режим работы Службы «Единого окна» в будни с 08.00 до 17.00
             Выходной: суббота, воскресенье
           </p>
-        </ion-text>
-
-
-        <ion-text v-if="errorText !== ''">
-          <p class="error">
+          <p class="blue" v-show="postReserveData?.error === false">
+            Ваша заявка принята!
+            {{ postReserveData?.enrollment_pin }}
+          </p>
+          <p class="error" v-show="postReserveData?.error === true">
+            {{ postReserveData?.message }}
+          </p>
+          <p v-show="errorText?.length > 0" class="error">
             {{ errorText }}
           </p>
         </ion-text>
@@ -98,19 +106,19 @@
         <ion-item>
           <ion-text> Дата приема: </ion-text>
           <ion-text slot="end" class="text-end text-success">{{
-              entryDate
+            entryDate
           }}</ion-text>
         </ion-item>
         <ion-item>
           <ion-text> Время приема: </ion-text>
           <ion-text slot="end" class="text-end text-success">{{
-              entryTime
+            entryTime
           }}</ion-text>
         </ion-item>
         <ion-item>
           <ion-text> Номер брони: </ion-text>
           <ion-text slot="end" class="text-end text-success">{{
-              entryNumber?.substr(0, 5)
+            entryNumber?.substr(0, 5)
           }}</ion-text>
         </ion-item>
       </template>
@@ -119,11 +127,12 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
-import { storeToRefs } from "pinia";
 import { usePreEntryStore } from "../stores/preEntry";
+import { Storage } from '@ionic/storage'
+
 import ButtonSelect from "../components/ButtonSelect.vue";
 import Back from "../components/Back.vue";
 
@@ -131,7 +140,6 @@ import {
   IonPage,
   IonText,
   IonItem,
-  // IonCheckbox,
   IonIcon,
 } from "@ionic/vue";
 import Input from "../components/Input.vue";
@@ -154,20 +162,42 @@ export default defineComponent({
     Input,
     IonText,
     IonIcon,
-    // IonCheckbox,
   },
   directives: { mask },
+  computed: {
+    reserveData() {
+      return this.$pinia.state.value.preEntry.reserveData
+    },
+    profileData() {
+      return this.$pinia.state.value.profile?.profileResponse?.data;
+    },
+    postReserveData() {
+      return this.$pinia.state.value.preEntry.postReserveResponse
+    },
+  },
+  data() {
+    return {
+      currentlySuccess: false,
+      errorText: '',
+      phone: '',
+      email: '',
+      fio: '',
+      loading: false,
+      token: null,
+    }
+  },
 
   setup() {
     const router = useRouter();
-    const preEntryStore = usePreEntryStore();
-    const { entryPhone, entryServiceType, entryDate, entryTime, entryNumber } =
-      storeToRefs(preEntryStore);
+    // const preEntryStore = usePreEntryStore();
+    /* const { entryPhone, entryServiceType, entryDate, entryTime, entryNumber } =
+      storeToRefs(preEntryStore); */
 
-    const { sendFullInfo, resetPreEntry } = usePreEntryStore();
+    const {/*  sendFullInfo, resetPreEntry, */ postReserve } = usePreEntryStore();
+    // const {/*  sendFullInfo, resetPreEntry, */ postReserve } = useProfileStore();
 
-    const errorText = ref("");
-    const currentlySuccess = ref(false);
+    // const errorText = ref("");
+    // const currentlySuccess = ref(false);
 
     return {
       router,
@@ -175,7 +205,8 @@ export default defineComponent({
       chevronForwardOutline,
       calendarNumberOutline,
       alarmOutline,
-      preEntryStore,
+      postReserve,
+      /* preEntryStore,
       entryPhone,
       entryServiceType,
       entryDate,
@@ -184,29 +215,53 @@ export default defineComponent({
       sendFullInfo,
       currentlySuccess,
       resetPreEntry,
-      entryNumber,
+      entryNumber, */
     };
   },
-  methods: {
-    formatServiceCode(code) {
-      let formattedText = "Неверный код сервиса";
-      switch (code) {
-        case "Q01":
-          formattedText = "Прием документов";
-          break;
-        case "Q03":
-          formattedText = "Заключение договора на поставку газа (квартира)";
-          break;
-        case "Q06":
-          formattedText = "Социальная газификация";
-          break;
-      }
+  mounted() {
+    const storageHandler = async () => {
 
-      return formattedText;
-    },
+      const store = new Storage()
+      await store.create()
+      const token = await store.get('token')
+      this.$data.phone = JSON.parse(token).phone
+      this.$data.token = JSON.parse(token)
+    }
+    storageHandler()
+
+    this.email = this.profileData?.email
+  },
+  methods: {
+
     sendPreregRequest() {
 
-      let status = 0;
+      const data = {
+        operation: this.reserveData?.operation,
+        slot: this.$pinia.state.value.preEntry.reserveData?.slot,
+        date: this.reserveData?.date,
+        phone: this.$data.phone,
+        email: this.$data.email,
+        fio: this.$data.fio,
+        token: this.$data.token?.token
+      }
+      if (this.reserveData?.operation && this.reserveData?.date && this.reserveData?.slot) {
+
+        if (this.$data.phone) {
+          this.$data.errorText = ''
+          this.$data.loading = true
+
+          this.postReserve(data).then(() => {
+            this.$data.loading = false
+          })
+        } else {
+          this.$data.errorText = "Все обязательные поля должны быть заполнены"
+        }
+      } else {
+        this.$data.errorText = "Все обязательные поля должны быть заполнены"
+
+      }
+
+      /* let status = 0;
       if (this.entryPhone.length === 18) {
         status++;
       }
@@ -222,7 +277,7 @@ export default defineComponent({
       if (this.entryTime) {
         status++;
       }
-
+    
       if (status !== 4) {
         this.errorText = "Все поля должны быть заполнены";
       } else {
@@ -238,7 +293,7 @@ export default defineComponent({
             this.currentlySuccess = true;
           }
         });
-      }
+      } */
     },
     reset() {
       this.resetPreEntry();

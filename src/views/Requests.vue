@@ -29,7 +29,7 @@
           </div>
         </div>
 
-        <ion-item style="width: 100%" v-show="listServices.length === 0" lines="none">
+        <ion-item style="width: 100%" v-show="listServices?.length === 0" lines="none">
           <ion-text style="width: 100%" class="ion-text-center">Заявок нет</ion-text>
         </ion-item>
 
