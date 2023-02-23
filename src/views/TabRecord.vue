@@ -2,10 +2,10 @@
   <ion-page>
     <Back :noBack="true" :logo="true" />
     <Layout :method2="
-  () => {
-    router.push('/tabs/records');
-  }
-" :loading="loading" v-if="!currentlySuccess" height="false" :outlineBtn="'Мои заявки'" filledBtn="Оставить заявку"
+      () => {
+        router.push('/tabs/records');
+      }
+    " :loading="loading" height="false" :outlineBtn="'Мои заявки'" filledBtn="Оставить заявку"
       title="Предварительная запись" :method="() => sendPreregRequest()">
       <template v-slot:header-content>
         <ion-text>
@@ -84,45 +84,43 @@
             Режим работы Службы «Единого окна» в будни с 08.00 до 17.00
             Выходной: суббота, воскресенье
           </p>
-          <p class="blue" v-show="postReserveData?.error === false">
-            Ваша заявка принята!
-            {{ postReserveData?.enrollment_pin }}
-          </p>
-          <p class="error" v-show="postReserveData?.error === true">
-            {{ postReserveData?.message }}
-          </p>
+          <ion-modal ref="recordResponse" :is-open="isOpen" @willDismiss="onWillDismiss" mode="ios">
+            <div class="modal-header"><ion-icon @click="cancel" :icon="closeOutline"></ion-icon></div>
+            <div class="modal">
+              <ion-text>
+                <p v-show="postReserveData?.error === false" class="ion-text-center"
+                  style="margin-top: -10px; color: black">
+                  Ваша заявка принята!
+                  <br />
+                  Номер вашей брони - {{ postReserveData?.data?.enrollment_pin }}
+                </p>
+                <p v-show="postReserveData?.error === true" style="margin-top: -10px;" class="ion-text-center error">
+                  {{ postReserveData?.message }}
+                </p>
+              
+                <p v-show="deleteReserveData && postReserveData?.error === false" class="ion-text-center" style="color: black">
+                  {{ deleteReserveData?.message }}
+                </p>
+              </ion-text>
+              <div class="confirmWrapper" v-show="postReserveData?.error === false">
+                <ion-button @click="deleteHandler(postReserveData?.data?.enrollment_id)" v-show="!loadingDel" fill="clear"
+                  style="color:red; border: solid red 1px;">ОТМЕНИТЬ ЗАПИСЬ</ion-button>
+                <ion-button v-show="loadingDel" fill="clear" style="color:red; border: solid red 1px;">
+                  <ion-spinner name="bubbles" />
+                </ion-button>
+              </div>
+            </div>
+          </ion-modal>
+
           <p v-show="errorText?.length > 0" class="error">
             {{ errorText }}
           </p>
         </ion-text>
       </template>
+
     </Layout>
 
-    <Layout v-else outlineBtn="." filledBtn="Вернуться" :method="() => reset()" title="Предварительная запись">
-      <template v-slot:main-content>
-        <ion-text>
-          <p class="title ion-text-start">Прием документов</p>
-        </ion-text>
-        <ion-item>
-          <ion-text> Дата приема: </ion-text>
-          <ion-text slot="end" class="text-end text-success">{{
-            entryDate
-          }}</ion-text>
-        </ion-item>
-        <ion-item>
-          <ion-text> Время приема: </ion-text>
-          <ion-text slot="end" class="text-end text-success">{{
-            entryTime
-          }}</ion-text>
-        </ion-item>
-        <ion-item>
-          <ion-text> Номер брони: </ion-text>
-          <ion-text slot="end" class="text-end text-success">{{
-            entryNumber?.substr(0, 5)
-          }}</ion-text>
-        </ion-item>
-      </template>
-    </Layout>
+
   </ion-page>
 </template>
 
@@ -141,6 +139,9 @@ import {
   IonText,
   IonItem,
   IonIcon,
+  IonModal,
+  IonButton,
+  IonSpinner,
 } from "@ionic/vue";
 import Input from "../components/Input.vue";
 import {
@@ -148,6 +149,7 @@ import {
   chevronForwardOutline,
   calendarNumberOutline,
   alarmOutline,
+  closeOutline,
 } from "ionicons/icons";
 import { mask } from "vue-the-mask";
 
@@ -157,11 +159,14 @@ export default defineComponent({
     ButtonSelect,
     IonPage,
     Back,
+    IonSpinner,
     Layout,
     IonItem,
     Input,
     IonText,
+    IonButton,
     IonIcon,
+    IonModal,
   },
   directives: { mask },
   computed: {
@@ -174,30 +179,27 @@ export default defineComponent({
     postReserveData() {
       return this.$pinia.state.value.preEntry.postReserveResponse
     },
+    deleteReserveData() {
+      return this.$pinia.state.value.preEntry.deleteReserveResponse
+    },
   },
   data() {
     return {
-      currentlySuccess: false,
       errorText: '',
       phone: '',
       email: '',
       fio: '',
       loading: false,
+      loadingDel: false,
       token: null,
+      isOpen: false,
     }
   },
 
   setup() {
     const router = useRouter();
-    // const preEntryStore = usePreEntryStore();
-    /* const { entryPhone, entryServiceType, entryDate, entryTime, entryNumber } =
-      storeToRefs(preEntryStore); */
+    const { postReserve, deleteReserve } = usePreEntryStore();
 
-    const {/*  sendFullInfo, resetPreEntry, */ postReserve } = usePreEntryStore();
-    // const {/*  sendFullInfo, resetPreEntry, */ postReserve } = useProfileStore();
-
-    // const errorText = ref("");
-    // const currentlySuccess = ref(false);
 
     return {
       router,
@@ -206,16 +208,8 @@ export default defineComponent({
       calendarNumberOutline,
       alarmOutline,
       postReserve,
-      /* preEntryStore,
-      entryPhone,
-      entryServiceType,
-      entryDate,
-      entryTime,
-      errorText,
-      sendFullInfo,
-      currentlySuccess,
-      resetPreEntry,
-      entryNumber, */
+      deleteReserve,
+      closeOutline,
     };
   },
   mounted() {
@@ -232,7 +226,21 @@ export default defineComponent({
     this.email = this.profileData?.email
   },
   methods: {
+    onWillDismiss() {
+      this.$pinia.state.value.preEntry.deleteReserveResponse = null
+      this.$pinia.state.value.preEntry.postReserveResponse = null
+    },
+    cancel() {
+      this.$refs.recordResponse.$el.dismiss(null, 'cancel');
+    },
+    deleteHandler(id) {
+      this.$data.loadingDel = true
+      this.deleteReserve(id).then(() => {
+        // this.$refs.recordResponse.$el.dismiss(null, 'cancel');
 
+        this.$data.loadingDel = false
+      })
+    },
     sendPreregRequest() {
 
       const data = {
@@ -251,6 +259,8 @@ export default defineComponent({
           this.$data.loading = true
 
           this.postReserve(data).then(() => {
+            this.$data.isOpen = true
+            this.$pinia.state.value.preEntry.reserveData = null
             this.$data.loading = false
           })
         } else {
@@ -260,54 +270,49 @@ export default defineComponent({
         this.$data.errorText = "Все обязательные поля должны быть заполнены"
 
       }
-
-      /* let status = 0;
-      if (this.entryPhone.length === 18) {
-        status++;
-      }
-      if (
-        this.entryServiceType !== "" &&
-        this.entryServiceType !== "Неверный код сервиса"
-      ) {
-        status++;
-      }
-      if (this.entryDate) {
-        status++;
-      }
-      if (this.entryTime) {
-        status++;
-      }
-    
-      if (status !== 4) {
-        this.errorText = "Все поля должны быть заполнены";
-      } else {
-        this.errorText = "";
-        this.sendFullInfo(
-          this.entryPhone,
-          this.entryServiceType,
-          this.entryDate,
-          this.entryTime
-        ).then((success) => {
-          console.log(success);
-          if (success) {
-            this.currentlySuccess = true;
-          }
-        });
-      } */
-    },
-    reset() {
-      this.resetPreEntry();
-      this.currentlySuccess = false;
     },
   },
 });
 </script>
 
 <style scoped>
+.modal-header {
+  padding: 10px;
+}
+
+.modal-header ion-icon {
+  font-size: 20px;
+  margin-left: auto;
+}
+
+ion-modal {
+  --height: fit-content;
+  --width: 80%;
+  --border-radius: 16px;
+}
+
+.modal {
+  padding: 15px;
+}
+
+.confirmWrapper {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.confirmWrapper ion-button {
+  --border-radius: 25px;
+  height: 45px;
+  width: 100%;
+  border-radius: 25px;
+  border: solid 1px #0378b4;
+  color: #0378b4;
+}
+
+
 ion-item {
   --padding-start: 0px;
-  /*  */
-  /*   --inner-padding-start: 20px; */
   --inner-padding-bottom: 10px;
   --inner-padding-end: 0;
   --inner-padding-top: 20px;
@@ -329,11 +334,5 @@ ion-icon {
   width: 24px;
   height: 24px;
   margin-left: 0px;
-}
-
-.text-success {
-  color: #000000;
-  font-weight: 700;
-  margin-left: 0;
 }
 </style>

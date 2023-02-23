@@ -4,13 +4,25 @@
     <Layout height="false" filledBtn="Готово" outlineBtn="." :btnSrc="'/tabs/record'" :method="() => clickFilledBtn()"
       :title="time === true ? 'Выберите время' : 'Выберите дату'">
       <template v-slot:main-content>
-        <ion-datetime v-if="availableDatesData?.data?.length > 0" color="date" presentation="date"
+        <ion-datetime v-show="availableDatesData?.data?.length > 0" color="date" presentation="date"
           @ionChange="onDateChange" mode="ios" :dayValues="availableDates"></ion-datetime>
-        <div v-else>
+
+        <div v-show="!reserveData?.operation && !availableDatesData">
           <ion-item lines="none" router-link="/tabs/record">
             <ion-text class="sub-title">Выберите вид услуг</ion-text>
           </ion-item>
         </div>
+        <div v-show="availableDatesData?.data?.length === 0 && reserveData?.operation">
+          <ion-item lines="none" router-link="/tabs/record">
+            <ion-text class="sub-title">Свободных дней нет</ion-text>
+          </ion-item>
+        </div>
+        <div v-show="availableDatesData?.error === true">
+          <ion-item lines="none" router-link="/tabs/record">
+            <ion-text class="sub-title">{{ availableDatesData?.message }}</ion-text>
+          </ion-item>
+        </div>
+
       </template>
     </Layout>
   </ion-page>
@@ -88,7 +100,7 @@ export default defineComponent({
     this.$pinia.state.value.preEntry.availableDates?.data?.forEach(element => {
       this.$data.availableDates += `${element.slice(-2)},`
     });
-    console.log(this.$pinia.state.value.preEntry.reserveData, 'testets')
+    // console.log(this.$pinia.state.value.preEntry.reserveData, 'testets')
   },
   methods: {
     onDateChange(event) {

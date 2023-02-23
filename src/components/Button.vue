@@ -3,6 +3,7 @@
     backgroundGrey: grey === true,
     outline: outline === true,
     lightBlue: lightBlue === true,
+    red: red === true
   }">
     <ion-text class="name ion-text-wrap" v-if="loading === false">
       {{ name }}
@@ -24,6 +25,7 @@ export default defineComponent({
     loading: Boolean,
     disabled: Boolean,
     lightBlue: Boolean,
+    red: Boolean
   },
   components: {
     IonButton,
@@ -80,6 +82,16 @@ ion-spinner {
 .lightBlue {
   --background: linear-gradient(89.74deg, #75E2E4 -0.72%, #2AA0DC 49.53%, #75E2E4 99.77%);
 
+}
+
+.red {
+  --background: #ffffff00;
+  --border-width: 1px;
+  --border-color: #dd2c00;
+  --border-style: solid;
+}
+.red ion-text {
+  color: #dd2c00;
 }
 
 .name {

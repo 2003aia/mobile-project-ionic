@@ -352,7 +352,11 @@ export default defineComponent({
 }
 
 .modal-header ion-icon {
-  font-size: 20px;
+  height: 32px;
+  width: 32px;
+  --ionicon-stroke-width: 40px;
+  color: #0378b4;
+  margin-right: 20px;
   margin-left: auto;
 }
 

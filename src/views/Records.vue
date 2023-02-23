@@ -3,7 +3,8 @@
     <Back />
     <Layout :btnSrc="'/tabs/record'" height="false" outlineBtn="." filledBtn="." title="Мои заявки">
       <template v-slot:main-content>
-        <div v-show="!loading">
+
+        <div v-show="!loading && el?.length > 0">
 
           <ion-item lines="none">
             <ion-text>
@@ -64,7 +65,7 @@
             <ion-spinner name="bubbles" />
           </ion-item>
         </div>
-        <div v-show="el?.length === 0">
+        <div v-show="el?.length === 0 && !loading">
           <ion-item lines="none">
             Заявок нет
           </ion-item>
@@ -151,6 +152,8 @@ import {
   ellipsisVertical,
 } from "ionicons/icons";
 import Back from "../components/Back.vue";
+// import Button from "../components/Button.vue";
+
 import LayoutBox from "../components/LayoutBox.vue";
 import { usePreEntryStore } from "../stores/preEntry";
 
@@ -164,6 +167,7 @@ export default defineComponent({
     Layout,
     IonText,
     LayoutBox,
+    // Button,
     IonPopover, IonIcon, IonContent, IonSpinner
   },
   data() {
@@ -175,7 +179,7 @@ export default defineComponent({
   computed: {
 
     el() {
-      return this.$pinia.state.value.preEntry.getReserveResponse?.Дата || []
+      return this.$pinia.state.value.preEntry.getReserveResponse?.data || []
     },
     el2() {
       return [...this.el.slice(1)];
@@ -233,4 +237,8 @@ export default defineComponent({
   font-weight: 700;
   margin-left: 0;
 }
+
+/* .btn{
+  border: solid #dd2c00 1px;
+} */
 </style>

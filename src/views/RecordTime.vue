@@ -5,14 +5,25 @@
       <template v-slot:main-content>
         <ion-text class="title">Выберите время</ion-text>
 
-        <div v-if="availableTimeSlots?.length > 0">
-          <ion-item v-for="time in availableTimeSlots" :key="time" router-link="/tabs/record" @click="selectTime(time?.time)">
+        <div v-show="availableTimeSlots?.length > 0">
+          <ion-item v-for="time in availableTimeSlots" :key="time" router-link="/tabs/record"
+            @click="selectTime(time?.time)">
             <ion-text class="sub-title">{{ time?.time }}</ion-text>
           </ion-item>
         </div>
-        <div v-else>
+        <div v-show="!reserveData?.date && !availableTimeSlotsData">
           <ion-item lines="none" router-link="/tabs/record">
             <ion-text class="sub-title">Выберите вид услуг и дату записи</ion-text>
+          </ion-item>
+        </div>
+        <div v-show="availableTimeSlots?.length === 0 && reserveData?.date">
+          <ion-item lines="none" router-link="/tabs/record">
+            <ion-text class="sub-title">Свободных часов нет</ion-text>
+          </ion-item>
+        </div>
+        <div v-show="availableTimeSlotsData?.error === true">
+          <ion-item lines="none" router-link="/tabs/record">
+            <ion-text class="sub-title">{{ availableTimeSlotsData?.message }}</ion-text>
           </ion-item>
         </div>
       </template>
@@ -48,7 +59,7 @@ export default defineComponent({
     // const preEntryStore = usePreEntryStore();
     // const { setTime } = usePreEntryStore();
     // const { entryAvailableTimes, entryTime } = storeToRefs(preEntryStore);
-    return { router,  };
+    return { router, };
   },
   computed: {
     availableTimeSlotsData() {
@@ -70,7 +81,7 @@ export default defineComponent({
   },
   methods: {
     selectTime(time) {
-      console.log(time, 'timetest')
+      // console.log(time, 'timetest')
       this.$pinia.state.value.preEntry.reserveData = { ...this.reserveData, slot: time }
     },
   },
