@@ -45,7 +45,7 @@
       :title="
         this.$pinia.state.value?.services?.servicesOneNext === true
           ? 'Разовая услуга'
-          : 'Вид работ'
+          : 'Вид работы'
       "
       outlineBtn="."
     >

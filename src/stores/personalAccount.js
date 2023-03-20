@@ -29,6 +29,7 @@ export const usePersonalAccountStore = defineStore({
     setIndicesResponse: null,
     setIndicesError: null,
     personalItemData: {},
+    payed: false,
   }),
   getters: {
     getSettlementsList: (state) => {

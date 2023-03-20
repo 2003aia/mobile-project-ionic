@@ -9,7 +9,9 @@ import PassRecoveryPage from "../views/PassRecovery.vue";
 import NewPassPage from "../views/NewPass.vue";
 import Tabs from "../views/Tabs.vue";
 
+
 const routes = [
+
   {
     path: "/",
     redirect: "/authPage",
@@ -298,5 +300,7 @@ const router = createRouter({
   history: createWebHashHistory(process.env.BASE_URL),
   routes,
 });
+
+
 
 export default router;

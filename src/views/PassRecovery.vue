@@ -18,6 +18,8 @@
         </div>
         <div>
           <Input :blue="true" name="Телефон" v-mask="'+7 (###) ###-##-##'" :value="login" @change="loginChange" />
+          <Input v-show="passRecoveryResponse?.error === false" :blue="true" name="Пароль" :value="password"
+            :changeHandler="passChange" />
           <ion-text v-if="errorText">
             <p class="ion-text-start error">
               {{ errorText }}
@@ -28,6 +30,11 @@
               {{ passRecoveryResponse?.message }}
             </p>
           </ion-text>
+          <Button v-show="passRecoveryResponse?.error === false" style="margin-bottom: 20px" :lightBlue="true" @click="
+            () => {
+              authUserHandler()
+            }
+          " :loading="loading2" :disabled="passRecoveryResponse?.error === true" :name="'Войти'" />
           <Button :lightBlue="true" @click="
             () => {
               passRecoveryHandler();
@@ -52,6 +59,11 @@ import { storeToRefs } from "pinia";
 import { IonPage, IonContent, IonImg, IonText } from "@ionic/vue";
 import { mask } from "vue-the-mask";
 import moment from 'moment'
+import { PushNotifications } from '@capacitor/push-notifications'
+import { FCM } from "@capacitor-community/fcm"
+import { Storage } from "@ionic/storage";
+import axios from 'axios'
+
 
 export default defineComponent({
   name: "passRecoveryPage",
@@ -68,13 +80,17 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const { passRecoveryResponse, passRecoveryError } = storeToRefs(
+    const { passRecoveryResponse, passRecoveryError, authResponse, } = storeToRefs(
       useLoginStore()
     );
-    const { passRecovery } = useLoginStore();
+    const { passRecovery, authUser } = useLoginStore();
     const errorText = ref("");
     const loading = ref(false);
+    const loading2 = ref(false);
+
     const login = ref("");
+    const password = ref("");
+
     const timer = ref(moment(60 * 3 * 1000))
 
     const passRecoveryHandler = () => {
@@ -108,10 +124,85 @@ export default defineComponent({
           });
       }
     };
+
+    const authUserHandler = async () => {
+      let myModel = login.value.replace(/\D+/g, "");
+      if (password.value === "" || login.value === "") {
+        errorText.value = "Заполните поля!";
+
+      } else {
+        loading2.value = true;
+        // if (isPlatform('android') && isPlatform('ios')) {
+        const fcmRegistr = async () => {
+          const store = new Storage()
+          await store.create()
+          const token = await store.get('token')
+          const tokenParsed = JSON.parse(token)
+          await PushNotifications.addListener('registration', token => {
+            console.log('Registration token2: ', token.value, tokenParsed);
+            const setFcmToken = async () => {
+              await store.set('fcmToken', token.value)
+            }
+            setFcmToken()
+            if (token?.value.length !== 0) {
+              console.log('Registration token: ', token.value, tokenParsed.token);
+              axios.post('https://fhd.aostng.ru/vesta/hs/API_STNG/V2/Profile', {
+                token: tokenParsed.token,
+                fcmToken: token.value
+              })
+            }
+            console.log('test', JSON.stringify(token))
+            FCM.subscribeTo({ topic: "all" })
+              .then((r) => console.log(`subscribed to topic`, JSON.stringify(r)))
+              .catch((err) => console.log(err));
+
+          });
+        }
+
+
+        // } 
+
+        authUser(myModel, password.value)
+          .then(async () => {
+            loading2.value = false;
+            // fcmRegistr()
+            if (authResponse?.value?.error === false) {
+              const store = new Storage();
+              await store.create();
+              await store.set(
+                "token",
+                JSON.stringify({
+                  ...authResponse?.value?.data,
+                  phone: login.value,
+                })
+              )
+              await store.set(
+                "lics",
+                JSON.stringify(
+                  authResponse?.value?.data?.lics,
+                )
+              )
+              router.push("/tabs/personalAccounts");
+            } else {
+              errorText.value = authResponse.value?.message;
+            }
+          }).then(() => {
+            fcmRegistr()
+          })
+          .catch((e) => {
+            console.log(e, "error2");
+            errorText.value = e;
+          });
+      }
+    };
+
     const loginChange = (e) => {
       login.value = e.target.value;
     };
-    return { router, passRecoveryHandler, login, loginChange, errorText, loading, passRecoveryResponse, timer, moment, };
+    const passChange = (e) => {
+      password.value = e.target.value;
+    };
+    return { router, passRecoveryHandler, authUserHandler, login, loginChange, password, passChange, errorText, loading, loading2, passRecoveryResponse, timer, moment, };
   },
   data() {
     return {

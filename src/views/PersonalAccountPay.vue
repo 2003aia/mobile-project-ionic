@@ -71,8 +71,8 @@
     </ion-content>
 
     <ion-content v-if="link" class="background">
-      <iframe id="iframe" class="video" height="100%" width="100%" :src="linkSrc" frameborder="0"
-        allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      <iframe ref="iframeRef" :onload="onloadHandler" id="iframe" class="video" height="100%" width="100%" :src="linkSrc"
+        frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
     </ion-content>
   </ion-page>
 </template>
@@ -126,18 +126,26 @@ export default defineComponent({
     linkSrc(newv, old) {
       console.log(newv, 'testwatch', old)
 
-      if (newv?.includes('https://aostng.ru')) {
+      if (newv == 'https://aostng.ru/tabs/personalAccounts') {
         this.router.push('/tabs/personalAccounts')
       }
     }
   },
   methods: {
-    ...mapActions(usePersonalAccountStore, ["sberPay"]),
+    ...mapActions(usePersonalAccountStore, ["sberPay", "getAccount"]),
     changePhone(e) {
       this.$data.phone = e.target.value;
     },
     changeEmail(e) {
       this.$data.email = e.target.value;
+    },
+    onloadHandler() {
+      if (this.linkSrc.includes('stng')) {
+        this.$router.push('/tabs/personalAccounts')
+        this.getAccount().then(()=>{
+          console.log('getAccount')
+        })
+      }
     },
     async uniqueCheck(e) {
       this.$data.formTypeVal = [];

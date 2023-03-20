@@ -254,7 +254,7 @@
                 }}</ion-text>
               </ion-item>
               <ion-text>
-                <p class="sub-title">Место присоединения к газопровода</p>
+                <p class="sub-title">Место присоединения к газопроводу</p>
               </ion-text>
               <ion-accordion-group ref="accordionPlace">
                 <ion-accordion value="first">

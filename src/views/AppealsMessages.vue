@@ -60,7 +60,7 @@
           <div v-for="el in appealsInfoMessages" :key="el.id">
             <div class="message" v-if="el.support_message == false">
               <div class="message-main">
-                <ion-text>{{ el.message }}</ion-text>
+                <ion-text v-html="urlify(el.message)"></ion-text>
                 <div class="chip-container" v-for="(file, index) in el?.files" :key="index">
                   <ion-chip>
                     <ion-text style="color: #7f8da8; font-size: 12px; font-weight: 400;">{{ file?.NAME || file?.name }}
@@ -75,8 +75,7 @@
             </div>
             <div class="message-left" v-if="el.support_message == true">
               <div class="message-main">
-                <ion-text>
-                  {{ el.message }}
+                <ion-text v-html="urlify(el.message)">
                 </ion-text>
                 <div class="chip-container" v-for="(file, index) in el?.files" :key="index">
                   <ion-chip>
@@ -313,7 +312,12 @@ export default defineComponent({
     const downloadFile = (file) => {
       window.open(file, "_system")
     }
-
+    function urlify(text) {
+      var urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.toString()?.replace(urlRegex, function (url) {
+        return '<a class="blue" href="' + url + '">' + url + '</a>';
+      })
+    }
     onIonViewDidEnter(() => {
       getAppealsCategoriesHandler();
       getAppealsInfoHandler();
@@ -324,6 +328,7 @@ export default defineComponent({
       message.value = ''
       files.value = []
     })
+
     return {
       supportCreate,
       router,
@@ -344,12 +349,14 @@ export default defineComponent({
       category,
       appealsInfoMessages,
       appealsCategoriesResponse,
+      urlify,
     };
   },
 });
 </script>
 
 <style scoped>
+
 .btn-support {
   --padding-start: 0;
   --padding-end: 0;

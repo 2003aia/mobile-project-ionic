@@ -257,7 +257,7 @@ export default defineComponent({
         if (this.$data.phone) {
           this.$data.errorText = ''
           this.$data.loading = true
-
+          this.$data.isOpen = false
           this.postReserve(data).then(() => {
             this.$data.isOpen = true
             this.$pinia.state.value.preEntry.reserveData = null

@@ -40,13 +40,15 @@ import { FCM } from "@capacitor-community/fcm"
 import { StatusBar } from '@capacitor/status-bar';
 import { App } from "@capacitor/app"
 import axios from 'axios'
-// import { useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useProfileStore } from "./stores/profile";
 import { mapActions } from "pinia";
 import Layout from './components/Layout.vue'
 import {
   closeOutline,
 } from "ionicons/icons";
+import { usePersonalAccountStore } from "./stores/personalAccount";
+
 
 export default defineComponent({
   name: "App",
@@ -220,12 +222,26 @@ export default defineComponent({
   },
   setup() {
     const ionRouter = useIonRouter();
+    const router = useRouter()
+    const { getAccount } = usePersonalAccountStore();
+    App.addListener('appUrlOpen', function (event) {
+      // Example url: https://beerswift.app/tabs/tabs2
+      // slug = /tabs/tabs2
+      const slug = event.url.split('.ru').pop();
+      console.log('appUrlOpen:', event.url, slug)
+      // We only push to the route if there is a slug present
+      if (slug) {
+        getAccount()
+        router.push(slug);
+      }
+    });
     useBackButton(-1, () => {
       if (!ionRouter.canGoBack()) {
         App.exitApp();
       }
     });
     return {
+      router,
       closeOutline,
     };
   },

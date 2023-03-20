@@ -12,14 +12,14 @@
             <div class="item" @click="
               () => {
                 this.$pinia.state.value.appeals.appealsItem = el;
-            
+
                 router.push({ name: 'appealsMessages' });
               }
             ">
               <div class="item-header">
                 <ion-text class="title ion-text-start">№{{ el.id }}</ion-text>
                 <ion-badge>
-                  {{ el.messages }}
+                  {{ el?.messages }}
                 </ion-badge>
 
               </div>
@@ -142,7 +142,7 @@ export default defineComponent({
       menuController.close("menu");
 
     });
-
+  
     return {
       router,
       paperPlaneOutline,
