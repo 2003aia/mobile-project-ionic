@@ -121,7 +121,7 @@
                 заполнения.
               </p>
               <p class="sub-title">
-                Адрес обьекта <ion-text class="dot">*</ion-text>
+                Адрес объекта <ion-text class="dot">*</ion-text>
               </p>
             </ion-text>
 

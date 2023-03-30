@@ -2,7 +2,7 @@
   <ion-page>
     <Back :btnSrc="() => router.push('/tabs/services')" />
     <Layout :method="storageHandler" height="false" filledBtn="Далее" outlineBtn="."
-      title="Заключения договора поставки газа для обеспечения коммунально - бытовых нужд гражданина собственниками квартир">
+      title="Услуга заключения договора поставки газа для обеспечения коммунально - бытовых нужд гражданина собственниками квартир">
       <!-- btnSrc="/tabs/servicesGasContractCheckbox" -->
       <template v-slot:header-content>
         <ion-text>

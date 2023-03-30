@@ -13,7 +13,7 @@
           <ion-accordion value="first" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
               <input type="text" :value="country" @input="(e) => countryChange(e)" class="input"
-                placeholder="Введите населенный пункт" />
+                placeholder="Введите район" />
             </div>
 
             <div slot="content">
@@ -213,47 +213,7 @@ export default defineComponent({
     };
   },
   computed: {
-    /* ulusList() {
-      return this.$pinia.state.value?.personalAccount?.getSettlementsResponse?.data.filter((el) => {
-        return el.ulus
-          .toLowerCase()
-          .includes(this.$data.country.toLowerCase());
-      });
-    }, */
-    /* settlementsList() {
-      return this.ulusList?.filter((el) => {
-        return el?.ulusId === this.$data.settlementId
-      })[0]?.settlements?.filter((el2) => {
-        return el2?.settlement?.toLowerCase().includes(this.$data.settlement.toLowerCase())
-      })
-    }, */
-    /* streetsList() {
-      return this.$pinia.state.value?.personalAccount?.getStreetsResponse?.data
-        .flatMap((el) => el)
-        .filter((el) => {
-          return el.street
-            .toLowerCase()
-            .includes(this.$data.street.toLowerCase());
-        });
-    }, */
-    /* housesList() {
-      return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data
-        .flatMap((el) => el)
-        .filter((el) => {
-          return el.house
-            .toLowerCase()
-            .includes(this.$data.house.toLowerCase());
-        });
-    }, */
-    /* apartmentsList() {
-      return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data?.filter((el) => el.house.toLowerCase() === this.$data.house.toLowerCase())
-        .flatMap((el) => el?.apartments?.flatMap((el) => el))
-        .filter((el) => {
-          return el?.apartment
-            ?.toLowerCase()
-            .includes(this.$data.apartment.toLowerCase());
-        });
-    }, */
+    
     licsApartmentsList() {
       return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data.filter((el) => el.house.toLowerCase() === this.$data.house.toLowerCase())
         .flatMap((el) => el?.apartments?.flatMap((el) => el))

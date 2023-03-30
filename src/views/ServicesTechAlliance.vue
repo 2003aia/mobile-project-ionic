@@ -185,7 +185,7 @@
 
             <ion-text>
               <p class="sub-title">
-                Адрес обьекта <ion-text class="dot">*</ion-text>
+                Адрес объекта <ion-text class="dot">*</ion-text>
               </p>
             </ion-text>
             <ion-accordion-group ref="addressQuery3">
