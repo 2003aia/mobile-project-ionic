@@ -30,6 +30,7 @@ export const usePersonalAccountStore = defineStore({
     setIndicesError: null,
     personalItemData: {},
     payed: false,
+    returnPayError: null,
   }),
   getters: {
     getSettlementsList: (state) => {
@@ -39,6 +40,8 @@ export const usePersonalAccountStore = defineStore({
     },
   },
   actions: {
+
+
     async getSettlements() {
       try {
         const store = new Storage();
@@ -238,7 +241,7 @@ export const usePersonalAccountStore = defineStore({
         this.setIndicesError = error;
       }
     },
-    async sberPay(lc, phone, emailString, email, sum, ios) {
+    async sberPay(lc, phone, emailString, email, sum, ios, method) {
       try {
         const store = new Storage();
         await store.create();
@@ -246,7 +249,7 @@ export const usePersonalAccountStore = defineStore({
         const tokenParsed = JSON.parse(token);
         console.log(phone, email,)
         await axios
-          .post(`${apiUrlStng2}SBOL`, {
+          .post(`${apiUrlStng2 + method}`, {
             token: tokenParsed.token,
             sum: sum,
             LC: lc,
@@ -262,6 +265,19 @@ export const usePersonalAccountStore = defineStore({
           });
       } catch (error) {
         this.sberPayError = error;
+      }
+    },
+    async returnPay(orderId) {
+      try {
+        await axios.post(`${apiUrlStng2}ReturnPay`, { orderId: orderId }).then((res) => {
+          console.log(res.data)
+          if (res.data.message === 'Чек оплачен') {
+            this.payed = true
+            this.getAccount()
+          }
+        })
+      } catch (error) {
+        this.returnPayError = error
       }
     },
   },

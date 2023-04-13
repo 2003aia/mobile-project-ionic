@@ -44,16 +44,19 @@
         <ion-text>
           <p class="title">Выберите удобный вам способ оплаты</p>
         </ion-text>
-        <layout-box :onClick="sberPayHanler2">
+        <layout-box :onClick="sbolHandler">
           <template v-slot:content>
             <ion-text>
-              <p class="ion-text-center title">Оплатить платежной картой</p>
+              <p v-show="!sbolLoading" class="ion-text-center title">Оплатить платежной картой</p>
+              <ion-spinner v-show="sbolLoading" name="bubbles" />
             </ion-text>
           </template>
         </layout-box>
-        <layout-box :onClick="sberPayHanler">
+        <layout-box :onClick="sberPayHandler">
           <template v-slot:content>
-            <ion-img :src="require('@/assets/img/Sberpay.png')" />
+            <ion-img v-show="!sberPayLoading" :src="require('@/assets/img/Sberpay.png')" />
+            <ion-spinner v-show="sberPayLoading" name="bubbles" />
+
           </template>
         </layout-box>
         <!-- <layout-box>
@@ -83,7 +86,7 @@ import { useRouter } from "vue-router";
 import Layout from "../components/Layout.vue";
 import LayoutBox from "../components/LayoutBox.vue";
 import Input from "../components/Input.vue";
-import { IonPage, IonText, IonContent, IonImg, IonItem, isPlatform } from "@ionic/vue";
+import { IonPage, IonText, IonContent, IonImg, IonItem, isPlatform, IonSpinner, } from "@ionic/vue";
 import {
   pencilOutline,
   documentTextOutline,
@@ -105,6 +108,7 @@ export default defineComponent({
     LayoutBox,
     IonContent,
     IonItem,
+    IonSpinner,
     IonImg,
   },
   data() {
@@ -115,7 +119,9 @@ export default defineComponent({
       link: false,
       linkSrc: '',
       consentEMAIL: false,
-      formTypeVal: ['number']
+      formTypeVal: ['number'],
+      sberPayLoading: false,
+      sbolLoading: false,
     };
   },
   ionViewDidLeave() {
@@ -132,7 +138,7 @@ export default defineComponent({
     }
   },
   methods: {
-    ...mapActions(usePersonalAccountStore, ["sberPay", "getAccount"]),
+    ...mapActions(usePersonalAccountStore, ["sberPay", "getAccount", "returnPay"]),
     changePhone(e) {
       this.$data.phone = e.target.value;
     },
@@ -140,11 +146,17 @@ export default defineComponent({
       this.$data.email = e.target.value;
     },
     onloadHandler() {
-      if (this.linkSrc.includes('stng')) {
-        this.$router.push('/tabs/personalAccounts')
-        this.getAccount().then(()=>{
-          console.log('getAccount')
+      if (this.linkSrc !== undefined) {
+        let arr = this.linkSrc.split("=")
+        this.returnPay(arr[1]).then(() => {
+          /*  if (this.$pinia.state.value?.personalAccount?.payed) {
+             this.$router.push('/tabs/personalAccounts')
+           } */
         })
+        /*  this.$router.push('/tabs/personalAccounts')
+         this.getAccount().then(()=>{
+           console.log('getAccount')
+         }) */
       }
     },
     async uniqueCheck(e) {
@@ -155,6 +167,11 @@ export default defineComponent({
 
     },
     paymentHandler() {
+
+      this.$data.paySent = true;
+    },
+    sbolHandler() {
+      this.$data.sbolLoading = true
       this.sberPay(
         this.$pinia.state.value.personalAccount.personalItemData.code,
         this.$data.phone,
@@ -162,27 +179,45 @@ export default defineComponent({
         this.$data.formTypeVal[0] === 'email' ? true : false,
         +this.$pinia.state.value.personalAccount.personalItemData.sberPay
           .accruals,
-        isPlatform('ios') ? true : false
+        isPlatform('ios') ? true : false,
+        'SberPAY'
       ).then(() => {
+        this.$data.sbolLoading = false
+        this.$data.link = true
         this.$data.linkSrc = this.$pinia.state.value?.personalAccount?.sberPayResponse?.data?.formUrl
+
       })
-      this.$data.paySent = true;
-    },
-    sberPayHanler() {
-      window.open(
+      /* window.open(
         this.$pinia.state.value?.personalAccount?.sberPayResponse?.data?.externalParams?.sbolDeepLink,
         "_system"
-      );
+      ); */
 
     },
-    sberPayHanler2() {
+    sberPayHandler() {
+      console.log('handler 2')
+      this.$data.sberPayLoading = true
 
-      this.$data.link = true
+      this.sberPay(
+        this.$pinia.state.value.personalAccount.personalItemData.code,
+        this.$data.phone,
+        this.$data.email,
+        this.$data.formTypeVal[0] === 'email' ? true : false,
+        +this.$pinia.state.value.personalAccount.personalItemData.sberPay
+          .accruals,
+        isPlatform('ios') ? true : false,
+        'SBOL'
+      ).then(() => {
+        this.$data.sberPayLoading = false
 
-      /* window.open(
-        this.$pinia.state.value?.personalAccount?.sberPayResponse?.link,
-        "_system"
-      ); */
+
+        window.open(
+          this.$pinia.state.value?.personalAccount?.sberPayResponse?.data?.externalParams?.sbolDeepLink,
+          "_system"
+        );
+        this.$router.push('/tabs/personalAccounts')
+        
+      })
+      
     },
   },
   setup() {
