@@ -208,13 +208,21 @@ export default defineComponent({
         'SBOL'
       ).then(() => {
         this.$data.sberPayLoading = false
+        let sberbankOnlineUrlScheme = this.$pinia.state.value?.personalAccount?.sberPayResponse?.data?.externalParams?.sbolDeepLink
+        window.location.href = sberbankOnlineUrlScheme;
+        
+        setTimeout(() => {
+          if (document.hasFocus()) {
+            console.log('The Sberbank Online app is not installed');
+            // Perform any actions you need to take if the app is not installed
+            this.sbolHandler();
+          } else {
+            console.log('The Sberbank Online app is installed');
+            this.$router.push('/tabs/personalAccounts')
+            // Perform any actions you need to take if the app is installed
+          }
+        }, 1000);
 
-
-        window.open(
-          this.$pinia.state.value?.personalAccount?.sberPayResponse?.data?.externalParams?.sbolDeepLink,
-          "_system"
-        );
-        this.$router.push('/tabs/personalAccounts')
         
       })
       
