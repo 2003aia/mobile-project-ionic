@@ -221,7 +221,7 @@ export default defineComponent({
             this.$router.push('/tabs/personalAccounts')
             // Perform any actions you need to take if the app is installed
           }
-        }, 1000);
+        }, 1500);
 
         
       })
