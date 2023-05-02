@@ -18,8 +18,12 @@
         </div>
         <div>
           <Input :blue="true" name="Телефон" v-mask="'+7 (###) ###-##-##'" :value="login" @change="loginChange" />
-          <Input v-show="passRecoveryResponse?.error === false" :blue="true" name="Пароль" :value="password"
-            :changeHandler="passChange" />
+          <!-- <Input v-show="passRecoveryResponse?.error === false" :blue="true" name="Пароль" :value="password"
+            @change="passChange" /> -->
+          <div v-show="passRecoveryResponse?.error === false">
+            <Input type="password" :blue="true" name="Пароль" :value="password" @change="passChange" />
+          </div>
+
           <ion-text v-if="errorText">
             <p class="ion-text-start error">
               {{ errorText }}
@@ -30,16 +34,14 @@
               {{ passRecoveryResponse?.message }}
             </p>
           </ion-text>
-          <Button v-show="passRecoveryResponse?.error === false" style="margin-bottom: 20px" :lightBlue="true" @click="
-            () => {
+          <Button v-show="passRecoveryResponse?.error === false" style="margin-bottom: 20px" :lightBlue="true" @click="() => {
               authUserHandler()
             }
-          " :loading="loading2" :disabled="passRecoveryResponse?.error === true" :name="'Войти'" />
-          <Button :lightBlue="true" @click="
-            () => {
+            " :loading="loading2" :disabled="passRecoveryResponse?.error === true" :name="'Войти'" />
+          <Button :lightBlue="true" @click="() => {
               passRecoveryHandler();
             }
-          " :loading="loading" :disabled="timer.format('mm:ss') !== '03:00' && timer.format('mm:ss') !== '00:00'"
+            " :loading="loading" :disabled="timer.format('mm:ss') !== '03:00' && timer.format('mm:ss') !== '00:00'"
             :name="timer.format('mm:ss') !== '03:00' && timer.format('mm:ss') !== '00:00' ? timer.format('mm:ss') : 'Восстановить пароль'" />
         </div>
       </div>

@@ -1,8 +1,7 @@
 <template>
   <ion-page>
     <Back />
-    <Layout :method="authUserHandler" filledBtn="Сохранить новый пароль" height="false" outlineBtn="."
-      :loading="loading">
+    <Layout :method="authUserHandler" filledBtn="Сохранить новый пароль" height="false" outlineBtn="." :loading="loading">
       <template v-slot:header-content>
         <ion-text v-if="route.params.recovery === 'true'" class="main-title ion-text-wrap ion-text-start">
           Восстановление пароля
@@ -39,14 +38,18 @@
         </div>
         <div class="input-container">
           <ion-text class="sub-title sub-margin">Новый пароль</ion-text>
-          <Input :value="password" :changeHandler="passwordChange" name="Новый пароль" />
+          <Input type="password" :value="password" :changeHandler="passwordChange" name="Новый пароль" />
         </div>
         <div class="input-container">
           <ion-text class="sub-title sub-margin">Повторите новый пароль</ion-text>
-          <Input name="Повторите новый пароль" :value="confirmPassword" @change="confirmPasswordChange" />
+          <Input type="password" name="Повторите новый пароль" :value="confirmPassword" @change="confirmPasswordChange" />
         </div>
-        <ion-text v-if="error">
-          <p class="ion-text-start error">
+        <ion-text>
+
+          <p class="ion-text-start blue" v-show="changePassResponse?.error === false">
+            Пароль изменен
+          </p>
+          <p class="ion-text-start error" v-show="changePassResponse?.error === true">
             {{ error }}
           </p>
         </ion-text>
@@ -130,9 +133,7 @@ export default defineComponent({
           changePass(JSON.parse(token).token, password.value)
             .then(() => {
               loading.value = false
-              if (changePassResponse.value?.status === true) {
-                router.push("/tabs");
-              } else {
+              if (changePassResponse.value?.error === true) {
                 error.value = changePassError.value;
               }
             })
@@ -175,6 +176,7 @@ export default defineComponent({
       oldPassword,
       phone,
       error,
+      changePassResponse,
       loading,
     };
   },
