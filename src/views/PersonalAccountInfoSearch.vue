@@ -91,11 +91,10 @@
             </div>
           </ion-accordion>
 
-          <ion-accordion v-show="
-            housesList?.length !== 0 &&
+          <ion-accordion v-show="housesList?.length !== 0 &&
             apartmentsList[0]
             // housesList[0]?.apartments
-          " value="fifth" :toggle-icon="caretDownSharp">
+            " value="fifth" :toggle-icon="caretDownSharp">
             <div class="input-wrapper" slot="header">
               <input type="text" :value="apartment" @input="(e) => apartmentChange(e)" class="input"
                 placeholder="Введите номер квартиры" />
@@ -113,6 +112,11 @@
             </div>
           </ion-accordion>
         </ion-accordion-group>
+        <div class="input-wrapper" slot="header">
+          <input type="text" :value="fio" @input="(e) => fioChange(e)" class="input"
+            placeholder="Введите три буквы фамилии" />
+        </div>
+
         <div v-show="licsList?.length !== 0">
           <div v-for="el in licsList" :key="el">
             <ion-text v-for="el2 in el?.lics" :key="el2?.code">
@@ -125,11 +129,10 @@
             </ion-text>
           </div>
         </div>
-        <div v-show="
-          housesList?.length !== 0 &&
+        <div v-show="housesList?.length !== 0 &&
           housesList !== undefined &&
           licsApartmentsList?.length !== 0
-        ">
+          ">
           <div v-for="el in licsApartmentsList" :key="el">
             <ion-text v-for="el2 in el?.lics" :key="el2?.code">
               <ion-item class="check" lines="none">
@@ -198,6 +201,7 @@ export default defineComponent({
       settlementId: '',
       country: "",
       apartment: "",
+      fio: '',
       lc: [],
       loading: false,
       response: [],
@@ -212,8 +216,9 @@ export default defineComponent({
       apartmentsList: [],
     };
   },
+
   computed: {
-    
+
     licsApartmentsList() {
       return this.$pinia.state.value?.personalAccount?.getHousesResponse?.data.filter((el) => el.house.toLowerCase() === this.$data.house.toLowerCase())
         .flatMap((el) => el?.apartments?.flatMap((el) => el))
@@ -230,6 +235,7 @@ export default defineComponent({
           return el.house.toLowerCase() === this.$data.house.toLowerCase()
         });
     },
+
   },
   mounted() {
     this.$data.loading2 = true
@@ -239,6 +245,9 @@ export default defineComponent({
     });
   },
   methods: {
+    fioChange(e) {
+      this.$data.fio = e.target.value
+    },
     countryChange(e) {
       this.$data.country = e.target.value
       this.$data.ulusList = this.$pinia.state.value?.personalAccount?.getSettlementsResponse?.data.filter((el) => {
@@ -354,22 +363,36 @@ export default defineComponent({
         (el) => el?.value === true
       );
       if (
-        (lics?.length !== 0 && lics !== undefined) ||
-        (licsApartments?.length !== 0 && licsApartments !== undefined)
+        (lics?.length !== 0 && lics !== undefined && this.$data.fio !== '') ||
+        (licsApartments?.length !== 0 && licsApartments !== undefined && this.$data.fio !== '')
       ) {
         this.$data.loading = true;
+        let newLicsCodes = []
+        let newLicsApartments = []
+        for (let index = 0; index < lics?.length; index++) {
+          const element = lics[index]?.code;
+          newLicsCodes.push({ code: element, fio: this.$data.fio })
+        }
+        for (let index = 0; index < licsApartments?.length; index++) {
+          const element = licsApartments[index]?.code;
+          newLicsApartments.push({ code: element, fio: this.$data.fio })
+        }
         const licsCodes =
           lics !== undefined
-            ? lics?.map((v) => v?.code)
-            : licsApartments?.map((v) => v?.code);
-
+            ? newLicsCodes
+            : newLicsApartments
         this.addAccount(JSON.parse(token).token, licsCodes).then(() => {
-          this.$data.error = "";
+          this.$data.error = this.$pinia.state.value?.personalAccount?.addAccountResponse?.message;
+          newLicsCodes = []
+          newLicsApartments = []
 
           this.getAccount().then(() => {
-            this.$router.push("/tabs/personalAccountPayment");
-            const itemData = this.$pinia.state.value?.personalAccount?.getAccountResponse?.data.filter((el) => el.code === licsCodes[0])
-            this.$pinia.state.value.personalAccount.personalItemData = itemData[0]
+            if (this.$pinia.state.value?.personalAccount?.addAccountResponse?.error !== true) {
+              this.$router.push("/tabs/personalAccountPayment");
+              const itemData = this.$pinia.state.value?.personalAccount?.getAccountResponse?.data?.filter((el) => el.code === licsCodes[0].code)
+              this.$pinia.state.value.personalAccount.personalItemData = itemData[0]
+
+            }
 
           });
 
@@ -380,6 +403,9 @@ export default defineComponent({
       } else {
         this.$data.response = "";
         this.$data.error = "Выберите лицевой счет";
+        if (this.$data.fio.length == 0) {
+          this.$data.error = "Введите три буквы фамилии";
+        }
       }
     },
   },

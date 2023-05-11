@@ -9,6 +9,7 @@
           <p class="title ion-text-start">Новый лицевой счёт</p>
         </ion-text>
         <Input :value="lc" @change="lcChange" name="Введите номер лицевого счета" />
+        <Input :value="fio" @change="fioChange" name="Три буквы фамилии" />
         <!-- <ion-text
           ><p class="title ion-text-start">
             Введите данные владельца лицевого счета
@@ -16,7 +17,7 @@
         >
         <Input name="Введите фамилию" />
         <Input name="Введите имя" />
-        <Input name="Введите отчество" /> -->
+         -->
         <ion-text v-if="response">
           <p>{{ response }}</p>
         </ion-text>
@@ -58,9 +59,14 @@ export default defineComponent({
     );
     const { addAccount, getAccount, } = usePersonalAccountStore();
     const lc = ref("");
+    const fio = ref("");
+
     const loading = ref(false);
     const lcChange = (e) => {
       lc.value = e.target.value;
+    };
+    const fioChange = (e) => {
+      fio.value = e.target.value;
     };
     const response = ref('')
     const addAccountHandler = async () => {
@@ -68,24 +74,29 @@ export default defineComponent({
       const store = new Storage()
       await store.create()
       const token = await store.get('token')
-      const lcArr = [lc.value]
+      const lcArr = [{code: lc.value, fio: fio.value}]
       addAccount(JSON.parse(token).token, lcArr).then(() => {
         loading.value = false;
-        getAccount().then(() => {
+        if (addAccountResponse.value.error !== true) {
+          getAccount().then(() => {
 
           const itemData = getAccountResponse?.value?.data?.filter((el) => el.code === lc.value)
           router.push("/tabs/personalAccountPayment");
           personalItemData.value = itemData[0]
         })
+        }
+        
         response.value = addAccountResponse.value.message
       });
     };
     return {
       lc,
+      fio,
       loading,
       addAccountHandler,
       response,
       lcChange,
+      fioChange,
       router,
       pencilOutline,
       documentTextOutline,

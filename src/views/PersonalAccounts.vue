@@ -73,9 +73,9 @@
           </ion-item>
 
           <div>
-            <ion-item>
+            <!-- <ion-item>
               <ion-text>{{ lcList[0]?.name }}</ion-text>
-            </ion-item>
+            </ion-item> -->
             <ion-item>
               <ion-text>{{ lcList[0]?.address }}</ion-text>
             </ion-item>
@@ -194,9 +194,9 @@
                 </ion-item>
 
                 <div>
-                  <ion-item>
+                  <!-- <ion-item>
                     <ion-text>{{ el.name }}</ion-text>
-                  </ion-item>
+                  </ion-item> -->
                   <ion-item>
                     <ion-text>{{ el.address }}</ion-text>
                   </ion-item>

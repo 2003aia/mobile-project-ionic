@@ -133,14 +133,21 @@ export const usePersonalAccountStore = defineStore({
             this.addAccountResponse = response.data;
             const store = new Storage();
             await store.create();
-            const token = await store.get("lics");
-            const tokenParsed = JSON.parse(token);
-            let newArray = [...tokenParsed, ...lc]
-            await store.set(
-              "lics",
-              JSON.stringify(newArray)
-            );
-            /*  }); */
+            if (response.data.error !== true) {
+              let newLc = []
+              for (let index = 0; index < lc.length; index++) {
+                const element = lc[index].code;
+                newLc.push(element)
+              }
+              const token = await store.get("lics");
+              const tokenParsed = JSON.parse(token);
+              let newArray = [...tokenParsed, ...newLc]
+              await store.set(
+                "lics",
+                JSON.stringify(newArray)
+              );
+            }
+
           });
       } catch (error) {
         this.addAccountError = error;
