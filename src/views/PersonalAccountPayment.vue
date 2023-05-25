@@ -6,12 +6,11 @@
         <ion-img class="pattern" :src="require('../assets/img/pattern2.png')"></ion-img>
         <div class="btn-wrapper">
           <Button class="btn" :lightBlue="true" name="Оплата" />
-          <Button class="btn" v-show="lcList?.counters.length > 0" :grey="true" name="Показания" @click="
-            () =>
+          <Button class="btn" v-show="lcList?.counters.length > 0" :grey="true" name="Показания" @click="() =>
               router.push({
                 name: 'personalAccountIndication',
               })
-          " />
+            " />
         </div>
       </div>
       <div class="container">
@@ -45,7 +44,7 @@
                   <ion-text>{{ el?.sum.toString().includes('-') ? 'Аванс' : 'Задолженность' }}:</ion-text>
                   <ion-text slot="end" :class="{ 'text-end': true, 'green': el?.sum.toString().includes('-') }">{{
                     el?.sum.toString().includes('-')
-                      ? maskMoney(Math.abs(el?.sum)) : maskMoney(el?.sum)
+                    ? maskMoney(Math.abs(el?.sum)) : maskMoney(el?.sum)
                   }}</ion-text>
                 </ion-item>
               </template>
@@ -89,6 +88,8 @@ import LayoutBox from "../components/LayoutBox.vue";
 import Input from "../components/Input.vue";
 import { useRouter, useRoute } from "vue-router";
 import Back from "../components/Back.vue";
+import { mapActions } from "pinia";
+import { usePersonalAccountStore } from "../stores/personalAccount";
 
 export default defineComponent({
   setup() {
@@ -117,6 +118,7 @@ export default defineComponent({
   },
   ionViewDidEnter() {
     this.$data.sum = this.sumValues(this.lcList?.debts.filter((e) => !e.sum.toString().includes('-')))?.toFixed(2).toString()
+    this.getAccount()
   },
   ionViewDidLeave() {
     this.$data.error = ''
@@ -124,6 +126,8 @@ export default defineComponent({
 
   },
   methods: {
+    ...mapActions(usePersonalAccountStore, ["getAccount"]),
+
     changeAccruals(e) {
       this.$data.accruals = e.target.value;
     },

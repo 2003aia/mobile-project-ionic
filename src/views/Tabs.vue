@@ -16,25 +16,24 @@
         <div style="margin-top:20px;">
 
           <div v-for="el in sideMenu" :key="el">
-            <ion-item @click="
-              () => {
+            <ion-item @click="() => {
                 router.push(el.path);
                 el?.method()
                 closeMenu()
               }
-            " lines="none">
+              " lines="none">
               <ion-icon slot="start" :icon="el.icon"></ion-icon>
               <ion-text class="sub-title">{{ el.name }}</ion-text>
               <ion-badge slot="end">{{ el.number }}</ion-badge>
             </ion-item>
           </div>
- <div class="versionWrapper" v-show="versionApp">
-          <ion-item lines="none">
-            <ion-text style="color: white;">{{ versionApp }}</ion-text>
-          </ion-item>
+          <div class="versionWrapper" v-show="versionApp">
+            <ion-item lines="none">
+              <ion-text style="color: white;">{{ versionApp }}</ion-text>
+            </ion-item>
+          </div>
         </div>
-        </div>
-       
+
       </ion-content>
     </ion-menu>
     <ion-content>
@@ -48,49 +47,44 @@
 
 
           <ion-tab-button v-on:click="openMenu">
-            <ion-img class="tabslogo" :src="
-              selected !== 'menu'
+            <ion-img class="tabslogo" :src="selected !== 'menu'
                 ? require('@/assets/img/home.png')
                 : require('@/assets/img/active-home.png')
-            " />
+              " />
 
             <ion-label :class="{ active: selected === 'menu' }">Быстрое меню</ion-label>
           </ion-tab-button>
 
           <ion-tab-button tab="services" href="/tabs/services">
-            <ion-img class="tabslogo" :src="
-              selected !== 'services'
+            <ion-img class="tabslogo" :src="selected !== 'services'
                 ? require('@/assets/img/services.png')
                 : require('@/assets/img/active-services.png')
-            " />
+              " />
 
             <ion-label :class="{ active: selected === 'services' }">Услуги</ion-label>
           </ion-tab-button>
           <ion-tab-button tab="personalAccounts" href="/tabs/personalAccounts">
-            <ion-img class="tabslogo" :src="
-              selected !== 'personalAccounts'
+            <ion-img class="tabslogo" :src="selected !== 'personalAccounts'
                 ? require('@/assets/img/bills.png')
                 : require('@/assets/img/active-bills.png')
-            " />
+              " />
 
             <ion-label :class="{ active: selected === 'personalAccounts' }">Лицевые счета</ion-label>
           </ion-tab-button>
           <ion-tab-button tab="record" href="/tabs/record">
-            <ion-img class="tabslogo" :src="
-              selected !== 'record'
+            <ion-img class="tabslogo" :src="selected !== 'record'
                 ? require('@/assets/img/list.png')
                 : require('@/assets/img/active-list.png')
-            " />
+              " />
 
             <ion-label :class="{ active: selected === 'record' }">Е-запись</ion-label>
           </ion-tab-button>
 
           <ion-tab-button class="badge-wrapper" tab="main" href="/tabs/main">
-            <ion-img class="tabslogo" :src="
-              selected !== 'main'
+            <ion-img class="tabslogo" :src="selected !== 'main'
                 ? require('@/assets/img/dots.png')
                 : require('@/assets/img/active-dots.png')
-            " />
+              " />
 
             <ion-label :class="{ active: selected === 'main' }">Новости и объявления</ion-label>
           </ion-tab-button>
@@ -118,6 +112,7 @@ import {
   menuController,
   IonBadge,
   IonToolbar,
+  isPlatform,
 } from "@ionic/vue";
 import { useRouter } from "vue-router";
 import { Storage } from "@ionic/storage"
@@ -172,7 +167,7 @@ export default defineComponent({
       menuOutline,
       videocamOutline,
       closeOutline,
-
+      isPlatform,
     };
   },
   data() {
@@ -340,9 +335,9 @@ export default defineComponent({
   border-top: 0;
   /* background: #EAEAEA; */
   background: #fff;
-
-  padding-top: 2px;
-  padding-bottom: 2px;
+/* background-color: blue; */
+  /* padding-top: 2px;
+  padding-bottom: 2px; */
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
 }
 
@@ -368,10 +363,13 @@ ion-icon {
 
 ion-tab-button {
   background: #ffffff;
+  /* background-color: red; */
   --padding-end: 0;
   --padding-start: 0;
   --padding-top: 3px;
+  --padding-bottom: 0px;
   position: relative;
+  
 }
 
 ion-tab-button ion-img {
@@ -433,8 +431,8 @@ ion-label {
   margin-top: 3px;
   margin-bottom: 3px;
 
-  font-size: 12px;
-  line-height: 12px;
+  font-size: 11px;
+  line-height: 10px;
   /* word-break: break-all; */
 }
 

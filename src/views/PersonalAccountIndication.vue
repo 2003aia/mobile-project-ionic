@@ -265,9 +265,7 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(usePersonalAccountStore, ["getIndices", "setIndices", "getAccount"]),
-    updateIndices() {
-
-    },
+  
     async setIndicesHandler(counterId, indice,) {
 
       if (
@@ -350,6 +348,7 @@ export default defineComponent({
   },
   ionViewDidEnter() {
     if (this.lcList?.counters?.length > 0 && this.lcList?.counters !== undefined) {
+      this.getAccount()
 
       for (let index = 0; index < this.lcList?.counters?.length; index++) {
         const element = this.lcList?.counters[index];
